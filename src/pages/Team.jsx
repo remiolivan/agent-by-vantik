@@ -68,14 +68,14 @@ export default function Team() {
 
   return (
     <div className="min-h-screen bg-paper">
-      <header className="border-b border-fog/20 px-8 py-5">
-        <div className="font-display text-lg font-medium text-nightfall">Team</div>
+      <header className="border-b border-muted/20 px-8 py-5">
+        <div className="font-display text-lg font-medium text-navyDeep">Team</div>
       </header>
 
       <main className="max-w-2xl mx-auto px-8 py-8">
         {org && (
-          <div className="bg-nightfall text-paper rounded p-6 mb-8">
-            <div className="font-mono text-xs uppercase tracking-wide text-dune mb-2">Your referral code</div>
+          <div className="bg-navyDeep text-paper rounded p-6 mb-8">
+            <div className="font-mono text-xs uppercase tracking-wide text-amber mb-2">Your referral code</div>
             <div className="font-display text-2xl font-medium mb-3">{org.referral_code}</div>
             <p className="text-sm text-paper/70 mb-4">
               Share your link — anyone who signs up with it gets 30 days instead of 14, and you get +14 days added to your own trial.
@@ -99,28 +99,28 @@ export default function Team() {
           <input
             type="email" required placeholder="agent@email.com"
             value={email} onChange={(e) => setEmail(e.target.value)}
-            className="flex-1 border border-fog/30 rounded px-3 py-2 text-sm"
+            className="flex-1 border border-muted/30 rounded px-3 py-2 text-sm"
           />
           <select
             value={role} onChange={(e) => setRole(e.target.value)}
-            className="border border-fog/30 rounded px-3 py-2 text-sm"
+            className="border border-muted/30 rounded px-3 py-2 text-sm"
           >
             <option value="agent">Agent</option>
             <option value="admin">Admin</option>
           </select>
           <button
             type="submit" disabled={sending}
-            className="bg-nightfall text-white text-sm rounded px-4 py-2 disabled:opacity-50"
+            className="bg-navyDeep text-white text-sm rounded px-4 py-2 disabled:opacity-50"
           >
             {sending ? 'Sending…' : 'Invite'}
           </button>
         </form>
 
-        {message && <p className="text-sm text-fog mb-6">{message}</p>}
+        {message && <p className="text-sm text-muted mb-6">{message}</p>}
 
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left font-mono text-xs uppercase tracking-wide text-fog border-b border-fog/20">
+            <tr className="text-left font-mono text-xs uppercase tracking-wide text-muted border-b border-muted/20">
               <th className="py-2 font-normal">Email</th>
               <th className="py-2 font-normal">Role</th>
               <th className="py-2 font-normal">Status</th>
@@ -128,9 +128,9 @@ export default function Team() {
           </thead>
           <tbody>
             {members.map((m) => (
-              <tr key={m.id} className="border-b border-fog/10">
+              <tr key={m.id} className="border-b border-muted/10">
                 <td className="py-3 text-ink">{m.invited_email || '—'}</td>
-                <td className="py-3 text-fog capitalize">{m.role}</td>
+                <td className="py-3 text-muted capitalize">{m.role}</td>
                 <td className="py-3">
                   <span className={
                     m.status === 'active'

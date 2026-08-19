@@ -60,24 +60,24 @@ export default function Billing() {
 
   return (
     <div className="min-h-screen bg-paper">
-      <header className="border-b border-fog/20 px-8 py-5">
-        <div className="font-display text-lg font-medium text-nightfall">Billing</div>
+      <header className="border-b border-muted/20 px-8 py-5">
+        <div className="font-display text-lg font-medium text-navyDeep">Billing</div>
       </header>
 
       <main className="max-w-3xl mx-auto px-8 py-8">
         {org && (
-          <div className="bg-white border border-fog/20 rounded p-6 mb-8 flex items-center justify-between">
+          <div className="bg-white border border-muted/20 rounded p-6 mb-8 flex items-center justify-between">
             <div>
-              <div className="font-mono text-xs uppercase tracking-wide text-fog mb-1">Current plan</div>
-              <div className="font-display text-xl font-medium text-nightfall capitalize">{org.plan}</div>
+              <div className="font-mono text-xs uppercase tracking-wide text-muted mb-1">Current plan</div>
+              <div className="font-display text-xl font-medium text-navyDeep capitalize">{org.plan}</div>
               {org.plan === 'trial' && daysLeft !== null && (
-                <div className="text-sm text-fog mt-1">{daysLeft} day{daysLeft === 1 ? '' : 's'} left in trial</div>
+                <div className="text-sm text-muted mt-1">{daysLeft} day{daysLeft === 1 ? '' : 's'} left in trial</div>
               )}
             </div>
             {org.stripe_customer_id && (
               <button
                 onClick={manageBilling} disabled={portalLoading}
-                className="text-sm text-nightfall border border-nightfall/30 rounded px-4 py-2 disabled:opacity-50"
+                className="text-sm text-navyDeep border border-navyDeep/30 rounded px-4 py-2 disabled:opacity-50"
               >
                 {portalLoading ? 'Loading…' : 'Manage billing'}
               </button>
@@ -89,10 +89,10 @@ export default function Billing() {
 
         <div className="grid grid-cols-3 gap-4">
           {PLANS.map((p) => (
-            <div key={p.key} className="bg-white border border-fog/20 rounded p-6 flex flex-col">
-              <div className="font-display text-lg font-medium text-nightfall mb-1">{p.name}</div>
-              <div className="font-mono text-2xl text-nightfall mb-1">{p.price}</div>
-              <div className="text-sm text-fog mb-6">{p.desc}</div>
+            <div key={p.key} className="bg-white border border-muted/20 rounded p-6 flex flex-col">
+              <div className="font-display text-lg font-medium text-navyDeep mb-1">{p.name}</div>
+              <div className="font-mono text-2xl text-navyDeep mb-1">{p.price}</div>
+              <div className="text-sm text-muted mb-6">{p.desc}</div>
               <button
                 onClick={() => subscribe(p.key)}
                 disabled={loadingPlan === p.key || org?.plan === p.key}

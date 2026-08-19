@@ -71,13 +71,13 @@ export default function Contacts() {
 
   return (
     <div className="min-h-screen bg-paper">
-      <header className="border-b border-fog/20 px-8 py-5 flex items-center justify-between">
-        <div className="font-display text-lg font-medium text-nightfall">Contacts</div>
+      <header className="border-b border-muted/20 px-8 py-5 flex items-center justify-between">
+        <div className="font-display text-lg font-medium text-navyDeep">Contacts</div>
         <div className="flex items-center gap-3">
           <button
             onClick={() => fileRef.current?.click()}
             disabled={importing}
-            className="text-sm text-nightfall border border-nightfall/30 rounded px-4 py-2 disabled:opacity-50"
+            className="text-sm text-navyDeep border border-navyDeep/30 rounded px-4 py-2 disabled:opacity-50"
           >
             {importing ? 'Importing…' : 'Import CSV'}
           </button>
@@ -89,40 +89,40 @@ export default function Contacts() {
       </header>
 
       {importMsg && (
-        <div className="px-8 py-3 bg-white border-b border-fog/20 text-sm text-fog">{importMsg}</div>
+        <div className="px-8 py-3 bg-white border-b border-muted/20 text-sm text-muted">{importMsg}</div>
       )}
 
       {showNew && (
-        <form onSubmit={createContact} className="flex gap-3 items-center px-8 py-4 bg-white border-b border-fog/20 flex-wrap">
+        <form onSubmit={createContact} className="flex gap-3 items-center px-8 py-4 bg-white border-b border-muted/20 flex-wrap">
           <input
             value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-            placeholder="Name" required className="border border-fog/30 rounded px-3 py-2 text-sm"
+            placeholder="Name" required className="border border-muted/30 rounded px-3 py-2 text-sm"
           />
           <input
             value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
-            placeholder="Email" type="email" className="border border-fog/30 rounded px-3 py-2 text-sm"
+            placeholder="Email" type="email" className="border border-muted/30 rounded px-3 py-2 text-sm"
           />
           <input
             value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
-            placeholder="Phone" className="border border-fog/30 rounded px-3 py-2 text-sm"
+            placeholder="Phone" className="border border-muted/30 rounded px-3 py-2 text-sm"
           />
           <select
             value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}
-            className="border border-fog/30 rounded px-3 py-2 text-sm"
+            className="border border-muted/30 rounded px-3 py-2 text-sm"
           >
             <option value="lead">Lead</option>
             <option value="client">Client</option>
             <option value="past_client">Past client</option>
           </select>
-          <button type="submit" className="bg-nightfall text-white text-sm rounded px-4 py-2">Add</button>
-          <button type="button" onClick={() => setShowNew(false)} className="text-sm text-fog">Cancel</button>
+          <button type="submit" className="bg-navyDeep text-white text-sm rounded px-4 py-2">Add</button>
+          <button type="button" onClick={() => setShowNew(false)} className="text-sm text-muted">Cancel</button>
         </form>
       )}
 
       <main className="max-w-5xl mx-auto px-8 py-8">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left font-mono text-xs uppercase tracking-wide text-fog border-b border-fog/20">
+            <tr className="text-left font-mono text-xs uppercase tracking-wide text-muted border-b border-muted/20">
               <th className="py-2 font-normal">Name</th>
               <th className="py-2 font-normal">Email</th>
               <th className="py-2 font-normal">Phone</th>
@@ -131,17 +131,17 @@ export default function Contacts() {
           </thead>
           <tbody>
             {contacts.map((c) => (
-              <tr key={c.id} className="border-b border-fog/10">
+              <tr key={c.id} className="border-b border-muted/10">
                 <td className="py-3 text-ink">{c.name}</td>
-                <td className="py-3 text-fog">{c.email || '—'}</td>
-                <td className="py-3 text-fog">{c.phone || '—'}</td>
-                <td className="py-3 text-fog capitalize">{c.type.replace('_', ' ')}</td>
+                <td className="py-3 text-muted">{c.email || '—'}</td>
+                <td className="py-3 text-muted">{c.phone || '—'}</td>
+                <td className="py-3 text-muted capitalize">{c.type.replace('_', ' ')}</td>
               </tr>
             ))}
           </tbody>
         </table>
         {contacts.length === 0 && (
-          <p className="text-sm text-fog py-8 text-center">No contacts yet. Add one or import a CSV.</p>
+          <p className="text-sm text-muted py-8 text-center">No contacts yet. Add one or import a CSV.</p>
         )}
       </main>
     </div>

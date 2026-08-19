@@ -29,7 +29,7 @@ export default function Signup() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-paper px-4">
       <div className="w-full max-w-sm">
-        <h1 className="font-display text-2xl font-medium text-nightfall mb-2">
+        <h1 className="font-display text-2xl font-medium text-navyDeep mb-2">
           Start your {referralCode ? '30' : '14'}-day trial
         </h1>
         {referralCode && (
@@ -42,28 +42,28 @@ export default function Signup() {
           <input
             type="text" placeholder="Business name" value={orgName}
             onChange={(e) => setOrgName(e.target.value)} required
-            className="w-full border border-fog/30 rounded px-4 py-3 text-sm focus:outline-none focus:border-nightfall"
+            className="w-full border border-muted/30 rounded px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
           />
           <input
             type="email" placeholder="Email" value={email}
             onChange={(e) => setEmail(e.target.value)} required
-            className="w-full border border-fog/30 rounded px-4 py-3 text-sm focus:outline-none focus:border-nightfall"
+            className="w-full border border-muted/30 rounded px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
           />
           <input
             type="password" placeholder="Password" value={password}
             onChange={(e) => setPassword(e.target.value)} required minLength={8}
-            className="w-full border border-fog/30 rounded px-4 py-3 text-sm focus:outline-none focus:border-nightfall"
+            className="w-full border border-muted/30 rounded px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
           />
           {error && <p className="text-sm text-red-600">{error}</p>}
           <button
             type="submit" disabled={loading}
-            className="w-full bg-nightfall text-paper rounded px-4 py-3 text-sm font-medium disabled:opacity-50"
+            className="w-full bg-navyDeep text-paper rounded px-4 py-3 text-sm font-medium disabled:opacity-50"
           >
             {loading ? 'Creating account…' : 'Create account'}
           </button>
         </form>
-        <p className="text-sm text-fog mt-6">
-          Already have an account? <Link to="/login" className="text-nightfall underline">Log in</Link>
+        <p className="text-sm text-muted mt-6">
+          Already have an account? <Link to="/login" className="text-navyDeep underline">Log in</Link>
         </p>
       </div>
     </div>
