@@ -33,7 +33,7 @@ export default function Signup() {
           Start your {referralCode ? '30' : '14'}-day trial
         </h1>
         {referralCode && (
-          <p className="text-sm text-horizon bg-horizon/10 rounded px-3 py-2 mb-6">
+          <p className="text-sm text-teal bg-teal/10 rounded px-3 py-2 mb-6">
             Referral code <span className="font-mono">{referralCode}</span> applied — you get 30 days instead of 14.
           </p>
         )}

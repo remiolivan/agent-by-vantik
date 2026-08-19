@@ -96,7 +96,7 @@ export default function Billing() {
               <button
                 onClick={() => subscribe(p.key)}
                 disabled={loadingPlan === p.key || org?.plan === p.key}
-                className="mt-auto bg-horizon text-white text-sm font-medium rounded px-4 py-2 disabled:opacity-50"
+                className="mt-auto bg-teal text-white text-sm font-medium rounded px-4 py-2 disabled:opacity-50"
               >
                 {org?.plan === p.key ? 'Current plan' : loadingPlan === p.key ? 'Loading…' : 'Subscribe'}
               </button>

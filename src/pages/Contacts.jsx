@@ -82,7 +82,7 @@ export default function Contacts() {
             {importing ? 'Importing…' : 'Import CSV'}
           </button>
           <input ref={fileRef} type="file" accept=".csv" onChange={handleImport} className="hidden" />
-          <button onClick={() => setShowNew(true)} className="bg-horizon text-white text-sm font-medium rounded px-4 py-2">
+          <button onClick={() => setShowNew(true)} className="bg-teal text-white text-sm font-medium rounded px-4 py-2">
             + New contact
           </button>
         </div>

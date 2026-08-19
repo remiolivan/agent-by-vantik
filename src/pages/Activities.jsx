@@ -48,7 +48,7 @@ export default function Activities() {
           {activities.map((a) => (
             <div key={a.id} className="bg-white border border-fog/20 rounded p-4">
               <div className="flex items-center justify-between mb-1">
-                <span className="font-mono text-xs uppercase tracking-wide text-horizon">{a.type}</span>
+                <span className="font-mono text-xs uppercase tracking-wide text-teal">{a.type}</span>
                 <span className="text-xs text-fog font-mono">{new Date(a.created_at).toLocaleString()}</span>
               </div>
               <p className="text-sm text-ink">{a.content}</p>

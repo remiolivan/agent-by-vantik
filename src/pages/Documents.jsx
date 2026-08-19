@@ -47,7 +47,7 @@ export default function Documents() {
     <div className="min-h-screen bg-paper">
       <header className="border-b border-fog/20 px-8 py-5 flex items-center justify-between">
         <div className="font-display text-lg font-medium text-nightfall">Documents</div>
-        <button onClick={() => setShowNew(true)} className="bg-horizon text-white text-sm font-medium rounded px-4 py-2">
+        <button onClick={() => setShowNew(true)} className="bg-teal text-white text-sm font-medium rounded px-4 py-2">
           + New document
         </button>
       </header>

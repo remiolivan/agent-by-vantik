@@ -52,7 +52,7 @@ export default function Deals() {
         <div className="font-display text-lg font-medium text-nightfall">Pipeline</div>
         <button
           onClick={() => setShowNew(true)}
-          className="bg-horizon text-white text-sm font-medium rounded px-4 py-2"
+          className="bg-teal text-white text-sm font-medium rounded px-4 py-2"
         >
           + New deal
         </button>
@@ -94,7 +94,7 @@ export default function Deals() {
                     )}
                     <div className="flex justify-between text-xs">
                       <button onClick={() => moveDeal(deal.id, -1)} className="text-fog hover:text-ink">← back</button>
-                      <button onClick={() => moveDeal(deal.id, 1)} className="text-nightfall hover:text-horizon">forward →</button>
+                      <button onClick={() => moveDeal(deal.id, 1)} className="text-nightfall hover:text-teal">forward →</button>
                     </div>
                   </div>
                 ))}

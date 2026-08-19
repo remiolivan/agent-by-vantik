@@ -4,16 +4,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        nightfall: '#16213E',
-        dune: '#C9A868',
-        horizon: '#E8963C',
+        nightfall: '#163052',
+        navyMid: '#2A5187',
+        teal: '#3FA8A0',
+        dune: '#C08A2E',
         paper: '#F7F5F0',
         fog: '#6B7280',
         ink: '#1C1B19',
       },
       fontFamily: {
-        display: ['"Space Grotesk"', 'sans-serif'],
-        body: ['Inter', 'sans-serif'],
+        display: ['Sora', 'sans-serif'],
+        body: ['"Albert Sans"', 'sans-serif'],
         mono: ['"IBM Plex Mono"', 'monospace'],
       },
     },

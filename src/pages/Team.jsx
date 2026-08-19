@@ -87,7 +87,7 @@ export default function Team() {
               />
               <button
                 onClick={copyLink}
-                className="bg-horizon text-white text-sm rounded px-4 py-2 whitespace-nowrap"
+                className="bg-teal text-white text-sm rounded px-4 py-2 whitespace-nowrap"
               >
                 {copied ? 'Copied!' : 'Copy link'}
               </button>
@@ -135,7 +135,7 @@ export default function Team() {
                   <span className={
                     m.status === 'active'
                       ? 'text-teal-700 bg-teal-50 px-2 py-0.5 rounded text-xs'
-                      : 'text-horizon bg-horizon/10 px-2 py-0.5 rounded text-xs'
+                      : 'text-teal bg-teal/10 px-2 py-0.5 rounded text-xs'
                   }>
                     {m.status}
                   </span>
