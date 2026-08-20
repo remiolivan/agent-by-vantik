@@ -1,5 +1,0 @@
-# Shared document links (property brochures, prospect summaries) resolve
-# through this short, branded path instead of the raw Supabase project URL —
-# shorter to read in a WhatsApp/email message, and identifiable as coming
-# from Agent by Vantik without shouting the brand.
-/s/*  https://ppommcjfwwrvmtdinitw.supabase.co/functions/v1/share/:splat  302
