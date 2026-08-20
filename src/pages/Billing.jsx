@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import Layout from '../components/Layout'
 
 const PLANS = [
   { key: 'solo', name: 'Solo', price: '$35/mo', desc: '1 agent' },
@@ -59,14 +60,10 @@ export default function Billing() {
     : null
 
   return (
-    <div className="min-h-screen bg-paper">
-      <header className="border-b border-muted/20 px-8 py-5">
-        <div className="font-display text-lg font-medium text-navyDeep">Billing</div>
-      </header>
-
-      <main className="max-w-3xl mx-auto px-8 py-8">
+    <Layout title="Billing">
+      <div className="max-w-3xl">
         {org && (
-          <div className="bg-white border border-muted/20 rounded p-6 mb-8 flex items-center justify-between">
+          <div className="bg-white border border-muted/20 rounded-xl p-5 sm:p-6 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="font-mono text-xs uppercase tracking-wide text-muted mb-1">Current plan</div>
               <div className="font-display text-xl font-medium text-navyDeep capitalize">{org.plan}</div>
@@ -77,7 +74,7 @@ export default function Billing() {
             {org.stripe_customer_id && (
               <button
                 onClick={manageBilling} disabled={portalLoading}
-                className="text-sm text-navyDeep border border-navyDeep/30 rounded px-4 py-2 disabled:opacity-50"
+                className="text-sm text-navyDeep border border-navyDeep/30 rounded-lg px-4 py-2.5 disabled:opacity-50 whitespace-nowrap"
               >
                 {portalLoading ? 'Loading…' : 'Manage billing'}
               </button>
@@ -87,23 +84,23 @@ export default function Billing() {
 
         {error && <p className="text-sm text-red-600 mb-6">{error}</p>}
 
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {PLANS.map((p) => (
-            <div key={p.key} className="bg-white border border-muted/20 rounded p-6 flex flex-col">
+            <div key={p.key} className="bg-white border border-muted/20 rounded-xl p-6 flex flex-col">
               <div className="font-display text-lg font-medium text-navyDeep mb-1">{p.name}</div>
               <div className="font-mono text-2xl text-navyDeep mb-1">{p.price}</div>
               <div className="text-sm text-muted mb-6">{p.desc}</div>
               <button
                 onClick={() => subscribe(p.key)}
                 disabled={loadingPlan === p.key || org?.plan === p.key}
-                className="mt-auto bg-teal text-white text-sm font-medium rounded px-4 py-2 disabled:opacity-50"
+                className="mt-auto bg-teal text-white text-sm font-medium rounded-lg px-4 py-2.5 disabled:opacity-50"
               >
                 {org?.plan === p.key ? 'Current plan' : loadingPlan === p.key ? 'Loading…' : 'Subscribe'}
               </button>
             </div>
           ))}
         </div>
-      </main>
-    </div>
+      </div>
+    </Layout>
   )
 }

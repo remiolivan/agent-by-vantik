@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import Logo from '../components/Logo'
 
 export default function Signup() {
   const [orgName, setOrgName] = useState('')
@@ -29,6 +30,7 @@ export default function Signup() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-paper px-4">
       <div className="w-full max-w-sm">
+        <Logo size={34} className="mb-8" />
         <h1 className="font-display text-2xl font-medium text-navyDeep mb-2">
           Start your {referralCode ? '30' : '14'}-day trial
         </h1>

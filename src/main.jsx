@@ -11,3 +11,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </React.StrictMode>,
 )
+
+// Keep the app addable to the home screen via the browser's own menu,
+// but don't let Chrome auto-surface its own "Install app" banner.
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault()
+})

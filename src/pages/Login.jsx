@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import Logo from '../components/Logo'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -22,6 +23,7 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-paper px-4">
       <div className="w-full max-w-sm">
+        <Logo size={34} className="mb-8" />
         <h1 className="font-display text-2xl font-medium text-navyDeep mb-8">Log in</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -42,6 +44,9 @@ export default function Login() {
             {loading ? 'Logging in…' : 'Log in'}
           </button>
         </form>
+        <p className="text-sm text-muted mt-4">
+          <Link to="/forgot-password" className="text-navyDeep underline">Forgot password?</Link>
+        </p>
         <p className="text-sm text-muted mt-6">
           No account? <Link to="/signup" className="text-navyDeep underline">Start free trial</Link>
         </p>
