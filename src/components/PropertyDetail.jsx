@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { X, Upload, Trash2, Share2, Pencil, MapPin, Receipt } from 'lucide-react'
+import { X, Upload, Trash2, Share2, Pencil, MapPin, Receipt, Sparkles } from 'lucide-react'
 import { supabase, invokeWithRetry } from '../lib/supabase'
 import { formatMoney } from '../lib/format'
 import { DEVELOPERS } from '../lib/constants'
 import NumberInput from './NumberInput'
+import FollowUpDraft from './FollowUpDraft'
 
 const TYPES = ['apartment', 'villa', 'townhouse', 'land', 'commercial', 'other']
 
@@ -44,6 +45,7 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
   const [photos, setPhotos] = useState([])
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
   const [viewerPhoto, setViewerPhoto] = useState(null)
+  const [showFollowUp, setShowFollowUp] = useState(false)
   const photoInputRef = useRef(null)
 
   const [documents, setDocuments] = useState([])
@@ -199,6 +201,9 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
             )}
           </div>
           <div className="flex items-center gap-1 shrink-0">
+            <button onClick={() => setShowFollowUp(true)} className="text-teal p-1.5" aria-label="Draft follow-up" title="Draft follow-up">
+              <Sparkles size={17} />
+            </button>
             {!editing && (
               <button onClick={() => setEditing(true)} className="text-navyDeep p-1.5" aria-label="Edit">
                 <Pencil size={17} />
@@ -483,6 +488,10 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
               cropping it to fit a box. */}
           <img src={viewerPhoto.url} alt="" className="max-w-full max-h-full object-contain" onClick={(e) => e.stopPropagation()} />
         </div>
+      )}
+
+      {showFollowUp && (
+        <FollowUpDraft propertyId={current.id} onClose={() => setShowFollowUp(false)} />
       )}
     </div>
   )

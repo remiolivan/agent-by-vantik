@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
-import { X, Pencil, Share2, Receipt } from 'lucide-react'
+import { X, Pencil, Share2, Receipt, Sparkles } from 'lucide-react'
 import { supabase, invokeWithRetry } from '../lib/supabase'
 import { formatNumber, formatMoney, nextQuarterHour } from '../lib/format'
 import { BEDROOM_OPTIONS } from '../lib/constants'
 import NumberInput from './NumberInput'
+import ActivityLog from './ActivityLog'
+import FollowUpDraft from './FollowUpDraft'
 
 function fieldsFrom(prospect) {
   return {
@@ -37,6 +39,7 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
   const [savingTask, setSavingTask] = useState(false)
 
   const [sharing, setSharing] = useState(false)
+  const [showFollowUp, setShowFollowUp] = useState(false)
   const [shareUrl, setShareUrl] = useState(null)
   const [shareError, setShareError] = useState(null)
   const [invoices, setInvoices] = useState([])
@@ -190,6 +193,9 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
             {current.email && <div className="text-xs text-muted truncate">{current.email}</div>}
           </div>
           <div className="flex items-center gap-1 shrink-0">
+            <button onClick={() => setShowFollowUp(true)} className="text-teal p-1.5" aria-label="Draft follow-up" title="Draft follow-up">
+              <Sparkles size={17} />
+            </button>
             {!editing && (
               <button onClick={() => setEditing(true)} className="text-navyDeep p-1.5" aria-label="Edit">
                 <Pencil size={17} />
@@ -382,6 +388,11 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
             </div>
           </div>
 
+          {/* Activity */}
+          <div>
+            <ActivityLog contactId={current.id} />
+          </div>
+
           {/* Share */}
           <div>
             <div className="font-mono text-xs uppercase tracking-wide text-muted mb-3">Share prospect summary</div>
@@ -417,6 +428,15 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
           </div>
         </div>
       </div>
+
+      {showFollowUp && (
+        <FollowUpDraft
+          contactId={current.id}
+          contactPhone={current.phone}
+          contactEmail={current.email}
+          onClose={() => setShowFollowUp(false)}
+        />
+      )}
     </div>
   )
 }
