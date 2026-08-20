@@ -18,6 +18,11 @@ export default function OAuthButtons({ referralCode }) {
       provider,
       options: {
         redirectTo: `${window.location.origin}/${referralCode ? `?ref=${encodeURIComponent(referralCode)}` : ''}`,
+        // Azure in particular won't return an email address unless this is
+        // requested explicitly — without it, Supabase can't create a
+        // session (no email to key the user on), and the login silently
+        // bounces back to the login screen with no visible error.
+        scopes: 'email',
       },
     })
     if (error) {

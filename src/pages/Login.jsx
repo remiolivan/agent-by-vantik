@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import Logo from '../components/Logo'
@@ -10,6 +10,21 @@ export default function Login() {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+
+  // If a Google/Microsoft sign-in fails after the provider's own login
+  // screen (e.g. no email scope granted, redirect URI mismatch), Supabase
+  // sends the user back here with the error in the URL hash instead of
+  // throwing anywhere in our own code. Without reading it, that failure is
+  // completely silent — the user just lands back on this page with no clue
+  // why.
+  useEffect(() => {
+    const hashParams = new URLSearchParams(window.location.hash.slice(1))
+    const oauthError = hashParams.get('error_description') || hashParams.get('error')
+    if (oauthError) {
+      setError(decodeURIComponent(oauthError.replace(/\+/g, ' ')))
+      window.history.replaceState(null, '', window.location.pathname)
+    }
+  }, [])
 
   async function handleSubmit(e) {
     e.preventDefault()
