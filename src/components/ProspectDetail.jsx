@@ -3,6 +3,7 @@ import { X, Pencil, Share2, Receipt } from 'lucide-react'
 import { supabase, invokeWithRetry } from '../lib/supabase'
 import { formatNumber, formatMoney, nextQuarterHour } from '../lib/format'
 import { BEDROOM_OPTIONS } from '../lib/constants'
+import NumberInput from './NumberInput'
 
 function fieldsFrom(prospect) {
   return {
@@ -258,13 +259,13 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
                 ))}
               </div>
               <div className="flex gap-3">
-                <input
-                  value={form.budget_min} onChange={(e) => setForm({ ...form, budget_min: e.target.value })}
-                  placeholder="Budget min (AED)" type="number" className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                <NumberInput
+                  value={form.budget_min} onChange={(v) => setForm({ ...form, budget_min: v })}
+                  placeholder="Budget min (AED)" className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
                 />
-                <input
-                  value={form.budget_max} onChange={(e) => setForm({ ...form, budget_max: e.target.value })}
-                  placeholder="Budget max (AED)" type="number" className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                <NumberInput
+                  value={form.budget_max} onChange={(v) => setForm({ ...form, budget_max: v })}
+                  placeholder="Budget max (AED)" className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
                 />
               </div>
               <div>

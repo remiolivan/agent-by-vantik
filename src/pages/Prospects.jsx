@@ -4,6 +4,7 @@ import Layout from '../components/Layout'
 import { formatNumber } from '../lib/format'
 import { BEDROOM_OPTIONS } from '../lib/constants'
 import ProspectDetail from '../components/ProspectDetail'
+import NumberInput from '../components/NumberInput'
 
 const NEW_PROSPECT_DEFAULTS = {
   name: '', email: '', phone: '', type: 'lead',
@@ -142,7 +143,7 @@ export default function Prospects() {
             />
             <select
               value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}
-              className="border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+              className="w-full sm:w-auto border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
             >
               <option value="lead">Lead</option>
               <option value="client">Client</option>
@@ -163,13 +164,13 @@ export default function Prospects() {
           </div>
 
           <div className="flex gap-3">
-            <input
-              value={form.budget_min} onChange={(e) => setForm({ ...form, budget_min: e.target.value })}
-              placeholder="Budget min (AED)" type="number" className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+            <NumberInput
+              value={form.budget_min} onChange={(v) => setForm({ ...form, budget_min: v })}
+              placeholder="Budget min (AED)" className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
             />
-            <input
-              value={form.budget_max} onChange={(e) => setForm({ ...form, budget_max: e.target.value })}
-              placeholder="Budget max (AED)" type="number" className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+            <NumberInput
+              value={form.budget_max} onChange={(v) => setForm({ ...form, budget_max: v })}
+              placeholder="Budget max (AED)" className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
             />
           </div>
 

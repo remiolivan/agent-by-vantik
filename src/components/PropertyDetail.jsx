@@ -3,6 +3,7 @@ import { X, Upload, Trash2, Share2, Pencil, MapPin, Receipt } from 'lucide-react
 import { supabase, invokeWithRetry } from '../lib/supabase'
 import { formatMoney } from '../lib/format'
 import { DEVELOPERS } from '../lib/constants'
+import NumberInput from './NumberInput'
 
 const TYPES = ['apartment', 'villa', 'townhouse', 'land', 'commercial', 'other']
 
@@ -254,9 +255,9 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
                 placeholder="Address" className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
               />
               <div className="flex gap-2">
-                <input
-                  value={form.value} onChange={(e) => setForm({ ...form, value: e.target.value })}
-                  placeholder="Price (AED)" type="number" className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                <NumberInput
+                  value={form.value} onChange={(v) => setForm({ ...form, value: v })}
+                  placeholder="Price (AED)" className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
                 />
                 <input
                   value={form.bedrooms} onChange={(e) => setForm({ ...form, bedrooms: e.target.value })}

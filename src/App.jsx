@@ -13,6 +13,7 @@ import Team from './pages/Team'
 import Tasks from './pages/Tasks'
 import Documents from './pages/Documents'
 import Billing from './pages/Billing'
+import Onboarding from './pages/Onboarding'
 import ProtectedRoute from './components/ProtectedRoute'
 
 export default function App() {
@@ -32,6 +33,7 @@ export default function App() {
       <Route path="/calendar/callback/:provider" element={<ProtectedRoute><CalendarCallback /></ProtectedRoute>} />
       <Route path="/documents" element={<ProtectedRoute><Documents /></ProtectedRoute>} />
       <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
+      <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
     </Routes>
   )
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import Layout from '../components/Layout'
+import CancelSubscriptionFlow from '../components/CancelSubscriptionFlow'
 
 const PLANS = [
   { key: 'solo', name: 'Solo', price: '$35/mo', desc: '1 agent' },
@@ -13,13 +14,14 @@ export default function Billing() {
   const [loadingPlan, setLoadingPlan] = useState(null)
   const [portalLoading, setPortalLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [showCancelFlow, setShowCancelFlow] = useState(false)
 
   async function load() {
     const { data: membership } = await supabase.from('memberships').select('org_id').single()
     if (membership) {
       const { data } = await supabase
         .from('organizations')
-        .select('name, plan, trial_ends_at, stripe_customer_id')
+        .select('name, plan, trial_ends_at, stripe_customer_id, is_comped, cancel_requested_at')
         .eq('id', membership.org_id)
         .single()
       setOrg(data)
@@ -101,6 +103,27 @@ export default function Billing() {
           ))}
         </div>
       </div>
+
+      {!org?.is_comped && (
+        <div className="mt-10 max-w-3xl">
+          {org?.cancel_requested_at ? (
+            <p className="text-sm text-muted">
+              Cancellation requested — your access continues until the end of the current billing period.
+            </p>
+          ) : (
+            <button onClick={() => setShowCancelFlow(true)} className="text-sm text-muted underline">
+              Cancel my subscription
+            </button>
+          )}
+        </div>
+      )}
+
+      {showCancelFlow && (
+        <CancelSubscriptionFlow
+          onClose={() => setShowCancelFlow(false)}
+          onCancelled={() => { setShowCancelFlow(false); load() }}
+        />
+      )}
     </Layout>
   )
 }

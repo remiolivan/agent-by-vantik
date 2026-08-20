@@ -26,3 +26,28 @@ export function nextQuarterHour(date = new Date()) {
   const pad = (n) => String(n).padStart(2, '0')
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
+
+// Converts a stored UTC timestamp (ISO string from the DB) into the value
+// format <input type="datetime-local"> expects, IN THE BROWSER'S LOCAL
+// TIMEZONE. Using .slice(0, 16) on the raw ISO string instead of this is the
+// classic bug: it chops the UTC string as if it were already local, so a
+// task due at 18:00 Dubai time (14:00 UTC) would show as 14:00 in the edit
+// field — a 4-hour mismatch between the time you set and the time you see.
+export function toLocalInputValue(isoString) {
+  if (!isoString) return ''
+  const d = new Date(isoString)
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
+// Converts a <input type="datetime-local"> value (local, no timezone info)
+// into a proper UTC ISO string for storage. Sending the raw
+// "YYYY-MM-DDTHH:mm" string straight to Postgres lets it get interpreted as
+// UTC rather than the browser's local (Dubai) time, silently shifting the
+// stored time by the local UTC offset. `new Date(...)` on a bare
+// datetime-local string is parsed as local time per spec, so converting
+// through it here gives the correct UTC instant.
+export function fromLocalInputValue(localValue) {
+  if (!localValue) return null
+  return new Date(localValue).toISOString()
+}

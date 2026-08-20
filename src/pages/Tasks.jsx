@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Pencil } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import Layout from '../components/Layout'
-import { nextQuarterHour } from '../lib/format'
+import { nextQuarterHour, toLocalInputValue, fromLocalInputValue } from '../lib/format'
 
 export default function Tasks() {
   const [tasks, setTasks] = useState([])
@@ -40,7 +40,7 @@ export default function Tasks() {
     await supabase.from('tasks').insert({
       title, description: description || null, org_id: membership.org_id,
       assignee_id: membership.id,
-      due_at: dueAt || null,
+      due_at: fromLocalInputValue(dueAt),
       prospect_id: prospectId || null,
       property_id: propertyId || null,
     })
@@ -59,7 +59,7 @@ export default function Tasks() {
     setEditingId(task.id)
     setEditForm({
       title: task.title || '',
-      due_at: task.due_at ? task.due_at.slice(0, 16) : '',
+      due_at: task.due_at ? toLocalInputValue(task.due_at) : '',
       description: task.description || '',
       prospect_id: task.prospect_id || '',
       property_id: task.property_id || '',
@@ -72,7 +72,7 @@ export default function Tasks() {
     setSaving(true)
     await supabase.from('tasks').update({
       title: editForm.title,
-      due_at: editForm.due_at || null,
+      due_at: fromLocalInputValue(editForm.due_at),
       description: editForm.description || null,
       prospect_id: editForm.prospect_id || null,
       property_id: editForm.property_id || null,

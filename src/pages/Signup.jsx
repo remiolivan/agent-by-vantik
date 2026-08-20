@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import Logo from '../components/Logo'
+import OAuthButtons from '../components/OAuthButtons'
 
 export default function Signup() {
   const [orgName, setOrgName] = useState('')
@@ -40,6 +41,14 @@ export default function Signup() {
           </p>
         )}
         {!referralCode && <div className="mb-6" />}
+
+        <OAuthButtons referralCode={referralCode} />
+        <div className="flex items-center gap-3 my-6">
+          <div className="h-px bg-muted/20 flex-1" />
+          <span className="text-xs text-muted">or</span>
+          <div className="h-px bg-muted/20 flex-1" />
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text" placeholder="Business name" value={orgName}

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import Logo from '../components/Logo'
+import OAuthButtons from '../components/OAuthButtons'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -25,6 +26,14 @@ export default function Login() {
       <div className="w-full max-w-sm">
         <Logo size={34} className="mb-8" />
         <h1 className="font-display text-2xl font-medium text-navyDeep mb-8">Log in</h1>
+
+        <OAuthButtons />
+        <div className="flex items-center gap-3 my-6">
+          <div className="h-px bg-muted/20 flex-1" />
+          <span className="text-xs text-muted">or</span>
+          <div className="h-px bg-muted/20 flex-1" />
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="email" placeholder="Email" value={email}

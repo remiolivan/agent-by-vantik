@@ -3,6 +3,7 @@ import { Settings, Upload } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import Layout from '../components/Layout'
 import { formatMoney } from '../lib/format'
+import NumberInput from '../components/NumberInput'
 
 const EMPTY_INVOICE = {
   title: '', prospectId: '', propertyId: '', dueDate: '', taxRate: '',
@@ -169,9 +170,9 @@ export default function Documents() {
                 value={item.description} onChange={(e) => updateItem(idx, 'description', e.target.value)}
                 placeholder="Description" className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
               />
-              <input
-                value={item.amount} onChange={(e) => updateItem(idx, 'amount', e.target.value)}
-                placeholder="Amount" type="number" className="w-24 sm:w-32 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+              <NumberInput
+                value={item.amount} onChange={(v) => updateItem(idx, 'amount', v)}
+                placeholder="Amount" className="w-24 sm:w-32 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
               />
             </div>
           ))}

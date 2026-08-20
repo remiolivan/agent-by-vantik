@@ -4,6 +4,7 @@ import Layout from '../components/Layout'
 import { formatMoney } from '../lib/format'
 import { DEVELOPERS } from '../lib/constants'
 import PropertyDetail from '../components/PropertyDetail'
+import NumberInput from '../components/NumberInput'
 
 const TYPES = ['apartment', 'villa', 'townhouse', 'land', 'commercial', 'other']
 const STATUSES = {
@@ -114,9 +115,9 @@ export default function Properties() {
         value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })}
         placeholder="Address" className="col-span-2 sm:col-span-3 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
       />
-      <input
-        value={form.value} onChange={(e) => setForm({ ...form, value: e.target.value })}
-        placeholder="Price" type="number" className="border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+      <NumberInput
+        value={form.value} onChange={(v) => setForm({ ...form, value: v })}
+        placeholder="Price" className="border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
       />
       <input
         value={form.bedrooms} onChange={(e) => setForm({ ...form, bedrooms: e.target.value })}
