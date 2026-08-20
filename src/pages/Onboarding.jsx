@@ -75,8 +75,18 @@ export default function Onboarding() {
       }
       if (logoUrl) payload.logo_url = logoUrl
       if (stampUrl) payload.invoice_stamp_url = stampUrl
-      const { error: updateErr } = await supabase.from('organizations').update(payload).eq('id', orgId)
+      // Chaining .select().single() is deliberate: a plain .update() call
+      // returns no error even when Row Level Security silently blocks the
+      // write (0 rows affected looks identical to success). Forcing a
+      // returned row means an RLS rejection surfaces as a real error
+      // instead of the button appearing to do nothing.
+      const { error: updateErr } = await supabase.from('organizations').update(payload).eq('id', orgId).select().single()
       if (updateErr) throw updateErr
+      // A stale session token can still have the pre-signup JWT claims,
+      // which would make the update above silently no-op under RLS. Refresh
+      // before navigating so the dashboard's own org-scoped queries don't
+      // hit the same stale-claim issue right after onboarding.
+      await supabase.auth.refreshSession()
       navigate('/')
     } catch (err) {
       setError(err.message || String(err))
@@ -87,7 +97,9 @@ export default function Onboarding() {
 
   async function skip() {
     if (!orgId) return
-    await supabase.from('organizations').update({ onboarding_completed: true }).eq('id', orgId)
+    const { error: skipErr } = await supabase.from('organizations').update({ onboarding_completed: true }).eq('id', orgId).select().single()
+    if (skipErr) { setError(skipErr.message); return }
+    await supabase.auth.refreshSession()
     navigate('/')
   }
 

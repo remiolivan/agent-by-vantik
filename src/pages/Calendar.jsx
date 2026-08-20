@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { supabase, invokeWithRetry } from '../lib/supabase'
 import Layout from '../components/Layout'
 import {
@@ -370,13 +370,18 @@ export default function Calendar() {
 
 function EventPill({ ev, onClick, compact }) {
   const syncedProviders = (ev.calendar_event_syncs || []).filter((s) => s.sync_status === 'synced').map((s) => s.calendar_connections?.provider)
+  const startLabel = new Date(ev.start_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  const endLabel = new Date(ev.end_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   return (
     <button
       onClick={(e) => { e.stopPropagation(); onClick(ev) }}
       className={`w-full text-left bg-tintBlue hover:bg-tintBlue/70 border border-border-blue rounded px-2 py-1 ${compact ? 'text-[11px]' : 'text-xs'} truncate`}
-      title={ev.title}
+      title={`${ev.title} (${startLabel} – ${endLabel})`}
     >
-      <span className="font-medium text-navyDeep">{new Date(ev.start_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+      {/* Shows the full start–end range, not just the start time — a
+          30-min slot and a 90-min slot previously looked identical since
+          only the start time was displayed. */}
+      <span className="font-medium text-navyDeep">{startLabel}–{endLabel}</span>
       {' '}{ev.title}
       {syncedProviders.length > 0 && <span className="text-teal-700"> ·synced</span>}
     </button>
@@ -409,13 +414,28 @@ function DayView({ date, events, onEventClick, onSlotClick }) {
 function WeekView({ days, eventsOn, onEventClick, onSlotClick }) {
   const today = new Date()
   const cols = 'grid-cols-[56px_repeat(7,minmax(0,1fr))]'
+  const todayColRef = useRef(null)
+
+  // On mobile the week grid is wider than the screen and scrolls
+  // horizontally. Without this it always opens scrolled to the first day of
+  // the week, so "today" (often mid-week) sits off to the right and needs a
+  // manual swipe to reach. Center today's column in the visible viewport
+  // whenever the week changes.
+  useEffect(() => {
+    todayColRef.current?.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' })
+  }, [days])
+
   return (
     <div className="bg-white border border-muted/20 rounded-xl overflow-x-auto">
       <div className="min-w-[720px]">
         <div className={`grid ${cols} border-b border-muted/15`}>
           <div />
           {days.map((d, i) => (
-            <div key={i} className={`text-center py-2 border-l border-muted/10 ${sameDay(d, today) ? 'bg-tintBlue/40' : ''}`}>
+            <div
+              key={i}
+              ref={sameDay(d, today) ? todayColRef : null}
+              className={`text-center py-2 border-l border-muted/10 ${sameDay(d, today) ? 'bg-tintBlue/40' : ''}`}
+            >
               <div className="text-[10px] font-mono text-muted uppercase">{WEEKDAY_LABELS[i]}</div>
               <div className={`text-sm ${sameDay(d, today) ? 'text-navyDeep font-medium' : 'text-ink'}`}>{d.getDate()}</div>
             </div>
