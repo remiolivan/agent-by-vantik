@@ -8,8 +8,23 @@ import {
 import { Trash2, Plus, ChevronLeft, ChevronRight, Send } from 'lucide-react'
 
 const HOURS = Array.from({ length: 15 }, (_, i) => i + 7) // 7am–9pm
+const HOUR_HEIGHT = 48 // px per hour row — event blocks below are sized against this
 const WEEKDAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 const DEFAULT_DURATION_MS = 30 * 60 * 1000
+
+// Pixel offset/height for an event block within the hour grid, clamped to
+// the visible HOURS range. Previously events were just bucketed into their
+// starting hour's row as a list, so a 30-min and a 90-min event rendered
+// identically — same box, same height. This computes an actual proportional
+// size so a 90-min meeting visibly takes up 3x the space of a 30-min one.
+function eventBlockStyle(ev) {
+  const start = new Date(ev.start_at)
+  const end = new Date(ev.end_at)
+  const firstHour = HOURS[0]
+  const startOffsetH = Math.max(0, (start.getHours() + start.getMinutes() / 60) - firstHour)
+  const durationH = Math.max((end - start) / 3600000, 0.25) // 15-min floor so short events stay tappable
+  return { top: `${startOffsetH * HOUR_HEIGHT}px`, height: `${durationH * HOUR_HEIGHT - 2}px` }
+}
 
 function toLocalInputValue(date) {
   const pad = (n) => String(n).padStart(2, '0')
@@ -368,14 +383,15 @@ export default function Calendar() {
   )
 }
 
-function EventPill({ ev, onClick, compact }) {
+function EventPill({ ev, onClick, compact, style }) {
   const syncedProviders = (ev.calendar_event_syncs || []).filter((s) => s.sync_status === 'synced').map((s) => s.calendar_connections?.provider)
   const startLabel = new Date(ev.start_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   const endLabel = new Date(ev.end_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   return (
     <button
       onClick={(e) => { e.stopPropagation(); onClick(ev) }}
-      className={`w-full text-left bg-tintBlue hover:bg-tintBlue/70 border border-border-blue rounded px-2 py-1 ${compact ? 'text-[11px]' : 'text-xs'} truncate`}
+      style={style}
+      className={`text-left bg-tintBlue hover:bg-tintBlue/70 border border-border-blue rounded px-2 py-1 overflow-hidden ${compact ? 'text-[11px]' : 'text-xs'} ${style ? 'absolute inset-x-0.5' : 'w-full truncate'}`}
       title={`${ev.title} (${startLabel} – ${endLabel})`}
     >
       {/* Shows the full start–end range, not just the start time — a
@@ -390,22 +406,27 @@ function EventPill({ ev, onClick, compact }) {
 
 function DayView({ date, events, onEventClick, onSlotClick }) {
   return (
-    <div className="bg-white border border-muted/20 rounded-xl overflow-hidden">
+    <div className="bg-white border border-muted/20 rounded-xl overflow-hidden relative">
       {HOURS.map((h) => {
-        const slotEvents = events.filter((ev) => new Date(ev.start_at).getHours() === h)
         const slotDate = new Date(date); slotDate.setHours(h, 0, 0, 0)
         return (
-          <div key={h} className="flex border-b border-muted/10 last:border-0 min-h-[52px]">
+          <div key={h} className="flex border-b border-muted/10 last:border-0" style={{ height: HOUR_HEIGHT }}>
             <div className="w-14 shrink-0 py-2 px-2 text-[11px] font-mono text-muted text-right">{h}:00</div>
-            <div
-              onClick={() => onSlotClick(slotDate)}
-              className="flex-1 py-1.5 px-2 space-y-1 cursor-pointer hover:bg-tintBlue/20"
-            >
-              {slotEvents.map((ev) => <EventPill key={ev.id} ev={ev} onClick={onEventClick} />)}
-            </div>
+            <div onClick={() => onSlotClick(slotDate)} className="flex-1 cursor-pointer hover:bg-tintBlue/20" />
           </div>
         )
       })}
+      {/* Events are laid out as one absolutely-positioned overlay spanning
+          the whole grid, instead of being listed inside each hour's row —
+          that's what lets a block's height reflect its actual duration
+          rather than always filling exactly one row. */}
+      <div className="absolute top-0 left-14 right-0 bottom-0 pointer-events-none">
+        {events.map((ev) => (
+          <div key={ev.id} className="pointer-events-auto">
+            <EventPill ev={ev} onClick={onEventClick} style={eventBlockStyle(ev)} />
+          </div>
+        ))}
+      </div>
       {events.length === 0 && <p className="text-sm text-muted text-center py-6">No events this day.</p>}
     </div>
   )
@@ -441,23 +462,35 @@ function WeekView({ days, eventsOn, onEventClick, onSlotClick }) {
             </div>
           ))}
         </div>
-        {HOURS.map((h) => (
-          <div key={h} className={`grid ${cols} border-b border-muted/10 last:border-0 min-h-[48px]`}>
-            <div className="py-1.5 px-2 text-[11px] font-mono text-muted text-right">{h}:00</div>
-            {days.map((d, i) => {
-              const slotDate = new Date(d); slotDate.setHours(h, 0, 0, 0)
-              const slotEvents = eventsOn(d).filter((ev) => new Date(ev.start_at).getHours() === h)
-              return (
-                <div
-                  key={i} onClick={() => onSlotClick(slotDate)}
-                  className="border-l border-muted/10 py-1 px-1 space-y-1 cursor-pointer hover:bg-tintBlue/20 min-w-0"
-                >
-                  {slotEvents.map((ev) => <EventPill key={ev.id} ev={ev} onClick={onEventClick} compact />)}
-                </div>
-              )
-            })}
+        <div className="relative">
+          {HOURS.map((h) => (
+            <div key={h} className={`grid ${cols} border-b border-muted/10 last:border-0`} style={{ height: HOUR_HEIGHT }}>
+              <div className="py-1.5 px-2 text-[11px] font-mono text-muted text-right">{h}:00</div>
+              {days.map((d, i) => {
+                const slotDate = new Date(d); slotDate.setHours(h, 0, 0, 0)
+                return (
+                  <div
+                    key={i} onClick={() => onSlotClick(slotDate)}
+                    className="border-l border-muted/10 cursor-pointer hover:bg-tintBlue/20 min-w-0"
+                  />
+                )
+              })}
+            </div>
+          ))}
+          {/* Same absolute-overlay approach as DayView, one column per day,
+              so each event's height reflects its real duration. */}
+          <div className="absolute top-0 left-14 right-0 bottom-0 grid grid-cols-7 pointer-events-none">
+            {days.map((d, i) => (
+              <div key={i} className="relative">
+                {eventsOn(d).map((ev) => (
+                  <div key={ev.id} className="pointer-events-auto">
+                    <EventPill ev={ev} onClick={onEventClick} compact style={eventBlockStyle(ev)} />
+                  </div>
+                ))}
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
     </div>
   )

@@ -43,6 +43,7 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
 
   const [photos, setPhotos] = useState([])
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
+  const [viewerPhoto, setViewerPhoto] = useState(null)
   const photoInputRef = useRef(null)
 
   const [documents, setDocuments] = useState([])
@@ -359,7 +360,13 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
             <div className="grid grid-cols-3 gap-2 mb-3">
               {photos.map((p) => (
                 <div key={p.name} className="relative aspect-square rounded-lg overflow-hidden border border-muted/20 group">
-                  <img src={p.url} alt="" className="w-full h-full object-cover" />
+                  {/* The square crop below is only for the thumbnail grid —
+                      clicking opens the full photo uncropped (object-contain)
+                      so a portrait photo actually looks like a portrait
+                      photo, not just the cropped square. */}
+                  <button type="button" onClick={() => setViewerPhoto(p)} className="block w-full h-full">
+                    <img src={p.url} alt="" className="w-full h-full object-cover" />
+                  </button>
                   <button
                     onClick={() => deletePhoto(p.name)}
                     className="absolute top-1 right-1 bg-navyDeep/70 text-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -458,6 +465,25 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
           </div>
         </div>
       </div>
+
+      {viewerPhoto && (
+        <div
+          className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center p-4"
+          onClick={() => setViewerPhoto(null)}
+        >
+          <button
+            onClick={() => setViewerPhoto(null)}
+            className="absolute top-4 right-4 text-white/80 hover:text-white"
+            aria-label="Close"
+          >
+            <X size={28} />
+          </button>
+          {/* object-contain (not cover) — shows the whole photo at its
+              actual aspect ratio, portrait or landscape, instead of
+              cropping it to fit a box. */}
+          <img src={viewerPhoto.url} alt="" className="max-w-full max-h-full object-contain" onClick={(e) => e.stopPropagation()} />
+        </div>
+      )}
     </div>
   )
 }

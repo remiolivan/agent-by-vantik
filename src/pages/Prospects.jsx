@@ -143,7 +143,7 @@ export default function Prospects() {
             />
             <select
               value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}
-              className="w-full sm:w-auto border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+              className="w-full sm:w-auto max-w-full box-border appearance-none bg-white border border-muted/30 rounded-lg px-3 py-2.5 text-sm bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22%235A6B84%22><path d=%22M5.5 7.5l4.5 4.5 4.5-4.5%22 stroke=%22%235A6B84%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/></svg>')] bg-no-repeat bg-[right_0.75rem_center] pr-8"
             >
               <option value="lead">Lead</option>
               <option value="client">Client</option>

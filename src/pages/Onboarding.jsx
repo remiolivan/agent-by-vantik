@@ -9,6 +9,7 @@ const CURRENCIES = ['AED', 'USD', 'EUR', 'GBP']
 export default function Onboarding() {
   const navigate = useNavigate()
   const [orgId, setOrgId] = useState(null)
+  const [firstName, setFirstName] = useState('')
   const [businessName, setBusinessName] = useState('')
   const [currency, setCurrency] = useState('AED')
   const [showMore, setShowMore] = useState(false)
@@ -24,6 +25,9 @@ export default function Onboarding() {
 
   useEffect(() => {
     async function load() {
+      const { data: { user } } = await supabase.auth.getUser()
+      const metaName = user?.user_metadata?.full_name || user?.user_metadata?.name
+      if (metaName) setFirstName(metaName.split(' ')[0])
       const { data: membership } = await supabase.from('memberships').select('org_id').single()
       if (!membership) return
       setOrgId(membership.org_id)
@@ -62,6 +66,12 @@ export default function Onboarding() {
         uploadAsset(logoFile, 'logo'),
         uploadAsset(stampFile, 'invoice-stamp'),
       ])
+      if (firstName.trim()) {
+        // Best-effort — a failure here shouldn't block finishing onboarding,
+        // it just means the dashboard greeting falls back to the business
+        // name instead of the person's name.
+        await supabase.auth.updateUser({ data: { full_name: firstName.trim() } })
+      }
       const payload = {
         name: businessName,
         base_currency: currency,
@@ -111,6 +121,11 @@ export default function Onboarding() {
         <p className="text-sm text-muted mb-8">This takes a minute — you can always change it later, or skip for now.</p>
 
         <form onSubmit={complete} className="space-y-4">
+          <input
+            type="text" placeholder="Your first name (optional)" value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            className="w-full border border-muted/30 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
+          />
           <input
             type="text" placeholder="Business name" value={businessName}
             onChange={(e) => setBusinessName(e.target.value)} required

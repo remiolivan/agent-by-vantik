@@ -10,12 +10,13 @@ export default function Dashboard() {
   const [stats, setStats] = useState({ properties: 0, tasks: 0, prospects: 0 })
   const [todayEvents, setTodayEvents] = useState([])
   const [todayTasks, setTodayTasks] = useState([])
+  const [greetingName, setGreetingName] = useState(null)
 
   async function load() {
     const startOfDay = new Date(); startOfDay.setHours(0, 0, 0, 0)
     const endOfDay = new Date(); endOfDay.setHours(23, 59, 59, 999)
 
-    const [{ count: properties }, { count: tasks }, { count: prospects }, { data: events }, { data: dueTasks }] = await Promise.all([
+    const [{ count: properties }, { count: tasks }, { count: prospects }, { data: events }, { data: dueTasks }, { data: membership }] = await Promise.all([
       supabase.from('properties').select('*', { count: 'exact', head: true }),
       supabase.from('tasks').select('*', { count: 'exact', head: true }).is('completed_at', null),
       supabase.from('contacts').select('*', { count: 'exact', head: true }),
@@ -30,10 +31,24 @@ export default function Dashboard() {
         .is('completed_at', null)
         .lte('due_at', endOfDay.toISOString())
         .order('due_at', { ascending: true, nullsFirst: false }),
+      supabase.from('memberships').select('org_id').single(),
     ])
     setStats({ properties: properties ?? 0, tasks: tasks ?? 0, prospects: prospects ?? 0 })
     setTodayEvents(events ?? [])
     setTodayTasks(dueTasks ?? [])
+
+    // Prefer the person's first name (from Google/Microsoft profile data, or
+    // full_name if they ever set one) over the business name — "Welcome
+    // back, Sarah" reads better than "Welcome back, My Real Estate Company"
+    // — but fall back to the org name since email/password signups don't
+    // collect a personal name anywhere today.
+    const metaName = user?.user_metadata?.full_name || user?.user_metadata?.name
+    if (metaName) {
+      setGreetingName(metaName.split(' ')[0])
+    } else if (membership?.org_id) {
+      const { data: org } = await supabase.from('organizations').select('name').eq('id', membership.org_id).single()
+      if (org?.name) setGreetingName(org.name)
+    }
   }
 
   useEffect(() => { if (user) load() }, [user])
@@ -44,7 +59,7 @@ export default function Dashboard() {
   }
 
   return (
-    <Layout title="Dashboard">
+    <Layout title={greetingName ? `Welcome back, ${greetingName}` : 'Dashboard'}>
       <div className="flex flex-col gap-6">
         {/* On mobile: today's appointments + tasks come first (what to act on), stats below. */}
         <div className="order-3 sm:order-1 grid grid-cols-1 sm:grid-cols-3 gap-4">
