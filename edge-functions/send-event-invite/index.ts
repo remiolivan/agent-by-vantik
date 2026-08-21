@@ -29,9 +29,15 @@ Deno.serve(async (req: Request) => {
       return new Response(JSON.stringify({ error: "No active membership" }), { status: 403, headers: { ...CORS, "Content-Type": "application/json" } });
     }
 
+    // contacts!contact_id disambiguates the nested embed under properties:
+    // `properties` now has TWO FKs to `contacts` (contact_id and
+    // owner_contact_id, added for the property-owner field). Without the
+    // hint PostgREST can't pick one and the whole query 500s — exactly the
+    // "more than one relationship was found" error seen on the Properties
+    // page, just triggered server-side here instead of client-side there.
     const { data: event, error: eventErr } = await adminClient
       .from("calendar_events")
-      .select("*, contacts(name, email), properties(title, address, contact_id, contacts(name, email))")
+      .select("*, contacts(name, email), properties(title, address, contact_id, contacts!contact_id(name, email))")
       .eq("id", eventId).eq("org_id", membership.org_id).single();
     if (eventErr || !event) {
       return new Response(JSON.stringify({ error: "Event not found" }), { status: 404, headers: { ...CORS, "Content-Type": "application/json" } });

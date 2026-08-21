@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import Logo from '../components/Logo'
+import PushNotificationToggle from '../components/PushNotificationToggle'
 
 const CURRENCIES = ['AED', 'USD', 'EUR', 'GBP']
 
 export default function Onboarding() {
   const navigate = useNavigate()
   const [orgId, setOrgId] = useState(null)
+  const [membershipId, setMembershipId] = useState(null)
   const [firstName, setFirstName] = useState('')
   const [businessName, setBusinessName] = useState('')
   const [currency, setCurrency] = useState('AED')
@@ -20,6 +22,8 @@ export default function Onboarding() {
   const [phone, setPhone] = useState('')
   const [logoFile, setLogoFile] = useState(null)
   const [stampFile, setStampFile] = useState(null)
+  const [digestEnabled, setDigestEnabled] = useState(false)
+  const [savingDigest, setSavingDigest] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
 
@@ -28,9 +32,11 @@ export default function Onboarding() {
       const { data: { user } } = await supabase.auth.getUser()
       const metaName = user?.user_metadata?.full_name || user?.user_metadata?.name
       if (metaName) setFirstName(metaName.split(' ')[0])
-      const { data: membership } = await supabase.from('memberships').select('org_id').single()
+      const { data: membership } = await supabase.from('memberships').select('id, org_id, morning_digest_enabled').single()
       if (!membership) return
       setOrgId(membership.org_id)
+      setMembershipId(membership.id)
+      setDigestEnabled(!!membership.morning_digest_enabled)
       const { data: org } = await supabase.from('organizations')
         .select('name, base_currency, invoice_address, invoice_trn, invoice_iban, invoice_email, invoice_phone')
         .eq('id', membership.org_id).single()
@@ -46,6 +52,15 @@ export default function Onboarding() {
     }
     load()
   }, [])
+
+  async function toggleDigest() {
+    if (!membershipId) return
+    const next = !digestEnabled
+    setDigestEnabled(next) // optimistic — same reasoning as Settings: just a preference toggle
+    setSavingDigest(true)
+    await supabase.from('memberships').update({ morning_digest_enabled: next }).eq('id', membershipId)
+    setSavingDigest(false)
+  }
 
   async function uploadAsset(file, kind) {
     if (!file || !orgId) return null
@@ -137,6 +152,30 @@ export default function Onboarding() {
           >
             {CURRENCIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
+
+          {/* Reminders — same toggles as Settings, surfaced here too so this
+              isn't buried where most people never look after their first
+              week. Still fully optional and editable later. */}
+          <div className="border border-muted/20 rounded-lg p-4">
+            <div className="font-mono text-xs uppercase tracking-wide text-muted mb-3">Reminders (optional)</div>
+            <div className="space-y-4">
+              <PushNotificationToggle />
+              <div className="pt-3 border-t border-muted/15 flex items-center justify-between">
+                <div>
+                  <div className="text-sm text-ink font-medium">Morning digest</div>
+                  <div className="text-xs text-muted mt-0.5">A push each morning (~7am) with today's tasks and appointments.</div>
+                </div>
+                <button
+                  type="button" onClick={toggleDigest} disabled={savingDigest || !membershipId}
+                  className={`text-xs rounded-full px-3.5 py-1.5 border disabled:opacity-50 ${
+                    digestEnabled ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'
+                  }`}
+                >
+                  {digestEnabled ? 'On' : 'Off'}
+                </button>
+              </div>
+            </div>
+          </div>
 
           <button
             type="button" onClick={() => setShowMore((s) => !s)}

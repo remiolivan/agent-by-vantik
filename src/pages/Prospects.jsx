@@ -18,6 +18,7 @@ export default function Prospects() {
   const [importing, setImporting] = useState(false)
   const [importMsg, setImportMsg] = useState(null)
   const [selected, setSelected] = useState(null)
+  const [creating, setCreating] = useState(false)
   const fileRef = useRef(null)
 
   async function load() {
@@ -29,6 +30,8 @@ export default function Prospects() {
 
   async function createContact(e) {
     e.preventDefault()
+    if (creating) return
+    setCreating(true)
     const { data: membership } = await supabase.from('memberships').select('org_id').single()
     const { data: firstStage } = await supabase.from('pipeline_stages')
       .select('id').eq('org_id', membership.org_id).eq('pipeline_type', 'prospect').order('position').limit(1).single()
@@ -47,6 +50,7 @@ export default function Prospects() {
     })
     setForm(NEW_PROSPECT_DEFAULTS)
     setShowNew(false)
+    setCreating(false)
     load()
   }
 
@@ -207,7 +211,9 @@ export default function Prospects() {
           />
 
           <div className="flex gap-3">
-            <button type="submit" className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5 flex-1 sm:flex-none">Add prospect</button>
+            <button type="submit" disabled={creating} className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5 flex-1 sm:flex-none disabled:opacity-50">
+              {creating ? 'Adding…' : 'Add prospect'}
+            </button>
             <button type="button" onClick={() => setShowNew(false)} className="text-sm text-muted px-2">Cancel</button>
           </div>
         </form>

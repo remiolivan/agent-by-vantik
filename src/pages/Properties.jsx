@@ -40,12 +40,17 @@ export default function Properties() {
   const [selected, setSelected] = useState(null)
   const [form, setForm] = useState(NEW_PROPERTY_DEFAULTS)
   const [loadError, setLoadError] = useState(null)
+  const [creating, setCreating] = useState(false)
 
   async function load() {
     setLoadError(null)
     const [{ data: stagesData, error: stagesErr }, { data: propsData, error: propsErr }, { data: prospectsData }] = await Promise.all([
       supabase.from('pipeline_stages').select('*').eq('pipeline_type', 'property').order('position'),
-      supabase.from('properties').select('*, contacts(name)').order('created_at', { ascending: false }),
+      // contacts!contact_id disambiguates: `properties` now has two FKs to
+      // `contacts` (contact_id, and owner_contact_id added for the property
+      // owner field) — without the hint PostgREST can't pick one and the
+      // whole query 500s with "more than one relationship was found".
+      supabase.from('properties').select('*, contacts!contact_id(name)').order('created_at', { ascending: false }),
       supabase.from('contacts').select('id, name').order('name'),
     ])
     // Supabase doesn't throw on failure — it returns { data: null, error }.
@@ -65,8 +70,10 @@ export default function Properties() {
 
   async function createProperty(e) {
     e.preventDefault()
+    if (creating) return
     const firstStage = stages[0]
     if (!firstStage) return
+    setCreating(true)
     const { data: inserted } = await supabase.from('properties').insert({
       title: form.title,
       address: form.address || null,
@@ -90,6 +97,7 @@ export default function Properties() {
     }).select().single()
     setForm(NEW_PROPERTY_DEFAULTS)
     setShowNew(false)
+    setCreating(false)
     await load()
     // Open it straight away so photos/documents (e.g. title deed) can be
     // added as part of setup, rather than requiring a separate visit later.
@@ -211,7 +219,9 @@ export default function Properties() {
         className="col-span-2 sm:col-span-3 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
       />
       <div className="col-span-2 sm:col-span-3 flex gap-3 pt-1">
-        <button type="submit" className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5 flex-1 sm:flex-none">Add property</button>
+        <button type="submit" disabled={creating} className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5 flex-1 sm:flex-none disabled:opacity-50">
+          {creating ? 'Adding…' : 'Add property'}
+        </button>
         <button type="button" onClick={() => setShowNew(false)} className="text-sm text-muted px-2">Cancel</button>
       </div>
     </form>

@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { MapPin } from 'lucide-react'
+import { MapPin, Sparkles } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/useAuth'
 import { formatMoney } from '../lib/format'
 import Layout from '../components/Layout'
+import FollowUpDraft from '../components/FollowUpDraft'
 
 // Local time, not UTC — someone in Dubai shouldn't get "good morning" from a
 // server clock that thinks it's still the middle of the night.
@@ -20,7 +21,7 @@ export default function Dashboard() {
   const { user } = useAuth()
   const [stats, setStats] = useState({ properties: 0, tasks: 0, prospects: 0 })
   const [kpis, setKpis] = useState({
-    pipelineValue: 0, pipelineCurrency: 'AED',
+    pipelineValue: 0, pipelineCurrency: 'AED', pipelineHasOtherCurrencies: false,
     closingCount: 0, closingValue: 0,
     dueCount: 0, overdueCount: 0,
     newLeadsThisWeek: 0,
@@ -28,6 +29,7 @@ export default function Dashboard() {
   const [todayEvents, setTodayEvents] = useState([])
   const [todayTasks, setTodayTasks] = useState([])
   const [greetingName, setGreetingName] = useState(null)
+  const [followUpTarget, setFollowUpTarget] = useState(null) // { contactId, propertyId, contactPhone, contactEmail } | null
 
   async function load() {
     const now = new Date()
@@ -53,9 +55,12 @@ export default function Dashboard() {
         .gte('start_at', startOfDay.toISOString())
         .lte('start_at', endOfDay.toISOString())
         .order('start_at', { ascending: true }),
-      // "Today's tasks" = due today, or overdue and still open — both need attention today.
+      // "Today's tasks" = due today, or overdue and still open — both need
+      // attention today. Also pulls the contact's phone/email so the
+      // follow-up popup below can offer WhatsApp/email send buttons without
+      // a second round trip.
       supabase.from('tasks')
-        .select('*, contacts(name), properties(title)')
+        .select('*, contacts(name, phone, email), properties(title)')
         .is('completed_at', null)
         .lte('due_at', endOfDay.toISOString())
         .order('due_at', { ascending: true, nullsFirst: false }),
@@ -72,25 +77,41 @@ export default function Dashboard() {
     setTodayEvents(events ?? [])
     setTodayTasks(dueTasks ?? [])
 
+    // Needed for the pipeline currency fix below, and (if there's no
+    // Google/Microsoft profile name) the dashboard greeting.
+    const { data: org } = membership?.org_id
+      ? await supabase.from('organizations').select('name, base_currency').eq('id', membership.org_id).single()
+      : { data: null }
+    const baseCurrency = org?.base_currency || 'AED'
+
     const openStageIds = new Set((stages ?? []).filter((s) => !s.is_won && !s.is_lost).map((s) => s.id))
     const lostStageIds = new Set((stages ?? []).filter((s) => s.is_lost).map((s) => s.id))
     const props = allProperties ?? []
-    const pipelineValue = props
-      .filter((p) => openStageIds.has(p.stage_id))
+    // Summing `value` across properties only makes sense when they're all in
+    // the same currency — this app has no FX conversion. Rather than adding
+    // AED and USD/EUR figures together and slapping one currency label on
+    // the (wrong) total, the pipeline only counts deals in the org's base
+    // currency, and flags when other-currency deals were excluded so the
+    // number is at least honest about what it's showing.
+    const openProps = props.filter((p) => openStageIds.has(p.stage_id))
+    const pipelineValue = openProps
+      .filter((p) => (p.currency || 'AED') === baseCurrency)
       .reduce((sum, p) => sum + (Number(p.value) || 0), 0)
+    const pipelineHasOtherCurrencies = openProps.some((p) => (p.currency || 'AED') !== baseCurrency)
     const closing = props.filter((p) => {
       if (!p.expected_close_date || lostStageIds.has(p.stage_id)) return false
       const d = new Date(p.expected_close_date)
       return d >= startOfMonth && d <= endOfMonth
     })
-    const closingValue = closing.reduce((sum, p) => sum + (Number(p.value) || 0), 0)
-    const pipelineCurrency = props.find((p) => p.currency)?.currency || 'AED'
+    const closingValue = closing
+      .filter((p) => (p.currency || 'AED') === baseCurrency)
+      .reduce((sum, p) => sum + (Number(p.value) || 0), 0)
 
     const dueCount = (allTasks ?? []).filter((t) => new Date(t.due_at) <= endOfDay).length
     const overdueCount = (allTasks ?? []).filter((t) => new Date(t.due_at) < now).length
 
     setKpis({
-      pipelineValue, pipelineCurrency,
+      pipelineValue, pipelineCurrency: baseCurrency, pipelineHasOtherCurrencies,
       closingCount: closing.length, closingValue,
       dueCount, overdueCount,
       newLeadsThisWeek: newLeads ?? 0,
@@ -104,9 +125,8 @@ export default function Dashboard() {
     const metaName = user?.user_metadata?.full_name || user?.user_metadata?.name
     if (metaName) {
       setGreetingName(metaName.split(' ')[0])
-    } else if (membership?.org_id) {
-      const { data: org } = await supabase.from('organizations').select('name').eq('id', membership.org_id).single()
-      if (org?.name) setGreetingName(org.name)
+    } else if (org?.name) {
+      setGreetingName(org.name)
     }
   }
 
@@ -128,6 +148,7 @@ export default function Dashboard() {
           <KpiCard
             label="Pipeline value"
             value={formatMoney(kpis.pipelineValue, kpis.pipelineCurrency)}
+            sub={kpis.pipelineHasOtherCurrencies ? `Other currencies not shown` : null}
           />
           <KpiCard
             label="Closing this month"
@@ -181,30 +202,59 @@ export default function Dashboard() {
         <div className="order-2 sm:order-3">
           <div className="font-mono text-xs uppercase tracking-wide text-muted mb-3">Today's tasks</div>
           <div className="bg-white border border-muted/20 rounded-xl divide-y divide-muted/10">
-            {todayTasks.map((t) => (
-              <div key={t.id} className="flex items-start gap-3 px-4 py-3">
-                <input
-                  type="checkbox" checked={!!t.completed_at} onChange={() => toggleTask(t)}
-                  className="w-5 h-5 accent-teal shrink-0 mt-0.5"
-                />
-                <div className="min-w-0 flex-1">
-                  <div className="text-sm text-ink truncate">{t.title}</div>
-                  {t.description && <div className="text-xs text-muted mt-0.5">{t.description}</div>}
-                  {(t.contacts?.name || t.properties?.title) && (
-                    <div className="flex flex-wrap gap-1.5 mt-1.5">
-                      {t.contacts?.name && <span className="text-xs text-navyDeep bg-tintBlue rounded px-2 py-0.5">{t.contacts.name}</span>}
-                      {t.properties?.title && <span className="text-xs text-teal-700 bg-teal/10 rounded px-2 py-0.5">{t.properties.title}</span>}
-                    </div>
-                  )}
+            {todayTasks.map((t) => {
+              // Only tasks tied to a prospect or property have anything for
+              // the AI draft to work with — plain standalone tasks (e.g.
+              // "renew license") stay checkbox-only, no dead click target.
+              const canFollowUp = !!(t.prospect_id || t.property_id)
+              return (
+                <div
+                  key={t.id}
+                  className={`flex items-start gap-3 px-4 py-3 ${canFollowUp ? 'cursor-pointer hover:bg-tintBlue/30' : ''}`}
+                  onClick={canFollowUp ? () => setFollowUpTarget({
+                    contactId: t.prospect_id || null,
+                    propertyId: t.property_id || null,
+                    contactPhone: t.contacts?.phone || null,
+                    contactEmail: t.contacts?.email || null,
+                  }) : undefined}
+                >
+                  <input
+                    type="checkbox" checked={!!t.completed_at}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={() => toggleTask(t)}
+                    className="w-5 h-5 accent-teal shrink-0 mt-0.5"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm text-ink truncate">{t.title}</div>
+                    {t.description && <div className="text-xs text-muted mt-0.5">{t.description}</div>}
+                    {(t.contacts?.name || t.properties?.title) && (
+                      <div className="flex flex-wrap gap-1.5 mt-1.5">
+                        {t.contacts?.name && <span className="text-xs text-navyDeep bg-tintBlue rounded px-2 py-0.5">{t.contacts.name}</span>}
+                        {t.properties?.title && <span className="text-xs text-teal-700 bg-teal/10 rounded px-2 py-0.5">{t.properties.title}</span>}
+                      </div>
+                    )}
+                  </div>
+                  {canFollowUp && <Sparkles size={14} className="text-teal shrink-0 mt-1" aria-label="Draft a follow-up" />}
                 </div>
-              </div>
-            ))}
+              )
+            })}
             {todayTasks.length === 0 && (
               <p className="text-sm text-muted text-center py-6">No tasks due today.</p>
             )}
           </div>
         </div>
       </div>
+
+      {followUpTarget && (
+        <FollowUpDraft
+          contactId={followUpTarget.contactId}
+          propertyId={followUpTarget.propertyId}
+          contactPhone={followUpTarget.contactPhone}
+          contactEmail={followUpTarget.contactEmail}
+          onClose={() => setFollowUpTarget(null)}
+          onLogged={() => load()}
+        />
+      )}
     </Layout>
   )
 }

@@ -18,6 +18,7 @@ export default function Tasks() {
   const [editingId, setEditingId] = useState(null)
   const [editForm, setEditForm] = useState({ title: '', due_at: '', description: '', prospect_id: '', property_id: '' })
   const [saving, setSaving] = useState(false)
+  const [creating, setCreating] = useState(false)
 
   async function load() {
     const [{ data: tasksData }, { data: prospectsData }, { data: propertiesData }] = await Promise.all([
@@ -36,6 +37,8 @@ export default function Tasks() {
 
   async function createTask(e) {
     e.preventDefault()
+    if (creating) return
+    setCreating(true)
     const { data: membership } = await supabase.from('memberships').select('org_id, id').single()
     await supabase.from('tasks').insert({
       title, description: description || null, org_id: membership.org_id,
@@ -45,6 +48,7 @@ export default function Tasks() {
       property_id: propertyId || null,
     })
     setTitle(''); setDescription(''); setExpandedDescription(false); setDueAt(''); setProspectId(''); setPropertyId('')
+    setCreating(false)
     load()
   }
 
@@ -129,7 +133,9 @@ export default function Tasks() {
               placeholder="Description" rows={2} className="w-full border border-muted/30 rounded-lg px-3 py-2 text-sm"
             />
           )}
-          <button type="submit" className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5">Add task</button>
+          <button type="submit" disabled={creating} className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5 disabled:opacity-50">
+            {creating ? 'Adding…' : 'Add task'}
+          </button>
         </form>
 
         <div className="space-y-2">
