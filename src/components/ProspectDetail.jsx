@@ -40,6 +40,7 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
 
   const [sharing, setSharing] = useState(false)
   const [showFollowUp, setShowFollowUp] = useState(false)
+  const [activityRefreshKey, setActivityRefreshKey] = useState(0)
   const [shareUrl, setShareUrl] = useState(null)
   const [shareError, setShareError] = useState(null)
   const [invoices, setInvoices] = useState([])
@@ -311,7 +312,7 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
 
           {/* Activity */}
           <div>
-            <ActivityLog contactId={current.id} />
+            <ActivityLog key={activityRefreshKey} contactId={current.id} />
           </div>
 
           {/* Tasks */}
@@ -443,6 +444,7 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
           contactPhone={current.phone}
           contactEmail={current.email}
           onClose={() => setShowFollowUp(false)}
+          onLogged={() => setActivityRefreshKey((k) => k + 1)}
         />
       )}
     </div>

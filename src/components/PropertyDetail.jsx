@@ -51,6 +51,7 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
   const [viewerPhoto, setViewerPhoto] = useState(null)
   const [showFollowUp, setShowFollowUp] = useState(false)
+  const [activityRefreshKey, setActivityRefreshKey] = useState(0)
   const photoInputRef = useRef(null)
 
   const [documents, setDocuments] = useState([])
@@ -432,7 +433,7 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
 
           {/* Activity */}
           <div>
-            <ActivityLog propertyId={current.id} />
+            <ActivityLog key={activityRefreshKey} propertyId={current.id} />
           </div>
 
           {/* Photos */}
@@ -567,7 +568,11 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
       )}
 
       {showFollowUp && (
-        <FollowUpDraft propertyId={current.id} onClose={() => setShowFollowUp(false)} />
+        <FollowUpDraft
+          propertyId={current.id}
+          onClose={() => setShowFollowUp(false)}
+          onLogged={() => setActivityRefreshKey((k) => k + 1)}
+        />
       )}
     </div>
   )

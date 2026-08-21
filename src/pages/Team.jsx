@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import Layout from '../components/Layout'
 
@@ -86,6 +87,9 @@ export default function Team() {
   return (
     <Layout title="Team">
       <div className="max-w-2xl space-y-10">
+        <Link to="/team/activity" className="inline-block text-sm text-navyDeep underline">
+          View team activity →
+        </Link>
         {/* Section 0: Organization name (appears on shared PDFs) */}
         <section>
           <h2 className="font-mono text-xs uppercase tracking-wide text-muted mb-4">Organization name</h2>

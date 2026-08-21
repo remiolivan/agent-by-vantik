@@ -6,7 +6,7 @@ import { supabase, invokeWithRetry } from '../lib/supabase'
 // context, but never sends anything itself — the agent reviews, edits, and
 // picks WhatsApp or email themselves. AI writes the first draft, the agent
 // keeps the final call.
-export default function FollowUpDraft({ contactId, propertyId, contactPhone, contactEmail, onClose }) {
+export default function FollowUpDraft({ contactId, propertyId, contactPhone, contactEmail, onClose, onLogged }) {
   const [channel, setChannel] = useState('whatsapp')
   const [instructions, setInstructions] = useState('')
   const [showInstructions, setShowInstructions] = useState(false)
@@ -20,13 +20,12 @@ export default function FollowUpDraft({ contactId, propertyId, contactPhone, con
   const [marking, setMarking] = useState(false)
   const [marked, setMarked] = useState(false)
 
-  async function generate(nextChannel) {
-    setChannel(nextChannel)
+  async function generate() {
     setLoading(true)
     setError(null)
     setMarked(false)
     const { data, error: fnError } = await invokeWithRetry('draft-followup', {
-      body: { contactId, propertyId, channel: nextChannel, instructions: instructions.trim() || undefined },
+      body: { contactId, propertyId, channel, instructions: instructions.trim() || undefined },
     })
     setLoading(false)
     if (fnError || data?.error) {
@@ -61,6 +60,11 @@ export default function FollowUpDraft({ contactId, propertyId, contactPhone, con
     })
     setMarking(false)
     setMarked(true)
+    // Tell the parent (Prospect/Property detail) to refetch its Activity
+    // feed right away — without this, the new entry only ever showed up
+    // after leaving and reopening the record, since ActivityLog only loads
+    // once on mount and had no way to know something changed underneath it.
+    onLogged?.()
   }
 
   const whatsappUrl = resolvedPhone
@@ -83,14 +87,18 @@ export default function FollowUpDraft({ contactId, propertyId, contactPhone, con
         </div>
         <p className="text-sm text-muted mb-4">Written from recent activity — review and edit before sending.</p>
 
+        {/* Channel is just a selection here — picking it never triggers a
+            generation by itself. Only Generate/Regenerate calls the AI, so
+            switching between WhatsApp and Email doesn't burn a request (or
+            silently overwrite a draft the agent was still reading). */}
         <div className="flex gap-2 mb-3">
           <button
-            onClick={() => generate('whatsapp')} disabled={loading}
-            className={`text-xs rounded-full px-3 py-1.5 border ${channel === 'whatsapp' && hasGenerated ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'}`}
+            onClick={() => setChannel('whatsapp')} disabled={loading}
+            className={`text-xs rounded-full px-3 py-1.5 border ${channel === 'whatsapp' ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'}`}
           >WhatsApp</button>
           <button
-            onClick={() => generate('email')} disabled={loading}
-            className={`text-xs rounded-full px-3 py-1.5 border ${channel === 'email' && hasGenerated ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'}`}
+            onClick={() => setChannel('email')} disabled={loading}
+            className={`text-xs rounded-full px-3 py-1.5 border ${channel === 'email' ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'}`}
           >Email</button>
         </div>
 
@@ -136,7 +144,7 @@ export default function FollowUpDraft({ contactId, propertyId, contactPhone, con
               {channel === 'email' && !emailUrl && (
                 <p className="text-xs text-muted">No email on file for this prospect.</p>
               )}
-              <button onClick={() => generate(channel)} disabled={loading} className="text-xs text-muted underline">
+              <button onClick={() => generate()} disabled={loading} className="text-xs text-muted underline">
                 Regenerate
               </button>
             </div>
@@ -165,10 +173,18 @@ export default function FollowUpDraft({ contactId, propertyId, contactPhone, con
 
         {!loading && !hasGenerated && !error && (
           <button
-            onClick={() => generate('whatsapp')}
+            onClick={() => generate()}
             className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5"
           >
             Generate draft
+          </button>
+        )}
+        {!loading && error && (
+          <button
+            onClick={() => generate()}
+            className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5"
+          >
+            Try again
           </button>
         )}
       </div>

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { MapPin } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/useAuth'
+import { formatMoney } from '../lib/format'
 import Layout from '../components/Layout'
 
 // Local time, not UTC — someone in Dubai shouldn't get "good morning" from a
@@ -18,15 +19,32 @@ function timeOfDayGreeting() {
 export default function Dashboard() {
   const { user } = useAuth()
   const [stats, setStats] = useState({ properties: 0, tasks: 0, prospects: 0 })
+  const [kpis, setKpis] = useState({
+    pipelineValue: 0, pipelineCurrency: 'AED',
+    closingCount: 0, closingValue: 0,
+    dueCount: 0, overdueCount: 0,
+    newLeadsThisWeek: 0,
+  })
   const [todayEvents, setTodayEvents] = useState([])
   const [todayTasks, setTodayTasks] = useState([])
   const [greetingName, setGreetingName] = useState(null)
 
   async function load() {
+    const now = new Date()
     const startOfDay = new Date(); startOfDay.setHours(0, 0, 0, 0)
     const endOfDay = new Date(); endOfDay.setHours(23, 59, 59, 999)
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999)
+    // Week starts Monday, not Sunday — matches the calendar's WEEKDAY_LABELS elsewhere in the app.
+    const startOfWeek = new Date(startOfDay)
+    const dayOffset = (startOfDay.getDay() + 6) % 7
+    startOfWeek.setDate(startOfWeek.getDate() - dayOffset)
 
-    const [{ count: properties }, { count: tasks }, { count: prospects }, { data: events }, { data: dueTasks }, { data: membership }] = await Promise.all([
+    const [
+      { count: properties }, { count: tasks }, { count: prospects },
+      { data: events }, { data: dueTasks }, { data: membership },
+      { data: stages }, { data: allProperties }, { data: allTasks }, { count: newLeads },
+    ] = await Promise.all([
       supabase.from('properties').select('*', { count: 'exact', head: true }),
       supabase.from('tasks').select('*', { count: 'exact', head: true }).is('completed_at', null),
       supabase.from('contacts').select('*', { count: 'exact', head: true }),
@@ -42,10 +60,41 @@ export default function Dashboard() {
         .lte('due_at', endOfDay.toISOString())
         .order('due_at', { ascending: true, nullsFirst: false }),
       supabase.from('memberships').select('org_id').single(),
+      supabase.from('pipeline_stages').select('id, is_won, is_lost').eq('pipeline_type', 'property'),
+      supabase.from('properties').select('value, currency, stage_id, expected_close_date'),
+      // Separate from todayTasks above: this one needs every open task (no
+      // due_at cutoff) so the overdue count isn't silently capped by "today".
+      supabase.from('tasks').select('due_at').is('completed_at', null).not('due_at', 'is', null),
+      supabase.from('contacts').select('*', { count: 'exact', head: true })
+        .eq('type', 'lead').gte('created_at', startOfWeek.toISOString()),
     ])
     setStats({ properties: properties ?? 0, tasks: tasks ?? 0, prospects: prospects ?? 0 })
     setTodayEvents(events ?? [])
     setTodayTasks(dueTasks ?? [])
+
+    const openStageIds = new Set((stages ?? []).filter((s) => !s.is_won && !s.is_lost).map((s) => s.id))
+    const lostStageIds = new Set((stages ?? []).filter((s) => s.is_lost).map((s) => s.id))
+    const props = allProperties ?? []
+    const pipelineValue = props
+      .filter((p) => openStageIds.has(p.stage_id))
+      .reduce((sum, p) => sum + (Number(p.value) || 0), 0)
+    const closing = props.filter((p) => {
+      if (!p.expected_close_date || lostStageIds.has(p.stage_id)) return false
+      const d = new Date(p.expected_close_date)
+      return d >= startOfMonth && d <= endOfMonth
+    })
+    const closingValue = closing.reduce((sum, p) => sum + (Number(p.value) || 0), 0)
+    const pipelineCurrency = props.find((p) => p.currency)?.currency || 'AED'
+
+    const dueCount = (allTasks ?? []).filter((t) => new Date(t.due_at) <= endOfDay).length
+    const overdueCount = (allTasks ?? []).filter((t) => new Date(t.due_at) < now).length
+
+    setKpis({
+      pipelineValue, pipelineCurrency,
+      closingCount: closing.length, closingValue,
+      dueCount, overdueCount,
+      newLeadsThisWeek: newLeads ?? 0,
+    })
 
     // Prefer the person's first name (from Google/Microsoft profile data, or
     // full_name if they ever set one) over the business name — "Welcome
@@ -71,6 +120,29 @@ export default function Dashboard() {
   return (
     <Layout title={greetingName ? `${timeOfDayGreeting()}, ${greetingName}` : 'Dashboard'}>
       <div className="flex flex-col gap-6">
+        {/* The numbers an agent checks first: what's the pipeline actually
+            worth, what's closing soon, what's overdue, is the funnel being
+            fed. Sits above the generic counts below since these are the
+            ones with a decision attached. */}
+        <div className="order-0 grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <KpiCard
+            label="Pipeline value"
+            value={formatMoney(kpis.pipelineValue, kpis.pipelineCurrency)}
+          />
+          <KpiCard
+            label="Closing this month"
+            value={kpis.closingCount}
+            sub={kpis.closingCount > 0 ? formatMoney(kpis.closingValue, kpis.pipelineCurrency) : null}
+          />
+          <KpiCard
+            label="Follow-ups due"
+            value={kpis.dueCount}
+            sub={kpis.overdueCount > 0 ? `${kpis.overdueCount} overdue` : null}
+            subClassName={kpis.overdueCount > 0 ? 'text-red-600' : undefined}
+          />
+          <KpiCard label="New leads this week" value={kpis.newLeadsThisWeek} />
+        </div>
+
         {/* On mobile: today's appointments + tasks come first (what to act on), stats below. */}
         <div className="order-3 sm:order-1 grid grid-cols-1 sm:grid-cols-3 gap-4">
           <StatCard label="Active properties" value={stats.properties} />
@@ -142,6 +214,16 @@ function StatCard({ label, value }) {
     <div className="bg-white border border-muted/20 rounded-xl p-6">
       <div className="font-mono text-xs uppercase tracking-wide text-muted mb-2">{label}</div>
       <div className="font-display text-3xl font-medium text-navyDeep">{value}</div>
+    </div>
+  )
+}
+
+function KpiCard({ label, value, sub, subClassName }) {
+  return (
+    <div className="bg-white border border-muted/20 rounded-xl p-4 sm:p-5">
+      <div className="font-mono text-[10px] sm:text-xs uppercase tracking-wide text-muted mb-1.5">{label}</div>
+      <div className="font-display text-xl sm:text-2xl font-medium text-navyDeep">{value}</div>
+      {sub && <div className={`text-xs mt-1 ${subClassName || 'text-muted'}`}>{sub}</div>}
     </div>
   )
 }
