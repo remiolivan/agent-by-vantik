@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { X, Pencil, Share2, Receipt, Sparkles } from 'lucide-react'
+import { X, Pencil, Share2, Receipt, Sparkles, Copy, Check } from 'lucide-react'
 import { supabase, invokeWithRetry } from '../lib/supabase'
 import { formatNumber, formatMoney, nextQuarterHour } from '../lib/format'
 import { BEDROOM_OPTIONS } from '../lib/constants'
@@ -43,6 +43,7 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
   const [activityRefreshKey, setActivityRefreshKey] = useState(0)
   const [shareUrl, setShareUrl] = useState(null)
   const [shareError, setShareError] = useState(null)
+  const [linkCopied, setLinkCopied] = useState(false)
   const [invoices, setInvoices] = useState([])
 
   async function loadStages() {
@@ -175,6 +176,7 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
     setSharing(true)
     setShareError(null)
     setShareUrl(null)
+    setLinkCopied(false)
     const { data, error } = await invokeWithRetry('generate-prospect-summary', { body: { prospectId: prospect.id } })
     setSharing(false)
     if (error || data?.error) {
@@ -182,6 +184,13 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
       return
     }
     setShareUrl(data.url)
+  }
+
+  async function copyShareLink() {
+    if (!shareUrl) return
+    await navigator.clipboard.writeText(shareUrl)
+    setLinkCopied(true)
+    setTimeout(() => setLinkCopied(false), 2000)
   }
 
   return (
@@ -426,6 +435,13 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
                       href={`mailto:?subject=${encodeURIComponent(current.name)}&body=${encodeURIComponent(`Here's the summary: ${shareUrl}`)}`}
                       className="text-sm text-navyDeep border border-navyDeep/30 rounded-lg px-4 py-2.5"
                     >Send via email</a>
+                    <button
+                      onClick={copyShareLink}
+                      className="flex items-center gap-1.5 text-sm text-navyDeep border border-navyDeep/30 rounded-lg px-4 py-2.5"
+                    >
+                      {linkCopied ? <Check size={14} /> : <Copy size={14} />}
+                      {linkCopied ? 'Copied' : 'Copy link'}
+                    </button>
                   </div>
                   <button onClick={generateShare} disabled={sharing} className="text-xs text-muted underline">
                     {sharing ? 'Regenerating…' : 'Regenerate'}

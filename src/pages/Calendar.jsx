@@ -404,6 +404,35 @@ function EventPill({ ev, onClick, compact, style }) {
   )
 }
 
+// Current-time indicator line for the day/week grid — a thin red line at
+// today's current hour/minute, so glancing at the calendar tells you "where
+// you are" relative to the day's events, not just what's scheduled. Ticks
+// on its own (every 30s) rather than making the whole Calendar page
+// re-render every minute just to move a line.
+function nowLineTop(now) {
+  const firstHour = HOURS[0]
+  const lastHour = HOURS[HOURS.length - 1] + 1 // grid extends to the end of the last hour row
+  const hourDecimal = now.getHours() + now.getMinutes() / 60
+  if (hourDecimal < firstHour || hourDecimal > lastHour) return null // outside the visible 7am–9pm range
+  return (hourDecimal - firstHour) * HOUR_HEIGHT
+}
+
+function NowLine() {
+  const [now, setNow] = useState(new Date())
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 30000)
+    return () => clearInterval(id)
+  }, [])
+  const top = nowLineTop(now)
+  if (top === null) return null
+  return (
+    <div className="absolute left-0 right-0 z-10 pointer-events-none flex items-center" style={{ top: `${top}px` }}>
+      <div className="w-1.5 h-1.5 rounded-full bg-coral -ml-[3px]" />
+      <div className="flex-1 h-px bg-coral" />
+    </div>
+  )
+}
+
 function DayView({ date, events, onEventClick, onSlotClick }) {
   return (
     <div className="bg-white border border-muted/20 rounded-xl overflow-hidden relative">
@@ -421,6 +450,7 @@ function DayView({ date, events, onEventClick, onSlotClick }) {
           that's what lets a block's height reflect its actual duration
           rather than always filling exactly one row. */}
       <div className="absolute top-0 left-14 right-0 bottom-0 pointer-events-none">
+        {sameDay(date, new Date()) && <NowLine />}
         {events.map((ev) => (
           <div key={ev.id} className="pointer-events-auto">
             <EventPill ev={ev} onClick={onEventClick} style={eventBlockStyle(ev)} />
@@ -482,6 +512,7 @@ function WeekView({ days, eventsOn, onEventClick, onSlotClick }) {
           <div className="absolute top-0 left-14 right-0 bottom-0 grid grid-cols-7 pointer-events-none">
             {days.map((d, i) => (
               <div key={i} className="relative">
+                {sameDay(d, today) && <NowLine />}
                 {eventsOn(d).map((ev) => (
                   <div key={ev.id} className="pointer-events-auto">
                     <EventPill ev={ev} onClick={onEventClick} compact style={eventBlockStyle(ev)} />

@@ -97,11 +97,17 @@ async function sendWebPush(
 // them — see PushNotificationToggle's own copy: "Get notified for
 // reminders and follow-ups on this device").
 //
-// Window: due_at/start_at falls within the next 15 minutes, and it hasn't
-// been reminded yet (due_reminder_sent_at is null). Marking
-// due_reminder_sent_at immediately after a successful loop iteration is
-// what makes this idempotent across cron runs — without it the same item
-// would re-notify every 15 min until completed.
+// Window: due_at/start_at falls between (now - BACK_WINDOW) and
+// (now + FORWARD_WINDOW), and it hasn't been reminded yet
+// (due_reminder_sent_at is null). The back-window matters more than it
+// looks: the cron only runs at fixed :00/:15/:30/:45 marks, not
+// continuously. A task created at 13:34 due at 13:38 falls in the gap
+// between the 13:30 and 13:45 runs — by 13:45 its due_at is already in the
+// past, so a naive "due_at >= now" check would silently skip it forever
+// (this happened in production: v1 required due_at >= now and missed a
+// task due mid-interval). Looking back up to BACK_WINDOW minutes catches
+// anything that fell into that gap, while due_reminder_sent_at still
+// guarantees each item is only ever reminded once.
 Deno.serve(async (req: Request) => {
   const cronSecret = req.headers.get("x-cron-secret");
   if (cronSecret !== Deno.env.get("CRON_SECRET")) {
@@ -114,14 +120,19 @@ Deno.serve(async (req: Request) => {
   const vapidSubject = "mailto:alerts@getvantik.com";
 
   const now = new Date();
-  const windowEnd = new Date(now.getTime() + 15 * 60 * 1000);
+  const FORWARD_WINDOW_MS = 15 * 60 * 1000;
+  // Twice the cron interval, so even a slightly delayed cron tick can't
+  // reopen a gap the same way the original >= now check did.
+  const BACK_WINDOW_MS = 30 * 60 * 1000;
+  const windowStart = new Date(now.getTime() - BACK_WINDOW_MS);
+  const windowEnd = new Date(now.getTime() + FORWARD_WINDOW_MS);
 
   let sent = 0;
   const errors: string[] = [];
 
   // Cache subscriptions per membership within this run so a member with
-  // several due items in the same 15-min window doesn't trigger a repeat
-  // DB lookup per item.
+  // several due items in the same window doesn't trigger a repeat DB lookup
+  // per item.
   const subsCache = new Map<string, { id: string; endpoint: string; p256dh: string; auth_key: string }[]>();
   async function subsFor(membershipId: string) {
     if (subsCache.has(membershipId)) return subsCache.get(membershipId)!;
@@ -149,7 +160,7 @@ Deno.serve(async (req: Request) => {
       .not("due_at", "is", null)
       .not("assignee_id", "is", null)
       .lte("due_at", windowEnd.toISOString())
-      .gte("due_at", now.toISOString());
+      .gte("due_at", windowStart.toISOString());
 
     for (const task of dueTasks ?? []) {
       try {
@@ -171,7 +182,7 @@ Deno.serve(async (req: Request) => {
       .is("due_reminder_sent_at", null)
       .not("created_by", "is", null)
       .lte("start_at", windowEnd.toISOString())
-      .gte("start_at", now.toISOString());
+      .gte("start_at", windowStart.toISOString());
 
     for (const ev of dueEvents ?? []) {
       try {

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { X, Upload, Trash2, Share2, Pencil, MapPin, Receipt, Sparkles } from 'lucide-react'
+import { X, Upload, Trash2, Share2, Pencil, MapPin, Receipt, Sparkles, Copy, Check } from 'lucide-react'
 import { supabase, invokeWithRetry } from '../lib/supabase'
 import { formatMoney } from '../lib/format'
 import { DEVELOPERS } from '../lib/constants'
@@ -65,6 +65,7 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
   const [sharing, setSharing] = useState(false)
   const [shareUrl, setShareUrl] = useState(null)
   const [shareError, setShareError] = useState(null)
+  const [linkCopied, setLinkCopied] = useState(false)
 
   const [invoices, setInvoices] = useState([])
 
@@ -195,6 +196,7 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
     setSharing(true)
     setShareError(null)
     setShareUrl(null)
+    setLinkCopied(false)
     const { data, error } = await invokeWithRetry('generate-property-brochure', {
       body: { propertyId: property.id },
     })
@@ -204,6 +206,13 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
       return
     }
     setShareUrl(data.url)
+  }
+
+  async function copyShareLink() {
+    if (!shareUrl) return
+    await navigator.clipboard.writeText(shareUrl)
+    setLinkCopied(true)
+    setTimeout(() => setLinkCopied(false), 2000)
   }
 
   const displayName = (fullName) => fullName.replace(/^\d+-/, '')
@@ -536,6 +545,13 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
                       href={`mailto:?subject=${encodeURIComponent(current.title)}&body=${encodeURIComponent(`Here's the brochure: ${shareUrl}`)}`}
                       className="text-sm text-navyDeep border border-navyDeep/30 rounded-lg px-4 py-2.5"
                     >Send via email</a>
+                    <button
+                      onClick={copyShareLink}
+                      className="flex items-center gap-1.5 text-sm text-navyDeep border border-navyDeep/30 rounded-lg px-4 py-2.5"
+                    >
+                      {linkCopied ? <Check size={14} /> : <Copy size={14} />}
+                      {linkCopied ? 'Copied' : 'Copy link'}
+                    </button>
                   </div>
                   <button onClick={generateShare} disabled={sharing} className="text-xs text-muted underline">
                     {sharing ? 'Regenerating…' : 'Regenerate'}
