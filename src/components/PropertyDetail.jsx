@@ -34,6 +34,10 @@ function fieldsFrom(property) {
     has_balcony: property.has_balcony || false,
     is_vacant: property.is_vacant || false,
     has_gym: property.has_gym || false,
+    owner_contact_id: property.owner_contact_id || '',
+    owner_name: property.owner_name || '',
+    owner_phone: property.owner_phone || '',
+    owner_email: property.owner_email || '',
   }
 }
 
@@ -54,6 +58,8 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
   const docInputRef = useRef(null)
 
   const [orgId, setOrgId] = useState(null)
+  const [ownerMode, setOwnerMode] = useState(property.owner_contact_id ? 'link' : 'manual')
+  const [contactOptions, setContactOptions] = useState([])
 
   const [sharing, setSharing] = useState(false)
   const [shareUrl, setShareUrl] = useState(null)
@@ -70,8 +76,13 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
   }, [])
 
   useEffect(() => {
-    if (orgId) { loadPhotos(); loadDocuments(); loadInvoices() }
+    if (orgId) { loadPhotos(); loadDocuments(); loadInvoices(); loadContactOptions() }
   }, [orgId])
+
+  async function loadContactOptions() {
+    const { data } = await supabase.from('contacts').select('id, name').order('name', { ascending: true })
+    setContactOptions(data ?? [])
+  }
 
   async function loadInvoices() {
     const { data } = await supabase.from('documents').select('*').eq('property_id', property.id).order('created_at', { ascending: false })
@@ -122,6 +133,12 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
       has_balcony: form.has_balcony,
       is_vacant: form.is_vacant,
       has_gym: form.has_gym,
+      // Only one owner path is saved at a time, based on the toggle — never
+      // both, so the two don't drift out of sync with each other.
+      owner_contact_id: ownerMode === 'link' ? (form.owner_contact_id || null) : null,
+      owner_name: ownerMode === 'manual' ? (form.owner_name || null) : null,
+      owner_phone: ownerMode === 'manual' ? (form.owner_phone || null) : null,
+      owner_email: ownerMode === 'manual' ? (form.owner_email || null) : null,
     }
     await supabase.from('properties').update(payload).eq('id', property.id)
     setSaving(false)
@@ -251,6 +268,13 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
                 <a href={current.listing_url} target="_blank" rel="noreferrer" className="text-xs text-teal-700 underline block">Open listing ↗</a>
               )}
               {current.description && <p className="text-sm text-ink whitespace-pre-wrap">{current.description}</p>}
+              {(current.owner_contact_id || current.owner_name) && (
+                <p className="text-xs text-muted">
+                  Owner: {current.owner_contact_id
+                    ? (contactOptions.find((c) => c.id === current.owner_contact_id)?.name || '…')
+                    : [current.owner_name, current.owner_phone].filter(Boolean).join(' · ')}
+                </p>
+              )}
               {!current.address && !current.description && !current.listing_type && (
                 <p className="text-sm text-muted">No details yet — tap Edit to fill them in.</p>
               )}
@@ -269,15 +293,15 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
               <div className="flex gap-2">
                 <NumberInput
                   value={form.value} onChange={(v) => setForm({ ...form, value: v })}
-                  placeholder="Price (AED)" className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                  placeholder="Price (AED)" className="flex-1 min-w-0 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
                 />
                 <input
                   value={form.bedrooms} onChange={(e) => setForm({ ...form, bedrooms: e.target.value })}
-                  placeholder="Beds" type="number" className="w-20 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                  placeholder="Beds" type="number" className="w-16 shrink-0 min-w-0 border border-muted/30 rounded-lg px-2 py-2.5 text-sm"
                 />
                 <input
                   value={form.bathrooms} onChange={(e) => setForm({ ...form, bathrooms: e.target.value })}
-                  placeholder="Baths" type="number" className="w-20 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                  placeholder="Baths" type="number" className="w-16 shrink-0 min-w-0 border border-muted/30 rounded-lg px-2 py-2.5 text-sm"
                 />
               </div>
               <select
@@ -356,6 +380,47 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
                 placeholder="Description (used in the shared brochure)" rows={3}
                 className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
               />
+
+              <div>
+                <div className="text-xs text-muted mb-1.5">Owner</div>
+                <div className="flex gap-2 mb-2">
+                  <button
+                    type="button" onClick={() => setOwnerMode('link')}
+                    className={`text-xs rounded-full px-3 py-1.5 border ${ownerMode === 'link' ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'}`}
+                  >Link to prospect</button>
+                  <button
+                    type="button" onClick={() => setOwnerMode('manual')}
+                    className={`text-xs rounded-full px-3 py-1.5 border ${ownerMode === 'manual' ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'}`}
+                  >Enter manually</button>
+                </div>
+                {ownerMode === 'link' ? (
+                  <select
+                    value={form.owner_contact_id} onChange={(e) => setForm({ ...form, owner_contact_id: e.target.value })}
+                    className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm bg-white"
+                  >
+                    <option value="">Select a prospect…</option>
+                    {contactOptions.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  </select>
+                ) : (
+                  <div className="space-y-2">
+                    <input
+                      value={form.owner_name} onChange={(e) => setForm({ ...form, owner_name: e.target.value })}
+                      placeholder="Owner name" className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                    />
+                    <div className="flex gap-2">
+                      <input
+                        value={form.owner_phone} onChange={(e) => setForm({ ...form, owner_phone: e.target.value })}
+                        placeholder="Phone" className="flex-1 min-w-0 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                      />
+                      <input
+                        value={form.owner_email} onChange={(e) => setForm({ ...form, owner_email: e.target.value })}
+                        placeholder="Email" type="email" className="flex-1 min-w-0 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div className="flex items-center gap-3 pt-1">
                 <button type="submit" disabled={saving} className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5 disabled:opacity-50">
                   {saving ? 'Saving…' : 'Save'}

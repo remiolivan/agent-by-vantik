@@ -5,6 +5,16 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/useAuth'
 import Layout from '../components/Layout'
 
+// Local time, not UTC — someone in Dubai shouldn't get "good morning" from a
+// server clock that thinks it's still the middle of the night.
+function timeOfDayGreeting() {
+  const hour = new Date().getHours()
+  if (hour >= 6 && hour < 12) return 'Good morning'
+  if (hour >= 12 && hour < 18) return 'Good afternoon'
+  if (hour >= 18 && hour < 22) return 'Good evening'
+  return 'Good night'
+}
+
 export default function Dashboard() {
   const { user } = useAuth()
   const [stats, setStats] = useState({ properties: 0, tasks: 0, prospects: 0 })
@@ -59,7 +69,7 @@ export default function Dashboard() {
   }
 
   return (
-    <Layout title={greetingName ? `Welcome back, ${greetingName}` : 'Dashboard'}>
+    <Layout title={greetingName ? `${timeOfDayGreeting()}, ${greetingName}` : 'Dashboard'}>
       <div className="flex flex-col gap-6">
         {/* On mobile: today's appointments + tasks come first (what to act on), stats below. */}
         <div className="order-3 sm:order-1 grid grid-cols-1 sm:grid-cols-3 gap-4">

@@ -16,11 +16,15 @@ export default function FollowUpDraft({ contactId, propertyId, contactPhone, con
   const [hasGenerated, setHasGenerated] = useState(false)
   const [resolvedPhone, setResolvedPhone] = useState(contactPhone || null)
   const [resolvedEmail, setResolvedEmail] = useState(contactEmail || null)
+  const [resolvedContactId, setResolvedContactId] = useState(contactId || null)
+  const [marking, setMarking] = useState(false)
+  const [marked, setMarked] = useState(false)
 
   async function generate(nextChannel) {
     setChannel(nextChannel)
     setLoading(true)
     setError(null)
+    setMarked(false)
     const { data, error: fnError } = await invokeWithRetry('draft-followup', {
       body: { contactId, propertyId, channel: nextChannel, instructions: instructions.trim() || undefined },
     })
@@ -35,7 +39,28 @@ export default function FollowUpDraft({ contactId, propertyId, contactPhone, con
     // details so the send buttons below still work.
     if (!contactPhone && data.contactPhone) setResolvedPhone(data.contactPhone)
     if (!contactEmail && data.contactEmail) setResolvedEmail(data.contactEmail)
+    if (!contactId && data.resolvedContactId) setResolvedContactId(data.resolvedContactId)
     setHasGenerated(true)
+  }
+
+  // Logs the sent (or not-sent) message to Activity so it shows up in the
+  // same feed as calls, notes, and meetings — the point of asking is that a
+  // "sent" follow-up should count as logged activity without the agent
+  // having to type it out again by hand.
+  async function markSent(wasSent) {
+    setMarking(true)
+    const { data: membership } = await supabase.from('memberships').select('org_id').single()
+    const { data: { user } } = await supabase.auth.getUser()
+    await supabase.from('activities').insert({
+      org_id: membership.org_id,
+      contact_id: resolvedContactId || null,
+      property_id: propertyId || null,
+      type: channel === 'email' ? 'email' : 'whatsapp',
+      content: wasSent ? draft : `(Drafted but not sent) ${draft}`,
+      created_by: user?.id || null,
+    })
+    setMarking(false)
+    setMarked(true)
   }
 
   const whatsappUrl = resolvedPhone
@@ -115,6 +140,26 @@ export default function FollowUpDraft({ contactId, propertyId, contactPhone, con
                 Regenerate
               </button>
             </div>
+
+            {/* Confirmation, so a sent follow-up lands in Activity without
+                retyping it — shown once a draft exists, regardless of
+                whether the agent used the Send button here or copied the
+                text elsewhere. */}
+            {!marked ? (
+              <div className="flex items-center gap-3 mt-4 pt-4 border-t border-muted/15">
+                <span className="text-xs text-muted">Did you send this?</span>
+                <button
+                  onClick={() => markSent(true)} disabled={marking}
+                  className="text-xs bg-navyDeep text-white rounded-full px-3 py-1.5 disabled:opacity-50"
+                >Yes, log it</button>
+                <button
+                  onClick={() => markSent(false)} disabled={marking}
+                  className="text-xs text-muted underline disabled:opacity-50"
+                >Not sent</button>
+              </div>
+            ) : (
+              <p className="text-xs text-teal mt-4 pt-4 border-t border-muted/15">Logged to Activity.</p>
+            )}
           </>
         )}
 
