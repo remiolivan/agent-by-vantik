@@ -4,8 +4,8 @@ import { supabase } from '../lib/supabase'
 
 const CURRENCIES = ['AED', 'USD', 'EUR', 'GBP']
 
-export default function OrgSettings({ orgId }) {
-  const [expanded, setExpanded] = useState(false)
+export default function OrgSettings({ orgId, defaultExpanded = false }) {
+  const [expanded, setExpanded] = useState(defaultExpanded)
   const [businessName, setBusinessName] = useState('')
   const [currency, setCurrency] = useState('AED')
   const [address, setAddress] = useState('')

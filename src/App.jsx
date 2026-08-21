@@ -10,6 +10,7 @@ import Prospects from './pages/Prospects'
 import Calendar from './pages/Calendar'
 import CalendarCallback from './pages/CalendarCallback'
 import Team from './pages/Team'
+import Settings from './pages/Settings'
 import TeamActivity from './pages/TeamActivity'
 import Tasks from './pages/Tasks'
 import Documents from './pages/Documents'
@@ -29,6 +30,7 @@ export default function App() {
       <Route path="/properties" element={<ProtectedRoute><Properties /></ProtectedRoute>} />
       <Route path="/prospects" element={<ProtectedRoute><Prospects /></ProtectedRoute>} />
       <Route path="/team" element={<ProtectedRoute><Team /></ProtectedRoute>} />
+      <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
       <Route path="/team/activity" element={<ProtectedRoute><TeamActivity /></ProtectedRoute>} />
       <Route path="/tasks" element={<ProtectedRoute><Tasks /></ProtectedRoute>} />
       <Route path="/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />

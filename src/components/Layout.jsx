@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutGrid, Users, Building2, CheckSquare, FileText,
-  UsersRound, CreditCard, LogOut, X, MoreHorizontal, CalendarDays,
+  UsersRound, CreditCard, LogOut, X, MoreHorizontal, CalendarDays, Settings2,
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import Logo from './Logo'
@@ -45,6 +45,7 @@ export default function Layout({ title, action, children }) {
     ...(showTeam ? [{ to: '/team', label: 'Team', icon: UsersRound }] : []),
     { to: '/documents', label: 'Invoices', icon: FileText },
     { to: '/billing', label: 'Billing', icon: CreditCard },
+    { to: '/settings', label: 'Settings', icon: Settings2 },
   ]
 
   const ALL_NAV = [...PRIMARY_NAV, ...MORE_NAV]

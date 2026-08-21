@@ -39,13 +39,23 @@ export default function Properties() {
   const [showNew, setShowNew] = useState(false)
   const [selected, setSelected] = useState(null)
   const [form, setForm] = useState(NEW_PROPERTY_DEFAULTS)
+  const [loadError, setLoadError] = useState(null)
 
   async function load() {
-    const [{ data: stagesData }, { data: propsData }, { data: prospectsData }] = await Promise.all([
+    setLoadError(null)
+    const [{ data: stagesData, error: stagesErr }, { data: propsData, error: propsErr }, { data: prospectsData }] = await Promise.all([
       supabase.from('pipeline_stages').select('*').eq('pipeline_type', 'property').order('position'),
       supabase.from('properties').select('*, contacts(name)').order('created_at', { ascending: false }),
       supabase.from('contacts').select('id, name').order('name'),
     ])
+    // Supabase doesn't throw on failure — it returns { data: null, error }.
+    // Ignoring `error` here meant a transient network/auth hiccup silently
+    // left the board empty with zero indication anything went wrong, which
+    // looked exactly like "all my properties disappeared".
+    if (stagesErr || propsErr) {
+      setLoadError((propsErr || stagesErr).message)
+      return
+    }
     setStages(stagesData ?? [])
     setProperties(propsData ?? [])
     setProspects(prospectsData ?? [])
@@ -228,6 +238,13 @@ export default function Properties() {
         </div>
       }
     >
+      {loadError && (
+        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mb-4 flex items-center justify-between gap-3">
+          <span>Couldn't load your properties: {loadError}</span>
+          <button onClick={load} className="underline whitespace-nowrap shrink-0">Retry</button>
+        </div>
+      )}
+
       {showNew && newPropertyForm}
 
       {/* Mobile: stage tabs + vertical card list (no horizontal scrolling funnel) */}

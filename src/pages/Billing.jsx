@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import Layout from '../components/Layout'
 import CancelSubscriptionFlow from '../components/CancelSubscriptionFlow'
-import OrgSettings from '../components/OrgSettings'
 
 const PLANS = [
   { key: 'solo', name: 'Solo', price: '$35/mo', desc: '1 agent' },
@@ -109,7 +109,9 @@ export default function Billing() {
 
       {orgId && (
         <div className="mt-10 max-w-3xl">
-          <OrgSettings orgId={orgId} />
+          <p className="text-sm text-muted">
+            Logo, invoice details, and reminder preferences moved to <Link to="/settings" className="text-navyDeep underline">Settings</Link>.
+          </p>
         </div>
       )}
 
