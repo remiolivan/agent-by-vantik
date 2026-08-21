@@ -5,6 +5,7 @@ import { formatMoney } from '../lib/format'
 import { DEVELOPERS } from '../lib/constants'
 import NumberInput from './NumberInput'
 import FollowUpDraft from './FollowUpDraft'
+import ActivityLog from './ActivityLog'
 
 const TYPES = ['apartment', 'villa', 'townhouse', 'land', 'commercial', 'other']
 
@@ -201,9 +202,6 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
             )}
           </div>
           <div className="flex items-center gap-1 shrink-0">
-            <button onClick={() => setShowFollowUp(true)} className="text-teal p-1.5" aria-label="Draft follow-up" title="Draft follow-up">
-              <Sparkles size={17} />
-            </button>
             {!editing && (
               <button onClick={() => setEditing(true)} className="text-navyDeep p-1.5" aria-label="Edit">
                 <Pencil size={17} />
@@ -216,6 +214,14 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
         </div>
 
         <div className="px-5 py-5 space-y-8">
+          <button
+            onClick={() => setShowFollowUp(true)}
+            className="w-full flex items-center justify-center gap-2 bg-teal hover:bg-teal-dark text-white text-sm font-medium rounded-lg px-4 py-3"
+          >
+            <Sparkles size={16} />
+            Draft follow-up
+          </button>
+
           {!editing ? (
             <div className="bg-white border border-muted/20 rounded-xl p-4 space-y-3">
               {current.address && (
@@ -358,6 +364,11 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
               </div>
             </form>
           )}
+
+          {/* Activity */}
+          <div>
+            <ActivityLog propertyId={current.id} />
+          </div>
 
           {/* Photos */}
           <div>

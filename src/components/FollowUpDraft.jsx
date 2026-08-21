@@ -8,6 +8,8 @@ import { supabase, invokeWithRetry } from '../lib/supabase'
 // keeps the final call.
 export default function FollowUpDraft({ contactId, propertyId, contactPhone, contactEmail, onClose }) {
   const [channel, setChannel] = useState('whatsapp')
+  const [instructions, setInstructions] = useState('')
+  const [showInstructions, setShowInstructions] = useState(false)
   const [draft, setDraft] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -20,7 +22,7 @@ export default function FollowUpDraft({ contactId, propertyId, contactPhone, con
     setLoading(true)
     setError(null)
     const { data, error: fnError } = await invokeWithRetry('draft-followup', {
-      body: { contactId, propertyId, channel: nextChannel },
+      body: { contactId, propertyId, channel: nextChannel, instructions: instructions.trim() || undefined },
     })
     setLoading(false)
     if (fnError || data?.error) {
@@ -56,7 +58,7 @@ export default function FollowUpDraft({ contactId, propertyId, contactPhone, con
         </div>
         <p className="text-sm text-muted mb-4">Written from recent activity — review and edit before sending.</p>
 
-        <div className="flex gap-2 mb-4">
+        <div className="flex gap-2 mb-3">
           <button
             onClick={() => generate('whatsapp')} disabled={loading}
             className={`text-xs rounded-full px-3 py-1.5 border ${channel === 'whatsapp' && hasGenerated ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'}`}
@@ -66,6 +68,21 @@ export default function FollowUpDraft({ contactId, propertyId, contactPhone, con
             className={`text-xs rounded-full px-3 py-1.5 border ${channel === 'email' && hasGenerated ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'}`}
           >Email</button>
         </div>
+
+        <button
+          type="button" onClick={() => setShowInstructions((s) => !s)}
+          className="text-xs text-navyDeep underline mb-3"
+        >
+          {showInstructions ? 'Hide instructions' : '+ Add instructions (optional)'}
+        </button>
+        {showInstructions && (
+          <textarea
+            value={instructions} onChange={(e) => setInstructions(e.target.value)}
+            placeholder="e.g. mention the price just dropped, keep it very short, suggest a viewing this weekend…"
+            rows={2}
+            className="w-full border border-muted/30 rounded-lg px-3 py-2 text-sm resize-none mb-3"
+          />
+        )}
 
         {loading && <p className="text-sm text-muted py-6 text-center">Writing a draft…</p>}
         {error && <p className="text-sm text-red-600 mb-3">{error}</p>}

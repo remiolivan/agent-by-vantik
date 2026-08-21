@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import Layout from '../components/Layout'
 import CancelSubscriptionFlow from '../components/CancelSubscriptionFlow'
+import OrgSettings from '../components/OrgSettings'
 
 const PLANS = [
   { key: 'solo', name: 'Solo', price: '$35/mo', desc: '1 agent' },
@@ -11,6 +12,7 @@ const PLANS = [
 
 export default function Billing() {
   const [org, setOrg] = useState(null)
+  const [orgId, setOrgId] = useState(null)
   const [loadingPlan, setLoadingPlan] = useState(null)
   const [portalLoading, setPortalLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -19,6 +21,7 @@ export default function Billing() {
   async function load() {
     const { data: membership } = await supabase.from('memberships').select('org_id').single()
     if (membership) {
+      setOrgId(membership.org_id)
       const { data } = await supabase
         .from('organizations')
         .select('name, plan, trial_ends_at, stripe_customer_id, is_comped, cancel_requested_at')
@@ -103,6 +106,12 @@ export default function Billing() {
           ))}
         </div>
       </div>
+
+      {orgId && (
+        <div className="mt-10 max-w-3xl">
+          <OrgSettings orgId={orgId} />
+        </div>
+      )}
 
       {!org?.is_comped && (
         <div className="mt-10 max-w-3xl">

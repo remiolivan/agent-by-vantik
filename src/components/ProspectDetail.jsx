@@ -193,9 +193,6 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
             {current.email && <div className="text-xs text-muted truncate">{current.email}</div>}
           </div>
           <div className="flex items-center gap-1 shrink-0">
-            <button onClick={() => setShowFollowUp(true)} className="text-teal p-1.5" aria-label="Draft follow-up" title="Draft follow-up">
-              <Sparkles size={17} />
-            </button>
             {!editing && (
               <button onClick={() => setEditing(true)} className="text-navyDeep p-1.5" aria-label="Edit">
                 <Pencil size={17} />
@@ -208,6 +205,17 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
         </div>
 
         <div className="px-5 py-5 space-y-8">
+          {/* AI follow-up — full-width and labeled rather than a small icon,
+              since this is meant to be the button agents reach for by
+              default, not something they have to notice first. */}
+          <button
+            onClick={() => setShowFollowUp(true)}
+            className="w-full flex items-center justify-center gap-2 bg-teal hover:bg-teal-dark text-white text-sm font-medium rounded-lg px-4 py-3"
+          >
+            <Sparkles size={16} />
+            Draft follow-up
+          </button>
+
           {/* Stage */}
           <div>
             <div className="font-mono text-xs uppercase tracking-wide text-muted mb-2">Stage</div>
@@ -301,6 +309,11 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
             </form>
           )}
 
+          {/* Activity */}
+          <div>
+            <ActivityLog contactId={current.id} />
+          </div>
+
           {/* Tasks */}
           <div>
             <div className="font-mono text-xs uppercase tracking-wide text-muted mb-3">Tasks</div>
@@ -386,11 +399,6 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
               ))}
               {invoices.length === 0 && <p className="text-xs text-muted">No invoices linked to this prospect yet.</p>}
             </div>
-          </div>
-
-          {/* Activity */}
-          <div>
-            <ActivityLog contactId={current.id} />
           </div>
 
           {/* Share */}

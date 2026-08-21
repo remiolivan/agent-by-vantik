@@ -141,14 +141,26 @@ export default function Prospects() {
               value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
               placeholder="Phone" className="border border-muted/30 rounded-lg px-3 py-2.5 text-sm flex-1"
             />
-            <select
-              value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}
-              className="w-full sm:w-auto max-w-full box-border appearance-none bg-white border border-muted/30 rounded-lg px-3 py-2.5 text-sm bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22%235A6B84%22><path d=%22M5.5 7.5l4.5 4.5 4.5-4.5%22 stroke=%22%235A6B84%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/></svg>')] bg-no-repeat bg-[right_0.75rem_center] pr-8"
-            >
-              <option value="lead">Lead</option>
-              <option value="client">Client</option>
-              <option value="past_client">Past client</option>
-            </select>
+          </div>
+
+          {/* Pill toggles instead of a native <select> — a 3-option dropdown
+              wasn't worth the recurring cross-browser sizing headaches (iOS
+              Safari in particular doesn't reliably respect CSS width on
+              native form controls), and this reads faster than a dropdown
+              anyway for just three choices. */}
+          <div className="flex gap-2 flex-wrap">
+            {[
+              { value: 'lead', label: 'Lead' },
+              { value: 'client', label: 'Client' },
+              { value: 'past_client', label: 'Past client' },
+            ].map((opt) => (
+              <button
+                key={opt.value} type="button" onClick={() => setForm({ ...form, type: opt.value })}
+                className={`text-sm rounded-full px-3.5 py-1.5 border ${
+                  form.type === opt.value ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-ink'
+                }`}
+              >{opt.label}</button>
+            ))}
           </div>
 
           <div className="flex gap-2">
