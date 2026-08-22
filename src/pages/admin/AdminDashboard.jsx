@@ -70,6 +70,8 @@ export default function AdminDashboard() {
         </div>
       )}
 
+      <SystemCard />
+
       <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row gap-3 mb-6">
         <input
           type="text"
@@ -156,6 +158,55 @@ export default function AdminDashboard() {
         </div>
       )}
     </Layout>
+  )
+}
+
+function SystemCard() {
+  const [busyTarget, setBusyTarget] = useState(null)
+  const [result, setResult] = useState(null)
+  const [error, setError] = useState(null)
+
+  async function run(target, label) {
+    setBusyTarget(target)
+    setResult(null)
+    setError(null)
+    try {
+      const data = await callAdminApi('trigger_reminders', { target })
+      const sent = data.result?.sent ?? 0
+      const errCount = Array.isArray(data.result?.errors) ? data.result.errors.length : 0
+      setResult(`${label} : ${sent} envoyé${sent === 1 ? '' : 's'}${errCount ? `, ${errCount} erreur${errCount === 1 ? '' : 's'}` : ''}.`)
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setBusyTarget(null)
+    }
+  }
+
+  return (
+    <div className="bg-white border border-muted/20 rounded-xl p-5 sm:p-6 mb-8">
+      <h3 className="font-mono text-xs uppercase tracking-wide text-muted mb-1">Système</h3>
+      <p className="text-xs text-muted mb-4">
+        Déclenche manuellement les jobs de rappel (normalement gérés par pg_cron). Utile pour tester ou rattraper un envoi manqué.
+      </p>
+      <div className="flex flex-wrap gap-3 mb-3">
+        <button
+          disabled={busyTarget !== null}
+          onClick={() => run('send-reminders', 'Reminders (email)')}
+          className="bg-navyDeep text-white text-sm rounded-lg px-3.5 py-2 disabled:opacity-50"
+        >
+          {busyTarget === 'send-reminders' ? 'En cours…' : 'Lancer send-reminders (email)'}
+        </button>
+        <button
+          disabled={busyTarget !== null}
+          onClick={() => run('send-due-reminders', 'Due reminders (push)')}
+          className="bg-navyDeep text-white text-sm rounded-lg px-3.5 py-2 disabled:opacity-50"
+        >
+          {busyTarget === 'send-due-reminders' ? 'En cours…' : 'Lancer send-due-reminders (push)'}
+        </button>
+      </div>
+      {result && <p className="text-sm text-tealDark">{result}</p>}
+      {error && <p className="text-sm text-red-600">{error}</p>}
+    </div>
   )
 }
 
