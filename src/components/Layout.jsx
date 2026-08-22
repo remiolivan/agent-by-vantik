@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutGrid, Users, Building2, CheckSquare, FileText,
-  UsersRound, CreditCard, LogOut, X, MoreHorizontal, CalendarDays, Settings2,
+  UsersRound, CreditCard, LogOut, X, MoreHorizontal, CalendarDays, Settings2, Shield,
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { useAdmin } from '../lib/useAdmin'
 import Logo from './Logo'
 
 const TEAM_PLANS = ['team', 'brokerage']
@@ -20,6 +21,7 @@ export default function Layout({ title, action, children }) {
   const navigate = useNavigate()
   const [moreOpen, setMoreOpen] = useState(false)
   const [plan, setPlan] = useState(null)
+  const { isAdmin } = useAdmin()
 
   useEffect(() => {
     async function loadPlan() {
@@ -46,6 +48,7 @@ export default function Layout({ title, action, children }) {
     { to: '/documents', label: 'Invoices', icon: FileText },
     { to: '/billing', label: 'Billing', icon: CreditCard },
     { to: '/settings', label: 'Settings', icon: Settings2 },
+    ...(isAdmin ? [{ to: '/admin', label: 'Admin', icon: Shield }] : []),
   ]
 
   const ALL_NAV = [...PRIMARY_NAV, ...MORE_NAV]
