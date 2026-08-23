@@ -88,6 +88,16 @@ async function sendWebPush(
   return { ok: res.ok, status: res.status, shouldDelete: res.status === 404 || res.status === 410 };
 }
 
+// The org operates in Dubai, and every task/event due_at is entered and
+// read there — but the Deno runtime this function executes on has no
+// timezone set, so unqualified toLocaleTimeString() calls default to UTC.
+// That's exactly what caused notifications to fire at the right real-world
+// moment (15 min before due_at, verified against due_reminder_sent_at) but
+// DISPLAY the wrong time ("5:00 AM" for a 9am Dubai viewing) — a 4-hour
+// mislabeling, not an actual scheduling delay. Pinning the timeZone here
+// fixes the label to match the real-world time the push already fires at.
+const ORG_TIME_ZONE = "Asia/Dubai";
+
 // Runs every 15 min via pg_cron ("send-due-reminders-15min"). Unlike
 // morning-digest (one summary/day, opt-in), this pushes a notification for
 // each individual task/event as it approaches its due time/start time —
@@ -164,7 +174,7 @@ Deno.serve(async (req: Request) => {
 
     for (const task of dueTasks ?? []) {
       try {
-        const dueTime = new Date(task.due_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        const dueTime = new Date(task.due_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", timeZone: ORG_TIME_ZONE });
         await pushTo(task.assignee_id, { title: "Task due soon", body: `${task.title} — ${dueTime}`, url: "/tasks" });
         await adminClient.from("tasks").update({ due_reminder_sent_at: new Date().toISOString() }).eq("id", task.id);
       } catch (e) {
@@ -186,7 +196,7 @@ Deno.serve(async (req: Request) => {
 
     for (const ev of dueEvents ?? []) {
       try {
-        const startTime = new Date(ev.start_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        const startTime = new Date(ev.start_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", timeZone: ORG_TIME_ZONE });
         await pushTo(ev.created_by, { title: "Upcoming appointment", body: `${ev.title} — ${startTime}`, url: "/calendar" });
         await adminClient.from("calendar_events").update({ due_reminder_sent_at: new Date().toISOString() }).eq("id", ev.id);
       } catch (e) {

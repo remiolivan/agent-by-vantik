@@ -7,6 +7,14 @@ const CORS = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
+// The org operates in Dubai, and its clients read invite times as local
+// Dubai time regardless of where the edge function's container happens to
+// run (Deno defaults to UTC when no timeZone is given). Without pinning
+// this, a 9am viewing would print as "5:00 AM" in the email — exactly the
+// bug seen in the due-reminder push notifications, just here it can send a
+// client to a viewing 4 hours off instead of just mislabeling a push.
+const ORG_TIME_ZONE = "Asia/Dubai";
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
 
@@ -62,8 +70,8 @@ Deno.serve(async (req: Request) => {
 
     const start = new Date(event.start_at);
     const end = new Date(event.end_at);
-    const dateStr = start.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-    const timeStr = `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} – ${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+    const dateStr = start.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: ORG_TIME_ZONE });
+    const timeStr = `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", timeZone: ORG_TIME_ZONE })} – ${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", timeZone: ORG_TIME_ZONE })} (Dubai time)`;
     const orgName = org?.name ?? "Agent by Vantik";
 
     let sent = 0;

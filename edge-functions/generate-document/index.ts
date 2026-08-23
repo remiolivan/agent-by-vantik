@@ -8,6 +8,12 @@ const CORS = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
+// Same reasoning as send-due-reminders/send-event-invite: Deno defaults to
+// UTC with no timeZone given, but the org and its invoices are Dubai-based.
+// Pinning this keeps "Date:"/"Due:" on invoices from silently drifting to
+// the wrong calendar day near midnight Dubai time.
+const ORG_TIME_ZONE = "Asia/Dubai";
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
 
@@ -99,9 +105,9 @@ Deno.serve(async (req: Request) => {
     metaY -= 20;
     page.drawText(invoiceNumber, { x: 420, y: metaY, size: 10, font, color: fog });
     metaY -= 14;
-    page.drawText(`Date: ${new Date().toLocaleDateString("en-GB")}`, { x: 420, y: metaY, size: 9, font, color: fog });
+    page.drawText(`Date: ${new Date().toLocaleDateString("en-GB", { timeZone: ORG_TIME_ZONE })}`, { x: 420, y: metaY, size: 9, font, color: fog });
     metaY -= 13;
-    if (dueDate) { page.drawText(`Due: ${new Date(dueDate).toLocaleDateString("en-GB")}`, { x: 420, y: metaY, size: 9, font, color: fog }); metaY -= 13; }
+    if (dueDate) { page.drawText(`Due: ${new Date(dueDate).toLocaleDateString("en-GB", { timeZone: ORG_TIME_ZONE })}`, { x: 420, y: metaY, size: 9, font, color: fog }); metaY -= 13; }
 
     y = Math.min(y, metaY) - 20;
 
