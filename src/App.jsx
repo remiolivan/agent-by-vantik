@@ -17,7 +17,11 @@ import Documents from './pages/Documents'
 import Billing from './pages/Billing'
 import Onboarding from './pages/Onboarding'
 import ProtectedRoute from './components/ProtectedRoute'
-
+import ProtectedAdminRoute from './components/ProtectedAdminRoute'
+import AdminDashboard from './pages/admin/AdminDashboard'
+import AdminOrgDetail from './pages/admin/AdminOrgDetail'
+import AdminUsers from './pages/admin/AdminUsers'
+import AdminActivity from './pages/admin/AdminActivity'
 export default function App() {
   return (
     <Routes>
@@ -38,6 +42,10 @@ export default function App() {
       <Route path="/documents" element={<ProtectedRoute><Documents /></ProtectedRoute>} />
       <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
       <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
+      <Route path="/admin" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>} />
+      <Route path="/admin/orgs/:orgId" element={<ProtectedAdminRoute><AdminOrgDetail /></ProtectedAdminRoute>} />
+      <Route path="/admin/users" element={<ProtectedAdminRoute><AdminUsers /></ProtectedAdminRoute>} />
+      <Route path="/admin/activity" element={<ProtectedAdminRoute><AdminActivity /></ProtectedAdminRoute>} />
     </Routes>
   )
 }
