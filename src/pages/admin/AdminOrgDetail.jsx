@@ -33,6 +33,8 @@ export default function AdminOrgDetail() {
   const [aiDiagnosis, setAiDiagnosis] = useState(null)
   const [aiBusy, setAiBusy] = useState(false)
   const [aiError, setAiError] = useState(null)
+  const [orgErrors, setOrgErrors] = useState([])
+  const [errorsLoading, setErrorsLoading] = useState(true)
 
   async function load() {
     setLoading(true)
@@ -48,7 +50,14 @@ export default function AdminOrgDetail() {
     }
   }
 
-  useEffect(() => { load() }, [orgId])
+  useEffect(() => {
+    load()
+    setErrorsLoading(true)
+    callAdminApi('list_org_errors', { orgId, pageSize: 20 })
+      .then((data) => setOrgErrors(data.errors))
+      .catch((e) => console.error('list_org_errors failed:', e.message))
+      .finally(() => setErrorsLoading(false))
+  }, [orgId])
 
   async function runAction(action, payload, successMessage) {
     setBusy(true)
@@ -374,6 +383,27 @@ export default function AdminOrgDetail() {
             {aiDiagnosis}
           </div>
         )}
+      </div>
+
+      <div className="bg-white border border-muted/20 rounded-xl p-5 sm:p-6 mb-8">
+        <h3 className="font-mono text-xs uppercase tracking-wide text-muted mb-1">Erreurs récentes</h3>
+        <p className="text-xs text-muted mb-4">
+          Erreurs réellement survenues côté backend pour cette org (email/push non envoyé, etc.). Un problème "ça ne marche pas / c'est vide" sans message d'erreur ne remontera pas ici — c'est le rôle de l'assistant IA ci-dessus.
+        </p>
+        <div className="divide-y divide-muted/10">
+          {orgErrors.map((e) => (
+            <div key={e.id} className="py-2.5 text-sm">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <span className="text-coral font-medium">{e.edge_function}</span>
+                <span className="text-xs text-muted">{new Date(e.created_at).toLocaleString()}</span>
+              </div>
+              <div className="text-ink mt-0.5">{e.message}</div>
+            </div>
+          ))}
+          {!errorsLoading && orgErrors.length === 0 && (
+            <p className="text-sm text-muted py-4">Aucune erreur enregistrée pour cette org.</p>
+          )}
+        </div>
       </div>
 
       <div className="bg-white border border-muted/20 rounded-xl p-5 sm:p-6">

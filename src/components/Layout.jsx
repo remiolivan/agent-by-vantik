@@ -48,7 +48,7 @@ export default function Layout({ title, action, children }) {
     { to: '/documents', label: 'Invoices', icon: FileText },
     { to: '/billing', label: 'Billing', icon: CreditCard },
     { to: '/settings', label: 'Settings', icon: Settings2 },
-    ...(isAdmin ? [{ to: '/admin', label: 'Admin', icon: Shield }] : []),
+    ...(isAdmin ? [{ to: '/admin/support', label: 'Admin', icon: Shield }] : []),
   ]
 
   const ALL_NAV = [...PRIMARY_NAV, ...MORE_NAV]

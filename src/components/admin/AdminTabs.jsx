@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 
 const TABS = [
   { key: 'orgs', to: '/admin/support', label: 'Organizations' },
+  { key: 'billing', to: '/admin/support/billing', label: 'Billing' },
   { key: 'users', to: '/admin/support/users', label: 'Users' },
   { key: 'activity', to: '/admin/support/activity', label: 'Activity log' },
 ]

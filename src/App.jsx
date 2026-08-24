@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import CheckEmail from './pages/CheckEmail'
@@ -20,6 +20,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import ProtectedAdminRoute from './components/ProtectedAdminRoute'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminSupport from './pages/admin/AdminSupport'
+import AdminBilling from './pages/admin/AdminBilling'
 import AdminOrgDetail from './pages/admin/AdminOrgDetail'
 import AdminUsers from './pages/admin/AdminUsers'
 import AdminActivity from './pages/admin/AdminActivity'
@@ -43,8 +44,10 @@ export default function App() {
       <Route path="/documents" element={<ProtectedRoute><Documents /></ProtectedRoute>} />
       <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
       <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
-      <Route path="/admin" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>} />
+      <Route path="/admin" element={<Navigate to="/admin/support" replace />} />
+      <Route path="/admin/kpis" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>} />
       <Route path="/admin/support" element={<ProtectedAdminRoute><AdminSupport /></ProtectedAdminRoute>} />
+      <Route path="/admin/support/billing" element={<ProtectedAdminRoute><AdminBilling /></ProtectedAdminRoute>} />
       <Route path="/admin/support/users" element={<ProtectedAdminRoute><AdminUsers /></ProtectedAdminRoute>} />
       <Route path="/admin/support/activity" element={<ProtectedAdminRoute><AdminActivity /></ProtectedAdminRoute>} />
       <Route path="/admin/orgs/:orgId" element={<ProtectedAdminRoute><AdminOrgDetail /></ProtectedAdminRoute>} />
