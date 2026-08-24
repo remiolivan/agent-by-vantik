@@ -1,61 +1,26 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Layout from '../../components/Layout'
-import AdminTabs from '../../components/admin/AdminTabs'
+import AdminSectionNav from '../../components/admin/AdminSectionNav'
 import StatusBadge from '../../components/admin/StatusBadge'
 import { callAdminApi } from '../../lib/adminApi'
-
-const PLAN_OPTIONS = [
-  { value: '', label: 'All plans' },
-  { value: 'trial', label: 'Trial' },
-  { value: 'solo', label: 'Solo' },
-  { value: 'team', label: 'Team' },
-  { value: 'brokerage', label: 'Brokerage' },
-]
-
-const PAGE_SIZE = 25
 
 export default function AdminDashboard() {
   const [metrics, setMetrics] = useState(null)
   const [orgs, setOrgs] = useState([])
-  const [total, setTotal] = useState(0)
-  const [searchInput, setSearchInput] = useState('')
-  const [search, setSearch] = useState('')
-  const [plan, setPlan] = useState('')
-  const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
 
   useEffect(() => {
     callAdminApi('metrics').then(setMetrics).catch((e) => console.error('metrics failed:', e.message))
+    callAdminApi('list_orgs', { page: 1, pageSize: 100 })
+      .then((data) => setOrgs(data.orgs))
+      .catch((e) => console.error('list_orgs failed:', e.message))
+      .finally(() => setLoading(false))
   }, [])
 
-  useEffect(() => {
-    let cancelled = false
-    setLoading(true)
-    setError(null)
-    callAdminApi('list_orgs', { search, plan: plan || null, page, pageSize: PAGE_SIZE })
-      .then((data) => {
-        if (cancelled) return
-        setOrgs(data.orgs)
-        setTotal(data.total)
-      })
-      .catch((e) => { if (!cancelled) setError(e.message) })
-      .finally(() => { if (!cancelled) setLoading(false) })
-    return () => { cancelled = true }
-  }, [search, plan, page])
-
-  function handleSearchSubmit(e) {
-    e.preventDefault()
-    setPage(1)
-    setSearch(searchInput.trim())
-  }
-
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
-
   return (
-    <Layout title="Admin">
-      <AdminTabs active="dashboard" />
+    <Layout title="Admin — KPIs">
+      <AdminSectionNav active="kpis" />
 
       {metrics && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -70,39 +35,18 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      <SystemCard />
-
-      <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row gap-3 mb-6">
-        <input
-          type="text"
-          placeholder="Search by organization name…"
-          value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-          className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-navyDeep"
-        />
-        <select
-          value={plan}
-          onChange={(e) => { setPlan(e.target.value); setPage(1) }}
-          className="border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
-        >
-          {PLAN_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-        </select>
-        <button type="submit" className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5 whitespace-nowrap">
-          Search
-        </button>
-      </form>
-
-      {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
-
-      <div className="bg-white border border-muted/20 rounded-xl overflow-hidden">
+      <div className="bg-white border border-muted/20 rounded-xl overflow-hidden mb-8">
+        <div className="px-5 py-4 border-b border-muted/10">
+          <h3 className="font-mono text-xs uppercase tracking-wide text-muted">Billing</h3>
+        </div>
         <table className="w-full text-sm hidden md:table">
           <thead className="bg-tintBlue text-left">
             <tr>
               <th className="px-4 py-3 font-mono text-xs uppercase tracking-wide text-muted">Organization</th>
               <th className="px-4 py-3 font-mono text-xs uppercase tracking-wide text-muted">Plan</th>
-              <th className="px-4 py-3 font-mono text-xs uppercase tracking-wide text-muted">Status</th>
-              <th className="px-4 py-3 font-mono text-xs uppercase tracking-wide text-muted">Members</th>
-              <th className="px-4 py-3 font-mono text-xs uppercase tracking-wide text-muted">Created</th>
+              <th className="px-4 py-3 font-mono text-xs uppercase tracking-wide text-muted">Subscription</th>
+              <th className="px-4 py-3 font-mono text-xs uppercase tracking-wide text-muted">Renouvelle / se termine</th>
+              <th className="px-4 py-3 font-mono text-xs uppercase tracking-wide text-muted">Stripe</th>
             </tr>
           </thead>
           <tbody>
@@ -112,9 +56,12 @@ export default function AdminDashboard() {
                   <Link to={`/admin/orgs/${o.id}`} className="text-navyDeep font-medium hover:underline">{o.name}</Link>
                 </td>
                 <td className="px-4 py-3 text-ink capitalize">{o.plan}</td>
-                <td className="px-4 py-3"><StatusBadge status={o.status} /></td>
-                <td className="px-4 py-3 text-ink">{o.memberCount}</td>
-                <td className="px-4 py-3 text-muted">{new Date(o.createdAt).toLocaleDateString()}</td>
+                <td className="px-4 py-3">
+                  {o.subscription ? <StatusBadge status={o.subscription.status} /> : <span className="text-xs text-muted">Aucun abonnement</span>}
+                  {o.subscription?.cancel_at_period_end && <span className="text-xs text-coral ml-2">Annule en fin de période</span>}
+                </td>
+                <td className="px-4 py-3 text-muted">{o.subscription?.current_period_end ? new Date(o.subscription.current_period_end).toLocaleDateString() : '—'}</td>
+                <td className="px-4 py-3 text-muted">{o.hasStripeCustomer ? 'Lié' : '—'}</td>
               </tr>
             ))}
           </tbody>
@@ -125,38 +72,19 @@ export default function AdminDashboard() {
             <Link key={o.id} to={`/admin/orgs/${o.id}`} className="block px-4 py-3">
               <div className="flex items-center justify-between gap-2 mb-1">
                 <span className="text-navyDeep font-medium text-sm">{o.name}</span>
-                <StatusBadge status={o.status} />
+                {o.subscription ? <StatusBadge status={o.subscription.status} /> : <span className="text-xs text-muted">Aucun abo</span>}
               </div>
-              <div className="text-xs text-muted capitalize">{o.plan} · {o.memberCount} member{o.memberCount === 1 ? '' : 's'}</div>
+              <div className="text-xs text-muted capitalize">
+                {o.plan} · renouvelle {o.subscription?.current_period_end ? new Date(o.subscription.current_period_end).toLocaleDateString() : '—'}
+              </div>
             </Link>
           ))}
         </div>
 
-        {!loading && orgs.length === 0 && (
-          <p className="text-sm text-muted text-center py-8">No organizations match.</p>
-        )}
-        {loading && <p className="text-sm text-muted text-center py-8">Loading…</p>}
+        {!loading && orgs.length === 0 && <p className="text-sm text-muted text-center py-8">Aucune organisation.</p>}
       </div>
 
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-4 mt-6">
-          <button
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page <= 1}
-            className="text-sm text-navyDeep disabled:text-muted/40"
-          >
-            ← Previous
-          </button>
-          <span className="text-sm text-muted">Page {page} / {totalPages}</span>
-          <button
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page >= totalPages}
-            className="text-sm text-navyDeep disabled:text-muted/40"
-          >
-            Next →
-          </button>
-        </div>
-      )}
+      <SystemCard />
     </Layout>
   )
 }
@@ -174,7 +102,10 @@ function SystemCard() {
       const data = await callAdminApi('trigger_reminders', { target })
       const sent = data.result?.sent ?? 0
       const errCount = Array.isArray(data.result?.errors) ? data.result.errors.length : 0
-      setResult(`${label} : ${sent} envoyé${sent === 1 ? '' : 's'}${errCount ? `, ${errCount} erreur${errCount === 1 ? '' : 's'}` : ''}.`)
+      setResult(
+        `${label} : ${sent} envoyé${sent === 1 ? '' : 's'}${errCount ? `, ${errCount} erreur${errCount === 1 ? '' : 's'}` : ''}. ` +
+        (sent === 0 && !errCount ? "0 est normal si rien n'était dû à ce moment précis." : '')
+      )
     } catch (e) {
       setError(e.message)
     } finally {
@@ -186,7 +117,7 @@ function SystemCard() {
     <div className="bg-white border border-muted/20 rounded-xl p-5 sm:p-6 mb-8">
       <h3 className="font-mono text-xs uppercase tracking-wide text-muted mb-1">Système</h3>
       <p className="text-xs text-muted mb-4">
-        Déclenche manuellement les jobs de rappel (normalement gérés par pg_cron). Utile pour tester ou rattraper un envoi manqué.
+        Déclenche manuellement les jobs de rappel (normalement gérés par pg_cron). "0 envoyés" est le résultat normal s'il n'y avait rien à envoyer au moment du clic — ce n'est pas une erreur.
       </p>
       <div className="flex flex-wrap gap-3 mb-3">
         <button

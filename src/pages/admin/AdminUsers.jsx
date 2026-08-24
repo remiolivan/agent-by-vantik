@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Layout from '../../components/Layout'
+import AdminSectionNav from '../../components/admin/AdminSectionNav'
 import AdminTabs from '../../components/admin/AdminTabs'
 import { callAdminApi } from '../../lib/adminApi'
 
@@ -27,7 +28,8 @@ export default function AdminUsers() {
   }
 
   return (
-    <Layout title="Admin">
+    <Layout title="Admin — Support">
+      <AdminSectionNav active="support" />
       <AdminTabs active="users" />
 
       <form onSubmit={handleSearch} className="flex gap-3 mb-6">

@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
 
 const TABS = [
-  { key: 'dashboard', to: '/admin', label: 'Organizations' },
-  { key: 'users', to: '/admin/users', label: 'Users' },
-  { key: 'activity', to: '/admin/activity', label: 'Activity log' },
+  { key: 'orgs', to: '/admin/support', label: 'Organizations' },
+  { key: 'users', to: '/admin/support/users', label: 'Users' },
+  { key: 'activity', to: '/admin/support/activity', label: 'Activity log' },
 ]
 
 export default function AdminTabs({ active }) {

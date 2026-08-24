@@ -27,6 +27,12 @@ export default function AdminOrgDetail() {
   const [extendDays, setExtendDays] = useState(14)
   const [newPlan, setNewPlan] = useState('')
   const [suspendReason, setSuspendReason] = useState('')
+  const [inviteLinks, setInviteLinks] = useState({})
+  const [exportingEntity, setExportingEntity] = useState(null)
+  const [aiProblem, setAiProblem] = useState('')
+  const [aiDiagnosis, setAiDiagnosis] = useState(null)
+  const [aiBusy, setAiBusy] = useState(false)
+  const [aiError, setAiError] = useState(null)
 
   async function load() {
     setLoading(true)
@@ -74,6 +80,66 @@ export default function AdminOrgDetail() {
     }
   }
 
+  async function handleGetInviteLink(membershipId) {
+    setBusy(true)
+    setNotice(null)
+    setError(null)
+    try {
+      const data = await callAdminApi('get_invite_link', { membershipId })
+      if (data.link) {
+        setInviteLinks((prev) => ({ ...prev, [membershipId]: data.link }))
+        try {
+          await navigator.clipboard.writeText(data.link)
+          setNotice('Lien copié dans le presse-papier — colle-le où tu veux (WhatsApp, SMS…).')
+        } catch {
+          setNotice('Lien généré (affiché ci-dessous) — copie-le manuellement.')
+        }
+      }
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function handleExportCsv(entity) {
+    setExportingEntity(entity)
+    setError(null)
+    try {
+      const data = await callAdminApi('export_org_csv', { orgId, entity })
+      const blob = new Blob([data.csv], { type: 'text/csv;charset=utf-8;' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = data.filename
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+      setNotice(`Export ${entity} : ${data.rowCount} ligne${data.rowCount === 1 ? '' : 's'}.`)
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setExportingEntity(null)
+    }
+  }
+
+  async function handleAiDiagnose(e) {
+    e.preventDefault()
+    if (!aiProblem.trim()) return
+    setAiBusy(true)
+    setAiDiagnosis(null)
+    setAiError(null)
+    try {
+      const data = await callAdminApi('ai_diagnose', { orgId, problem: aiProblem.trim() })
+      setAiDiagnosis(data.diagnosis)
+    } catch (err) {
+      setAiError(err.message)
+    } finally {
+      setAiBusy(false)
+    }
+  }
+
   async function handleResetPassword(email) {
     setBusy(true)
     setNotice(null)
@@ -94,7 +160,7 @@ export default function AdminOrgDetail() {
   if (error && !data) {
     return (
       <Layout title="Admin">
-        <Link to="/admin" className="text-sm text-muted hover:text-navyDeep mb-6 inline-block">← All organizations</Link>
+        <Link to="/admin/support" className="text-sm text-muted hover:text-navyDeep mb-6 inline-block">← Toutes les organisations</Link>
         <p className="text-sm text-red-600">{error}</p>
       </Layout>
     )
@@ -128,11 +194,28 @@ export default function AdminOrgDetail() {
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <CountCard label="Contacts" value={counts.contacts} />
-          <CountCard label="Properties" value={counts.properties} />
-          <CountCard label="Documents" value={counts.documents} />
-          <CountCard label="Tasks" value={counts.tasks} />
+        <div>
+          <div className="grid grid-cols-2 gap-3 mb-3">
+            <CountCard label="Contacts" value={counts.contacts} />
+            <CountCard label="Properties" value={counts.properties} />
+            <CountCard label="Documents" value={counts.documents} />
+            <CountCard label="Tasks" value={counts.tasks} />
+          </div>
+          <div className="bg-white border border-muted/20 rounded-xl p-4">
+            <div className="font-mono text-[10px] uppercase tracking-wide text-muted mb-2">Export CSV</div>
+            <div className="flex flex-wrap gap-2">
+              {['contacts', 'properties', 'documents', 'tasks'].map((entity) => (
+                <button
+                  key={entity}
+                  disabled={exportingEntity !== null}
+                  onClick={() => handleExportCsv(entity)}
+                  className="text-xs text-navyDeep border border-navyDeep/30 rounded-lg px-2.5 py-1.5 disabled:opacity-50 capitalize"
+                >
+                  {exportingEntity === entity ? '…' : entity}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -226,13 +309,22 @@ export default function AdminOrgDetail() {
               </div>
               <div className="flex gap-2">
                 {m.status === 'invited' && (
-                  <button
-                    disabled={busy}
-                    onClick={() => handleResendInvite(m.membership_id)}
-                    className="text-xs text-navyDeep border border-navyDeep/30 rounded-lg px-2.5 py-1.5 disabled:opacity-50"
-                  >
-                    Resend invite
-                  </button>
+                  <>
+                    <button
+                      disabled={busy}
+                      onClick={() => handleResendInvite(m.membership_id)}
+                      className="text-xs text-navyDeep border border-navyDeep/30 rounded-lg px-2.5 py-1.5 disabled:opacity-50"
+                    >
+                      Renvoyer l'email
+                    </button>
+                    <button
+                      disabled={busy}
+                      onClick={() => handleGetInviteLink(m.membership_id)}
+                      className="text-xs text-navyDeep border border-navyDeep/30 rounded-lg px-2.5 py-1.5 disabled:opacity-50"
+                    >
+                      Copier le lien
+                    </button>
+                  </>
                 )}
                 {m.status === 'active' && m.email && (
                   <button
@@ -240,14 +332,48 @@ export default function AdminOrgDetail() {
                     onClick={() => handleResetPassword(m.email)}
                     className="text-xs text-navyDeep border border-navyDeep/30 rounded-lg px-2.5 py-1.5 disabled:opacity-50"
                   >
-                    Send password reset
+                    Reset password
                   </button>
                 )}
               </div>
+              {inviteLinks[m.membership_id] && (
+                <div className="w-full mt-2 text-xs text-muted break-all bg-tintBlue/40 rounded-lg px-3 py-2">
+                  {inviteLinks[m.membership_id]}
+                </div>
+              )}
             </div>
           ))}
           {members.length === 0 && <p className="text-sm text-muted py-4">No members.</p>}
         </div>
+      </div>
+
+      <div className="bg-white border border-muted/20 rounded-xl p-5 sm:p-6 mb-8">
+        <h3 className="font-mono text-xs uppercase tracking-wide text-muted mb-1">Assistant IA</h3>
+        <p className="text-xs text-muted mb-4">
+          Décris le problème du client, l'IA regarde les données de cette org (plan, statut, membres, actions récentes) et te propose un diagnostic.
+        </p>
+        <form onSubmit={handleAiDiagnose} className="mb-3">
+          <textarea
+            value={aiProblem}
+            onChange={(e) => setAiProblem(e.target.value)}
+            placeholder="Ex : le client dit qu'il ne reçoit plus les rappels par email depuis 3 jours"
+            className="w-full border border-muted/30 rounded-lg px-3 py-2 text-sm mb-3"
+            rows={2}
+          />
+          <button
+            type="submit"
+            disabled={aiBusy || !aiProblem.trim()}
+            className="bg-navyDeep text-white text-sm rounded-lg px-3.5 py-2 disabled:opacity-50"
+          >
+            {aiBusy ? 'Diagnostic en cours…' : 'Diagnostiquer'}
+          </button>
+        </form>
+        {aiError && <p className="text-sm text-red-600">{aiError}</p>}
+        {aiDiagnosis && (
+          <div className="bg-tintBlue/40 rounded-lg px-4 py-3 text-sm text-ink whitespace-pre-wrap">
+            {aiDiagnosis}
+          </div>
+        )}
       </div>
 
       <div className="bg-white border border-muted/20 rounded-xl p-5 sm:p-6">

@@ -19,6 +19,7 @@ import Onboarding from './pages/Onboarding'
 import ProtectedRoute from './components/ProtectedRoute'
 import ProtectedAdminRoute from './components/ProtectedAdminRoute'
 import AdminDashboard from './pages/admin/AdminDashboard'
+import AdminSupport from './pages/admin/AdminSupport'
 import AdminOrgDetail from './pages/admin/AdminOrgDetail'
 import AdminUsers from './pages/admin/AdminUsers'
 import AdminActivity from './pages/admin/AdminActivity'
@@ -43,9 +44,10 @@ export default function App() {
       <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
       <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
       <Route path="/admin" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>} />
+      <Route path="/admin/support" element={<ProtectedAdminRoute><AdminSupport /></ProtectedAdminRoute>} />
+      <Route path="/admin/support/users" element={<ProtectedAdminRoute><AdminUsers /></ProtectedAdminRoute>} />
+      <Route path="/admin/support/activity" element={<ProtectedAdminRoute><AdminActivity /></ProtectedAdminRoute>} />
       <Route path="/admin/orgs/:orgId" element={<ProtectedAdminRoute><AdminOrgDetail /></ProtectedAdminRoute>} />
-      <Route path="/admin/users" element={<ProtectedAdminRoute><AdminUsers /></ProtectedAdminRoute>} />
-      <Route path="/admin/activity" element={<ProtectedAdminRoute><AdminActivity /></ProtectedAdminRoute>} />
     </Routes>
   )
 }

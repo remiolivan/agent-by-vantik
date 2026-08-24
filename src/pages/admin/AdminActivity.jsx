@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Layout from '../../components/Layout'
+import AdminSectionNav from '../../components/admin/AdminSectionNav'
 import AdminTabs from '../../components/admin/AdminTabs'
 import { callAdminApi } from '../../lib/adminApi'
 
@@ -31,7 +32,8 @@ export default function AdminActivity() {
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
 
   return (
-    <Layout title="Admin">
+    <Layout title="Admin — Support">
+      <AdminSectionNav active="support" />
       <AdminTabs active="activity" />
 
       {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
