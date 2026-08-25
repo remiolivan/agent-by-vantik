@@ -1,13 +1,13 @@
-// Vantik mark — official geometry from the brand kit (v2.1, Aug 2026):
-// three ascending bars (navy / mid blue / gold, viewBox 0 0 253 354) capped
-// by an amber beacon of concentric rings. Flat single-tone fills — the kit
-// itself calls for flat colors (no gradient/glow) below ~40px, which is
-// every size this mark ever renders at in the app (sidebar, mobile header).
+// Agent by Vantik mark — official construction from Agent_Brand_Assets_dc.html.
 //
-// Bar 1 (shortest) is Navy on light backgrounds, but switches to Paper on
-// dark backgrounds — documented fix in the v2.1 kit: Navy against the dark
-// lockup's Void background measures 1.15:1 contrast (barely visible),
-// while Paper measures 18.3:1. Bars 2 and 3 (Mid Blue, Gold) never recolor.
+// Below ~32px (every size this renders at in the app: sidebar ~26px, mobile
+// header ~24-28px) the spec calls for "flat fills, solid beacon, no relief —
+// the 16/32px rule": a single solid amber circle, no concentric rings (those
+// only exist on the large hero/marketing version of the mark, where they're
+// actually visible).
+//
+// Bar 1 (shortest) is Navy on light backgrounds, Paper on dark — the
+// documented fix for Navy's near-invisible contrast against dark surfaces.
 function Mark({ size = 32, on = 'light' }) {
   const bar1 = on === 'dark' ? '#F7F5F0' : '#16213E'
   return (
@@ -15,14 +15,17 @@ function Mark({ size = 32, on = 'light' }) {
       <rect x="0" y="234" width="65" height="120" rx="12" fill={bar1} />
       <rect x="89" y="174" width="64" height="180" rx="12" fill="#4C7BC9" />
       <rect x="177" y="91" width="64" height="263" rx="12" fill="#C9A868" />
-      <circle cx="207" cy="45" r="22" stroke="#E8963C" strokeOpacity="0.55" strokeWidth="4" fill="none" />
-      <circle cx="207" cy="45" r="10" fill="#E8963C" />
+      <circle cx="207" cy="45" r="30" fill="#E8963C" />
     </svg>
   )
 }
 
 // variant: 'icon' (mark only) | 'full' (mark + wordmark)
 // on: 'light' background (navy text) | 'dark' background (white text)
+//
+// Construction rules (from the brand doc): bars sit on the baseline of
+// "Agent"; "by Vantik" sits on its own row below the whole lockup, left
+// edge aligned to bar 1 — not indented under the wordmark.
 export default function Logo({ variant = 'full', on = 'light', size = 32, className = '' }) {
   if (variant === 'icon') {
     return <Mark size={size} on={on} />
@@ -30,20 +33,21 @@ export default function Logo({ variant = 'full', on = 'light', size = 32, classN
 
   const titleColor = on === 'dark' ? 'text-white' : 'text-navy'
   const subColor = on === 'dark' ? 'text-navMuted' : 'text-muted'
+  const markSize = size * 0.72
 
   return (
-    <div className={`flex items-center gap-2.5 ${className}`}>
-      <Mark size={size * 0.72} on={on} />
-      <div className="leading-none">
-        <div className={`font-display font-bold tracking-tight ${titleColor}`} style={{ fontSize: size * 0.62 }}>
+    <div className={`flex flex-col gap-1 ${className}`}>
+      <div className="flex items-end gap-2">
+        <Mark size={markSize} on={on} />
+        <div className={`font-display font-bold tracking-tight leading-none ${titleColor}`} style={{ fontSize: size * 0.62 }}>
           Agent
         </div>
-        <div
-          className={`font-display font-medium uppercase ${subColor}`}
-          style={{ fontSize: size * 0.24, marginTop: 2, letterSpacing: '0.18em' }}
-        >
-          by Vantik
-        </div>
+      </div>
+      <div
+        className={`font-display font-medium uppercase leading-none ${subColor}`}
+        style={{ fontSize: size * 0.24, letterSpacing: '0.18em' }}
+      >
+        by Vantik
       </div>
     </div>
   )
