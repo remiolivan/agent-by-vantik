@@ -5,16 +5,48 @@ import {
   UsersRound, CreditCard, LogOut, X, MoreHorizontal, CalendarDays, Settings2, Shield,
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../lib/useAuth'
 import { useAdmin } from '../lib/useAdmin'
 import Logo from './Logo'
 
 const TEAM_PLANS = ['team', 'brokerage']
 
-function navLinkClasses(isActive, dense = false) {
-  const base = `flex items-center gap-3 rounded-lg text-sm transition-colors ${dense ? 'px-3 py-2' : 'px-3.5 py-2.5'}`
-  return isActive
-    ? `${base} bg-navyDeep text-white font-medium`
-    : `${base} text-muted hover:bg-tintBlue hover:text-navyDeep`
+function todayLabel() {
+  return new Date().toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
+}
+
+function initialsFromEmail(email) {
+  if (!email) return '—'
+  const name = email.split('@')[0].replace(/[._-]+/g, ' ').trim()
+  const parts = name.split(' ').filter(Boolean)
+  if (parts.length === 0) return email.slice(0, 2).toUpperCase()
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
+  return (parts[0][0] + parts[1][0]).toUpperCase()
+}
+
+function sidebarLinkClasses(isActive) {
+  return `block rounded-[5px] px-3 py-2 text-[13px] transition-colors ${
+    isActive
+      ? 'bg-mid text-white font-semibold'
+      : 'text-navLight hover:text-white hover:bg-white/5'
+  }`
+}
+
+// Section header shown at the top of every page: mono uppercase label,
+// today's date, round navy avatar. 52px tall, matches the Direction A spec.
+function TopBar({ title }) {
+  const { user } = useAuth()
+  return (
+    <div className="h-[52px] shrink-0 bg-white border-b border-border flex items-center justify-between px-4 lg:px-5">
+      <span className="font-mono text-[11px] tracking-[0.14em] uppercase text-muted">{title}</span>
+      <div className="flex items-center gap-3">
+        <span className="hidden sm:inline font-mono text-xs text-muted">{todayLabel()}</span>
+        <div className="w-[27px] h-[27px] rounded-full bg-navy text-paper text-[11px] flex items-center justify-center font-medium">
+          {initialsFromEmail(user?.email)}
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default function Layout({ title, action, children }) {
@@ -36,11 +68,11 @@ export default function Layout({ title, action, children }) {
   const showTeam = TEAM_PLANS.includes(plan)
 
   const PRIMARY_NAV = [
-    { to: '/', label: 'Dashboard', icon: LayoutGrid, end: true },
-    { to: '/prospects', label: 'Prospects', icon: Users },
-    { to: '/properties', label: 'Properties', icon: Building2 },
-    { to: '/tasks', label: 'Tasks', icon: CheckSquare },
-    { to: '/calendar', label: 'Calendar', icon: CalendarDays },
+    { to: '/', label: 'Dashboard', shortLabel: 'Dash', icon: LayoutGrid, end: true },
+    { to: '/prospects', label: 'Prospects', shortLabel: 'Prospects', icon: Users },
+    { to: '/properties', label: 'Properties', shortLabel: 'Props', icon: Building2 },
+    { to: '/tasks', label: 'Tasks', shortLabel: 'Tasks', icon: CheckSquare },
+    { to: '/calendar', label: 'Calendar', shortLabel: 'Cal', icon: CalendarDays },
   ]
 
   const MORE_NAV = [
@@ -60,78 +92,74 @@ export default function Layout({ title, action, children }) {
 
   return (
     <div className="min-h-screen bg-paper lg:flex">
-      {/* Desktop sidebar */}
-      <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:shrink-0 lg:border-r lg:border-muted/15 lg:bg-white lg:sticky lg:top-0 lg:h-screen">
-        <div className="px-5 py-6">
-          <Logo size={30} />
+      {/* Desktop sidebar — navy, matches Direction A "01 — Dashboard" spec */}
+      <aside className="hidden lg:flex lg:flex-col lg:w-[172px] lg:shrink-0 lg:bg-navy lg:sticky lg:top-0 lg:h-screen lg:py-4 lg:px-2.5 lg:gap-5">
+        <div className="flex flex-col gap-0.5 px-1.5">
+          <Logo size={26} on="dark" />
         </div>
-        <nav className="flex-1 px-3 space-y-1">
+        <nav className="flex-1 flex flex-col gap-0.5">
           {ALL_NAV.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              className={({ isActive }) => navLinkClasses(isActive)}
-            >
-              <item.icon size={18} strokeWidth={2} />
+            <NavLink key={item.to} to={item.to} end={item.end} className={({ isActive }) => sidebarLinkClasses(isActive)}>
               {item.label}
             </NavLink>
           ))}
         </nav>
-        <div className="px-3 pb-5 pt-3 border-t border-muted/15">
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 rounded-lg px-3.5 py-2.5 text-sm text-muted hover:bg-tintBlue hover:text-navyDeep w-full"
-          >
-            <LogOut size={18} strokeWidth={2} />
-            Log out
-          </button>
-        </div>
+        <button
+          onClick={handleLogout}
+          className="mt-auto text-left font-mono text-[11px] text-navFaint hover:text-navLight px-2.5 pt-3 border-t border-white/10"
+        >
+          Log out
+        </button>
       </aside>
 
       {/* Mobile top bar */}
-      <header className="lg:hidden sticky top-0 z-30 bg-white border-b border-muted/15 px-4 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))] flex items-center justify-between">
-        <Logo size={26} />
-        <button
-          onClick={handleLogout}
-          aria-label="Log out"
-          className="text-muted p-2 -mr-2"
-        >
+      <header className="lg:hidden sticky top-0 z-30 bg-navy px-4 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))] flex items-center justify-between">
+        <Logo size={24} on="dark" />
+        <button onClick={handleLogout} aria-label="Log out" className="text-navLight p-2 -mr-2">
           <LogOut size={19} strokeWidth={2} />
         </button>
       </header>
 
       {/* Main content */}
-      <div className="flex-1 min-w-0 pb-20 lg:pb-0">
-        <div className="px-4 py-5 lg:px-10 lg:py-8 flex items-center justify-between gap-3">
-          <h1 className="font-display text-xl lg:text-2xl font-medium text-navyDeep">{title}</h1>
+      <div className="flex-1 min-w-0 pb-20 lg:pb-0 flex flex-col">
+        <TopBar title={title} />
+        <div className="px-4 py-4 lg:px-5 lg:py-5 flex items-center justify-between gap-3">
+          <h1 className="font-display text-lg lg:text-xl font-semibold tracking-tight text-navy">{title}</h1>
           {action && <div className="shrink-0">{action}</div>}
         </div>
-        <main className="px-4 lg:px-10 pb-8">{children}</main>
+        <main className="px-4 lg:px-5 pb-8 flex-1">{children}</main>
       </div>
 
-      {/* Mobile bottom tab bar */}
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-muted/15 flex items-stretch pb-[env(safe-area-inset-bottom)]">
+      {/* Mobile bottom tab bar — navy, filled square icon on active tab */}
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-navy grid grid-cols-6 items-stretch pb-[env(safe-area-inset-bottom)] pt-2">
         {PRIMARY_NAV.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
             end={item.end}
-            className={({ isActive }) =>
-              `flex-1 flex flex-col items-center justify-center gap-1 py-2.5 text-[11px] ${
-                isActive ? 'text-navyDeep font-medium' : 'text-faint'
-              }`
-            }
+            className="flex flex-col items-center justify-center gap-1 py-1.5 text-[10px]"
           >
-            <item.icon size={20} strokeWidth={2} />
-            {item.label}
+            {({ isActive }) => (
+              <>
+                <span
+                  className={`w-6 h-6 rounded-[6px] flex items-center justify-center ${
+                    isActive ? 'bg-mid' : 'border-[1.5px] border-navFaint'
+                  }`}
+                >
+                  <item.icon size={14} strokeWidth={2} className={isActive ? 'text-white' : 'text-navMuted'} />
+                </span>
+                <span className={isActive ? 'text-white font-semibold' : 'text-navMuted'}>{item.shortLabel}</span>
+              </>
+            )}
           </NavLink>
         ))}
         <button
           onClick={() => setMoreOpen(true)}
-          className="flex-1 flex flex-col items-center justify-center gap-1 py-2.5 text-[11px] text-faint"
+          className="flex flex-col items-center justify-center gap-1 py-1.5 text-[10px] text-navMuted"
         >
-          <MoreHorizontal size={20} strokeWidth={2} />
+          <span className="w-6 h-6 rounded-[6px] border-[1.5px] border-navFaint flex items-center justify-center">
+            <MoreHorizontal size={14} strokeWidth={2} className="text-navMuted" />
+          </span>
           More
         </button>
       </nav>
@@ -139,10 +167,10 @@ export default function Layout({ title, action, children }) {
       {/* Mobile "More" sheet */}
       {moreOpen && (
         <div className="lg:hidden fixed inset-0 z-40">
-          <div className="absolute inset-0 bg-navyDeep/40" onClick={() => setMoreOpen(false)} />
-          <div className="absolute bottom-0 inset-x-0 bg-white rounded-t-2xl px-4 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+          <div className="absolute inset-0 bg-navy/50" onClick={() => setMoreOpen(false)} />
+          <div className="absolute bottom-0 inset-x-0 bg-white rounded-t-2xl px-4 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))] shadow-sheet">
             <div className="flex items-center justify-between mb-3">
-              <span className="font-display text-base font-medium text-navyDeep">More</span>
+              <span className="font-display text-base font-semibold text-navy">More</span>
               <button onClick={() => setMoreOpen(false)} className="text-muted p-1" aria-label="Close">
                 <X size={20} />
               </button>
@@ -153,7 +181,11 @@ export default function Layout({ title, action, children }) {
                   key={item.to}
                   to={item.to}
                   onClick={() => setMoreOpen(false)}
-                  className={({ isActive }) => navLinkClasses(isActive, true)}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 rounded-[5px] px-3 py-2.5 text-sm ${
+                      isActive ? 'bg-navy text-white font-medium' : 'text-ink hover:bg-paper'
+                    }`
+                  }
                 >
                   <item.icon size={18} strokeWidth={2} />
                   {item.label}
