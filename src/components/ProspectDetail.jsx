@@ -197,18 +197,18 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
     <div className="fixed inset-0 z-40">
       <div className="absolute inset-0 bg-navyDeep/40" onClick={onClose} />
       <div className="absolute inset-y-0 right-0 w-full sm:max-w-md bg-paper overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-border px-5 pb-4 pt-[calc(1rem+env(safe-area-inset-top))] flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-navy border-b border-navy px-5 pb-4 pt-[calc(1rem+env(safe-area-inset-top))] flex items-center justify-between z-10">
           <div className="min-w-0">
-            <div className="font-display text-lg font-medium text-navyDeep truncate">{current.name}</div>
-            {current.email && <div className="text-xs text-muted truncate">{current.email}</div>}
+            <div className="font-display text-lg font-semibold text-white truncate">{current.name}</div>
+            {current.email && <div className="text-xs text-navLight truncate">{current.email}</div>}
           </div>
           <div className="flex items-center gap-1 shrink-0">
             {!editing && (
-              <button onClick={() => setEditing(true)} className="text-navyDeep p-1.5" aria-label="Edit">
+              <button onClick={() => setEditing(true)} className="text-navLight hover:text-white p-1.5" aria-label="Edit">
                 <Pencil size={17} />
               </button>
             )}
-            <button onClick={onClose} aria-label="Close" className="text-muted p-1.5">
+            <button onClick={onClose} aria-label="Close" className="text-navLight hover:text-white p-1.5">
               <X size={20} />
             </button>
           </div>
@@ -220,7 +220,7 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
               default, not something they have to notice first. */}
           <button
             onClick={() => setShowFollowUp(true)}
-            className="w-full flex items-center justify-center gap-2 bg-teal hover:bg-teal-dark text-white text-sm font-medium rounded-md px-4 py-3"
+            className="w-full flex items-center justify-center gap-2 bg-amber hover:bg-amber/90 text-ink font-bold rounded-md px-4 py-3"
           >
             <Sparkles size={16} />
             Draft follow-up
@@ -348,7 +348,7 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
                   placeholder="Description" rows={2} className="w-full border border-border rounded-md px-3 py-2 text-sm"
                 />
               )}
-              <button type="submit" disabled={addingTask} className="bg-teal text-white text-sm rounded-md px-4 py-2 disabled:opacity-50">
+              <button type="submit" disabled={addingTask} className="bg-amber text-ink font-bold rounded-md px-4 py-2 disabled:opacity-50">
                 {addingTask ? 'Adding…' : 'Add task'}
               </button>
             </form>
@@ -380,7 +380,7 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
                   <div key={t.id} className="bg-white border border-border rounded-md px-4 py-3 flex items-start gap-3">
                     <input
                       type="checkbox" checked={!!t.completed_at} onChange={() => toggleTask(t)}
-                      className="w-5 h-5 accent-teal shrink-0 mt-0.5"
+                      className="w-5 h-5 accent-amber shrink-0 mt-0.5"
                     />
                     <div className="flex-1 min-w-0">
                       <div className={`text-sm ${t.completed_at ? 'line-through text-muted' : 'text-ink'}`}>{t.title}</div>
@@ -418,7 +418,7 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
               {!shareUrl ? (
                 <button
                   onClick={generateShare} disabled={sharing}
-                  className="flex items-center gap-2 bg-teal text-white text-sm font-medium rounded-md px-4 py-2.5 disabled:opacity-50"
+                  className="flex items-center gap-2 bg-amber text-ink font-bold rounded-md px-4 py-2.5 disabled:opacity-50"
                 >
                   <Share2 size={15} />
                   {sharing ? 'Generating PDF…' : 'Generate summary to share'}

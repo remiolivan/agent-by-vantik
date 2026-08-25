@@ -221,20 +221,20 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
     <div className="fixed inset-0 z-40">
       <div className="absolute inset-0 bg-navyDeep/40" onClick={onClose} />
       <div className="absolute inset-y-0 right-0 w-full sm:max-w-lg bg-paper overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-border px-5 pb-4 pt-[calc(1rem+env(safe-area-inset-top))] flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-navy border-b border-navy px-5 pb-4 pt-[calc(1rem+env(safe-area-inset-top))] flex items-center justify-between z-10">
           <div className="min-w-0">
-            <div className="font-display text-lg font-medium text-navyDeep truncate">{current.title}</div>
+            <div className="font-display text-lg font-semibold text-white truncate">{current.title}</div>
             {current.value && (
-              <div className="text-xs text-muted font-mono">{formatMoney(current.value, current.currency || 'AED')}</div>
+              <div className="text-xs text-navLight font-mono">{formatMoney(current.value, current.currency || 'AED')}</div>
             )}
           </div>
           <div className="flex items-center gap-1 shrink-0">
             {!editing && (
-              <button onClick={() => setEditing(true)} className="text-navyDeep p-1.5" aria-label="Edit">
+              <button onClick={() => setEditing(true)} className="text-navLight hover:text-white p-1.5" aria-label="Edit">
                 <Pencil size={17} />
               </button>
             )}
-            <button onClick={onClose} aria-label="Close" className="text-muted p-1.5">
+            <button onClick={onClose} aria-label="Close" className="text-navLight hover:text-white p-1.5">
               <X size={20} />
             </button>
           </div>
@@ -243,7 +243,7 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
         <div className="px-5 py-5 space-y-8">
           <button
             onClick={() => setShowFollowUp(true)}
-            className="w-full flex items-center justify-center gap-2 bg-teal hover:bg-teal-dark text-white text-sm font-medium rounded-md px-4 py-3"
+            className="w-full flex items-center justify-center gap-2 bg-amber hover:bg-amber/90 text-ink font-bold rounded-md px-4 py-3"
           >
             <Sparkles size={16} />
             Draft follow-up
@@ -266,16 +266,16 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
               </div>
               {(current.completion_status || current.furnished || current.has_pool || current.has_balcony || current.is_vacant || current.has_gym) && (
                 <div className="flex flex-wrap gap-2 text-xs">
-                  {current.completion_status && <span className="rounded px-2 py-1 bg-teal/10 text-teal-700">{current.completion_status === 'ready' ? 'Ready' : 'Off-plan'}</span>}
-                  {current.furnished && <span className="rounded px-2 py-1 bg-teal/10 text-teal-700 capitalize">{current.furnished}</span>}
-                  {current.has_pool && <span className="rounded px-2 py-1 bg-teal/10 text-teal-700">Pool</span>}
-                  {current.has_balcony && <span className="rounded px-2 py-1 bg-teal/10 text-teal-700">Balcony</span>}
-                  {current.is_vacant && <span className="rounded px-2 py-1 bg-teal/10 text-teal-700">Vacant</span>}
-                  {current.has_gym && <span className="rounded px-2 py-1 bg-teal/10 text-teal-700">Gym</span>}
+                  {current.completion_status && <span className="rounded px-2 py-1 bg-amber/10 text-[#9A5A16]">{current.completion_status === 'ready' ? 'Ready' : 'Off-plan'}</span>}
+                  {current.furnished && <span className="rounded px-2 py-1 bg-amber/10 text-[#9A5A16] capitalize">{current.furnished}</span>}
+                  {current.has_pool && <span className="rounded px-2 py-1 bg-amber/10 text-[#9A5A16]">Pool</span>}
+                  {current.has_balcony && <span className="rounded px-2 py-1 bg-amber/10 text-[#9A5A16]">Balcony</span>}
+                  {current.is_vacant && <span className="rounded px-2 py-1 bg-amber/10 text-[#9A5A16]">Vacant</span>}
+                  {current.has_gym && <span className="rounded px-2 py-1 bg-amber/10 text-[#9A5A16]">Gym</span>}
                 </div>
               )}
               {current.listing_url && (
-                <a href={current.listing_url} target="_blank" rel="noreferrer" className="text-xs text-teal-700 underline block">Open listing ↗</a>
+                <a href={current.listing_url} target="_blank" rel="noreferrer" className="text-xs text-[#9A5A16] underline block">Open listing ↗</a>
               )}
               {current.description && <p className="text-sm text-ink whitespace-pre-wrap">{current.description}</p>}
               {(current.owner_contact_id || current.owner_name) && (
@@ -527,7 +527,7 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
                 <button
                   onClick={generateShare}
                   disabled={sharing}
-                  className="flex items-center gap-2 bg-teal text-white text-sm font-medium rounded-md px-4 py-2.5 disabled:opacity-50"
+                  className="flex items-center gap-2 bg-amber text-ink font-bold rounded-md px-4 py-2.5 disabled:opacity-50"
                 >
                   <Share2 size={15} />
                   {sharing ? 'Generating PDF…' : 'Generate brochure to share'}
