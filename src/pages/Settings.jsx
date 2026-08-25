@@ -33,11 +33,11 @@ export default function Settings() {
   return (
     <Layout title="Settings">
       <div className="max-w-3xl space-y-6">
-        <div className="bg-white border border-muted/20 rounded-xl p-5 sm:p-6">
-          <div className="font-mono text-xs uppercase tracking-wide text-muted mb-4">Reminders</div>
+        <div className="bg-white border border-border rounded-md p-5 sm:p-6">
+          <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-4">Reminders</div>
           <div className="space-y-5">
             <PushNotificationToggle />
-            <div className="pt-5 border-t border-muted/15 flex items-center justify-between">
+            <div className="pt-5 border-t border-border flex items-center justify-between">
               <div>
                 <div className="text-sm text-ink font-medium">Morning digest</div>
                 <div className="text-xs text-muted mt-0.5">
@@ -47,7 +47,7 @@ export default function Settings() {
               <button
                 onClick={toggleDigest} disabled={savingDigest || !membershipId}
                 className={`text-xs rounded-full px-3.5 py-1.5 border disabled:opacity-50 ${
-                  digestEnabled ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'
+                  digestEnabled ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-muted'
                 }`}
               >
                 {digestEnabled ? 'On' : 'Off'}

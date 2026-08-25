@@ -62,12 +62,12 @@ export default function TeamActivity() {
         <div className="flex gap-2 flex-wrap mb-6">
           <button
             onClick={() => setFilterType('all')}
-            className={`text-xs rounded-full px-3 py-1.5 border ${filterType === 'all' ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'}`}
+            className={`text-xs rounded-full px-3 py-1.5 border ${filterType === 'all' ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-muted'}`}
           >All</button>
           {Object.entries(TYPE_META).map(([key, meta]) => (
             <button
               key={key} onClick={() => setFilterType(key)}
-              className={`flex items-center gap-1 text-xs rounded-full px-3 py-1.5 border ${filterType === key ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'}`}
+              className={`flex items-center gap-1 text-xs rounded-full px-3 py-1.5 border ${filterType === key ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-muted'}`}
             >
               <meta.icon size={12} />{meta.label}
             </button>
@@ -81,8 +81,8 @@ export default function TeamActivity() {
           {filtered.map((a) => {
             const meta = TYPE_META[a.type] || TYPE_META.note
             return (
-              <div key={a.id} className="bg-white border border-muted/20 rounded-xl p-4 flex gap-3">
-                <div className="w-8 h-8 rounded-full bg-tintBlue flex items-center justify-center shrink-0">
+              <div key={a.id} className="bg-white border border-border rounded-md p-4 flex gap-3">
+                <div className="w-8 h-8 rounded-full bg-mid/10 flex items-center justify-center shrink-0">
                   <meta.icon size={14} className="text-navyDeep" />
                 </div>
                 <div className="flex-1 min-w-0">

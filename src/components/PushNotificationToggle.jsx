@@ -96,7 +96,7 @@ export default function PushNotificationToggle() {
         <button
           onClick={subscribed ? disable : enable} disabled={loading}
           className={`text-xs rounded-full px-3.5 py-1.5 border disabled:opacity-50 ${
-            subscribed ? 'border-muted/30 text-muted' : 'bg-navyDeep text-white border-navyDeep'
+            subscribed ? 'border-border text-muted' : 'bg-navyDeep text-white border-navyDeep'
           }`}
         >
           {loading ? '…' : subscribed ? 'Disable' : 'Enable'}

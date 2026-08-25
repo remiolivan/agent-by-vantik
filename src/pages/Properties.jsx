@@ -10,11 +10,11 @@ const TYPES = ['apartment', 'villa', 'townhouse', 'land', 'commercial', 'other']
 const STATUSES = {
   available: { label: 'Available', className: 'text-teal-700 bg-teal/10' },
   under_offer: { label: 'Under offer', className: 'text-amber bg-amber/10' },
-  sold: { label: 'Sold', className: 'text-navyDeep bg-tintBlue' },
-  rented: { label: 'Rented', className: 'text-navyDeep bg-tintBlue' },
+  sold: { label: 'Sold', className: 'text-navyDeep bg-mid/10' },
+  rented: { label: 'Rented', className: 'text-navyDeep bg-mid/10' },
 }
 const LISTING_TYPES = {
-  sale: { label: 'For sale', className: 'text-navyDeep bg-tintBlue' },
+  sale: { label: 'For sale', className: 'text-navyDeep bg-mid/10' },
   rent: { label: 'For rent', className: 'text-teal-700 bg-teal/10' },
 }
 const AMENITIES = [
@@ -123,44 +123,44 @@ export default function Properties() {
   }
 
   const newPropertyForm = (
-    <form onSubmit={createProperty} className="px-4 py-5 -mx-4 mb-6 bg-white border-y border-muted/20 sm:mx-0 sm:rounded-xl sm:border grid grid-cols-2 sm:grid-cols-3 gap-3">
+    <form onSubmit={createProperty} className="px-4 py-5 -mx-4 mb-6 bg-white border-y border-border sm:mx-0 sm:rounded-md sm:border grid grid-cols-2 sm:grid-cols-3 gap-3">
       <input
         value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })}
         placeholder="Title (e.g. 2BR Marina)" required
-        className="col-span-2 sm:col-span-3 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+        className="col-span-2 sm:col-span-3 border border-border rounded-md px-3 py-2.5 text-sm"
       />
       <input
         value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })}
-        placeholder="Address" className="col-span-2 sm:col-span-3 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+        placeholder="Address" className="col-span-2 sm:col-span-3 border border-border rounded-md px-3 py-2.5 text-sm"
       />
       <NumberInput
         value={form.value} onChange={(v) => setForm({ ...form, value: v })}
-        placeholder="Price" className="border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+        placeholder="Price" className="border border-border rounded-md px-3 py-2.5 text-sm"
       />
       <input
         value={form.bedrooms} onChange={(e) => setForm({ ...form, bedrooms: e.target.value })}
-        placeholder="Beds" type="number" className="border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+        placeholder="Beds" type="number" className="border border-border rounded-md px-3 py-2.5 text-sm"
       />
       <input
         value={form.bathrooms} onChange={(e) => setForm({ ...form, bathrooms: e.target.value })}
-        placeholder="Baths" type="number" className="border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+        placeholder="Baths" type="number" className="border border-border rounded-md px-3 py-2.5 text-sm"
       />
       <select
         value={form.property_type} onChange={(e) => setForm({ ...form, property_type: e.target.value })}
-        className="border border-muted/30 rounded-lg px-3 py-2.5 text-sm capitalize"
+        className="border border-border rounded-md px-3 py-2.5 text-sm capitalize"
       >
         {TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
       </select>
       <select
         value={form.developer} onChange={(e) => setForm({ ...form, developer: e.target.value })}
-        className="border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+        className="border border-border rounded-md px-3 py-2.5 text-sm"
       >
         <option value="">Developer</option>
         {DEVELOPERS.map((d) => <option key={d} value={d}>{d}</option>)}
       </select>
       <select
         value={form.contact_id} onChange={(e) => setForm({ ...form, contact_id: e.target.value })}
-        className="col-span-2 sm:col-span-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+        className="col-span-2 sm:col-span-1 border border-border rounded-md px-3 py-2.5 text-sm"
       >
         <option value="">No linked prospect</option>
         {prospects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
@@ -171,8 +171,8 @@ export default function Properties() {
           <button
             key={opt.value} type="button"
             onClick={() => setForm({ ...form, listing_type: form.listing_type === opt.value ? '' : opt.value })}
-            className={`flex-1 text-sm rounded-lg px-3 py-2.5 border ${
-              form.listing_type === opt.value ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'
+            className={`flex-1 text-sm rounded-md px-3 py-2.5 border ${
+              form.listing_type === opt.value ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-muted'
             }`}
           >{opt.label}</button>
         ))}
@@ -182,8 +182,8 @@ export default function Properties() {
           <button
             key={opt.value} type="button"
             onClick={() => setForm({ ...form, furnished: form.furnished === opt.value ? '' : opt.value })}
-            className={`flex-1 text-sm rounded-lg px-3 py-2.5 border ${
-              form.furnished === opt.value ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'
+            className={`flex-1 text-sm rounded-md px-3 py-2.5 border ${
+              form.furnished === opt.value ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-muted'
             }`}
           >{opt.label}</button>
         ))}
@@ -191,8 +191,8 @@ export default function Properties() {
           <button
             key={opt.value} type="button"
             onClick={() => setForm({ ...form, completion_status: form.completion_status === opt.value ? '' : opt.value })}
-            className={`flex-1 text-sm rounded-lg px-3 py-2.5 border ${
-              form.completion_status === opt.value ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'
+            className={`flex-1 text-sm rounded-md px-3 py-2.5 border ${
+              form.completion_status === opt.value ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-muted'
             }`}
           >{opt.label}</button>
         ))}
@@ -203,7 +203,7 @@ export default function Properties() {
             key={a.key} type="button"
             onClick={() => setForm({ ...form, [a.key]: !form[a.key] })}
             className={`text-xs rounded-full px-3 py-1.5 border ${
-              form[a.key] ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'
+              form[a.key] ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-muted'
             }`}
           >{a.label}</button>
         ))}
@@ -211,15 +211,15 @@ export default function Properties() {
       <input
         value={form.listing_url} onChange={(e) => setForm({ ...form, listing_url: e.target.value })}
         placeholder="Link to the listing (Property Finder, Bayut, etc.)"
-        className="col-span-2 sm:col-span-3 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+        className="col-span-2 sm:col-span-3 border border-border rounded-md px-3 py-2.5 text-sm"
       />
       <textarea
         value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })}
         placeholder="Description (used in the shared brochure)" rows={2}
-        className="col-span-2 sm:col-span-3 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+        className="col-span-2 sm:col-span-3 border border-border rounded-md px-3 py-2.5 text-sm"
       />
       <div className="col-span-2 sm:col-span-3 flex gap-3 pt-1">
-        <button type="submit" disabled={creating} className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5 flex-1 sm:flex-none disabled:opacity-50">
+        <button type="submit" disabled={creating} className="bg-mid text-white text-sm font-medium rounded-md px-4 py-2.5 flex-1 sm:flex-none disabled:opacity-50">
           {creating ? 'Adding…' : 'Add property'}
         </button>
         <button type="button" onClick={() => setShowNew(false)} className="text-sm text-muted px-2">Cancel</button>
@@ -232,7 +232,7 @@ export default function Properties() {
       title="Properties"
       action={
         <div className="flex items-center gap-2">
-          <div className="hidden sm:flex bg-white border border-muted/20 rounded-lg p-0.5">
+          <div className="hidden sm:flex bg-white border border-border rounded-md p-0.5">
             <button
               onClick={() => setView('board')}
               className={`text-xs px-3 py-1.5 rounded-md ${view === 'board' ? 'bg-navyDeep text-white' : 'text-muted'}`}
@@ -242,14 +242,14 @@ export default function Properties() {
               className={`text-xs px-3 py-1.5 rounded-md ${view === 'list' ? 'bg-navyDeep text-white' : 'text-muted'}`}
             >List</button>
           </div>
-          <button onClick={() => setShowNew(true)} className="bg-teal text-white text-sm font-medium rounded-lg px-4 py-2.5 lg:py-2 whitespace-nowrap">
+          <button onClick={() => setShowNew(true)} className="bg-amber text-ink font-bold rounded-md px-4 py-2.5 lg:py-2 whitespace-nowrap">
             + New property
           </button>
         </div>
       }
     >
       {loadError && (
-        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mb-4 flex items-center justify-between gap-3">
+        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-md px-4 py-3 mb-4 flex items-center justify-between gap-3">
           <span>Couldn't load your properties: {loadError}</span>
           <button onClick={load} className="underline whitespace-nowrap shrink-0">Retry</button>
         </div>
@@ -266,7 +266,7 @@ export default function Properties() {
                 key={stage.id}
                 onClick={() => setMobileStageIdx(idx)}
                 className={`text-xs rounded-full px-3 py-1.5 whitespace-nowrap border ${
-                  idx === mobileStageIdx ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'
+                  idx === mobileStageIdx ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-muted'
                 }`}
               >
                 {stage.name} · {properties.filter((p) => p.stage_id === stage.id).length}
@@ -290,7 +290,7 @@ export default function Properties() {
           <div className="flex gap-4 min-w-max pb-2">
             {stages.map((stage) => (
               <div key={stage.id} className="w-64 flex-shrink-0">
-                <div className="font-mono text-xs uppercase tracking-wide text-muted mb-3 flex items-center justify-between">
+                <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-3 flex items-center justify-between">
                   <span>{stage.name}</span>
                   <span>{properties.filter((p) => p.stage_id === stage.id).length}</span>
                 </div>
@@ -307,10 +307,10 @@ export default function Properties() {
 
       {/* Desktop list view */}
       <div className={`hidden ${view === 'list' ? 'sm:block' : 'sm:hidden'}`}>
-        <div className="bg-white border border-muted/20 rounded-xl overflow-hidden">
+        <div className="bg-white border border-border rounded-md overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left font-mono text-xs uppercase tracking-wide text-muted border-b border-muted/20">
+              <tr className="text-left font-mono text-[9px] uppercase tracking-[0.1em] text-muted border-b border-border">
                 <th className="py-3 px-4 font-normal">Property</th>
                 <th className="py-3 px-4 font-normal">Type</th>
                 <th className="py-3 px-4 font-normal">Listing</th>
@@ -323,7 +323,7 @@ export default function Properties() {
               {properties.map((p) => (
                 <tr
                   key={p.id} onClick={() => setSelected(p)}
-                  className="border-b border-muted/10 last:border-0 cursor-pointer hover:bg-tintBlue/40"
+                  className="border-b border-border last:border-0 cursor-pointer hover:bg-mid/10"
                 >
                   <td className="py-3 px-4 text-ink">
                     <div>{p.title}</div>
@@ -376,7 +376,7 @@ function PropertyCard({ property, onSelect, onMove }) {
   return (
     <div
       onClick={() => onSelect(property)}
-      className="bg-white border border-muted/20 rounded-xl p-4 cursor-pointer hover:border-navyDeep/30"
+      className="bg-white border border-border rounded-md p-4 cursor-pointer hover:border-navyDeep/30"
     >
       <div className="flex items-start justify-between gap-2 mb-0.5">
         <div className="text-sm font-medium text-ink">{property.title}</div>
@@ -399,7 +399,7 @@ function PropertyCard({ property, onSelect, onMove }) {
         <span className="capitalize">{property.property_type}</span>
       </div>
       {property.contacts?.name && (
-        <div className="text-xs text-navyDeep bg-tintBlue rounded px-2 py-1 mb-3 inline-block">
+        <div className="text-xs text-navyDeep bg-mid/10 rounded px-2 py-1 mb-3 inline-block">
           {property.contacts.name}
         </div>
       )}

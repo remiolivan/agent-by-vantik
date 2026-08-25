@@ -9,7 +9,7 @@ const TABS = [
 
 export default function AdminTabs({ active }) {
   return (
-    <div className="flex gap-1 border-b border-muted/15 mb-6 overflow-x-auto">
+    <div className="flex gap-1 border-b border-border mb-6 overflow-x-auto">
       {TABS.map((t) => (
         <Link
           key={t.key}

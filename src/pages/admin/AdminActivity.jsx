@@ -38,7 +38,7 @@ export default function AdminActivity() {
 
       {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
 
-      <div className="bg-white border border-muted/20 rounded-xl divide-y divide-muted/10">
+      <div className="bg-white border border-border rounded-md divide-y divide-muted/10">
         {entries.map((e) => (
           <div key={e.id} className="px-4 py-3 text-sm">
             <div className="flex items-center justify-between flex-wrap gap-2">

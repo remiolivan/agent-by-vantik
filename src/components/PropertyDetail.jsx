@@ -221,7 +221,7 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
     <div className="fixed inset-0 z-40">
       <div className="absolute inset-0 bg-navyDeep/40" onClick={onClose} />
       <div className="absolute inset-y-0 right-0 w-full sm:max-w-lg bg-paper overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-muted/15 px-5 pb-4 pt-[calc(1rem+env(safe-area-inset-top))] flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-white border-b border-border px-5 pb-4 pt-[calc(1rem+env(safe-area-inset-top))] flex items-center justify-between z-10">
           <div className="min-w-0">
             <div className="font-display text-lg font-medium text-navyDeep truncate">{current.title}</div>
             {current.value && (
@@ -243,20 +243,20 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
         <div className="px-5 py-5 space-y-8">
           <button
             onClick={() => setShowFollowUp(true)}
-            className="w-full flex items-center justify-center gap-2 bg-teal hover:bg-teal-dark text-white text-sm font-medium rounded-lg px-4 py-3"
+            className="w-full flex items-center justify-center gap-2 bg-teal hover:bg-teal-dark text-white text-sm font-medium rounded-md px-4 py-3"
           >
             <Sparkles size={16} />
             Draft follow-up
           </button>
 
           {!editing ? (
-            <div className="bg-white border border-muted/20 rounded-xl p-4 space-y-3">
+            <div className="bg-white border border-border rounded-md p-4 space-y-3">
               {current.address && (
                 <div className="flex items-start gap-1.5 text-sm text-ink"><MapPin size={14} className="mt-0.5 shrink-0 text-muted" /> {current.address}</div>
               )}
               <div className="flex flex-wrap gap-2 text-xs">
                 {current.listing_type && (
-                  <span className="rounded px-2 py-1 bg-tintBlue text-navyDeep font-mono uppercase">{current.listing_type === 'sale' ? 'For sale' : 'For rent'}</span>
+                  <span className="rounded px-2 py-1 bg-mid/10 text-navyDeep font-mono uppercase">{current.listing_type === 'sale' ? 'For sale' : 'For rent'}</span>
                 )}
                 <span className="rounded px-2 py-1 bg-paper text-muted capitalize">{current.property_type}</span>
                 {(current.bedrooms || current.bathrooms) && (
@@ -290,40 +290,40 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
               )}
             </div>
           ) : (
-            <form onSubmit={saveEdits} className="bg-white border border-muted/20 rounded-xl p-4 space-y-3">
+            <form onSubmit={saveEdits} className="bg-white border border-border rounded-md p-4 space-y-3">
               <input
                 value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })}
                 placeholder="Title" required
-                className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
               />
               <input
                 value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })}
-                placeholder="Address" className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                placeholder="Address" className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
               />
               <div className="flex gap-2">
                 <NumberInput
                   value={form.value} onChange={(v) => setForm({ ...form, value: v })}
-                  placeholder="Price (AED)" className="flex-1 min-w-0 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                  placeholder="Price (AED)" className="flex-1 min-w-0 border border-border rounded-md px-3 py-2.5 text-sm"
                 />
                 <input
                   value={form.bedrooms} onChange={(e) => setForm({ ...form, bedrooms: e.target.value })}
-                  placeholder="Beds" type="number" className="w-16 shrink-0 min-w-0 border border-muted/30 rounded-lg px-2 py-2.5 text-sm"
+                  placeholder="Beds" type="number" className="w-16 shrink-0 min-w-0 border border-border rounded-md px-2 py-2.5 text-sm"
                 />
                 <input
                   value={form.bathrooms} onChange={(e) => setForm({ ...form, bathrooms: e.target.value })}
-                  placeholder="Baths" type="number" className="w-16 shrink-0 min-w-0 border border-muted/30 rounded-lg px-2 py-2.5 text-sm"
+                  placeholder="Baths" type="number" className="w-16 shrink-0 min-w-0 border border-border rounded-md px-2 py-2.5 text-sm"
                 />
               </div>
               <select
                 value={form.property_type} onChange={(e) => setForm({ ...form, property_type: e.target.value })}
-                className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm capitalize"
+                className="w-full border border-border rounded-md px-3 py-2.5 text-sm capitalize"
               >
                 {TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
               </select>
 
               <select
                 value={form.developer} onChange={(e) => setForm({ ...form, developer: e.target.value })}
-                className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
               >
                 <option value="">Developer (optional)</option>
                 {DEVELOPERS.map((d) => <option key={d} value={d}>{d}</option>)}
@@ -334,8 +334,8 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
                   <button
                     key={opt.value} type="button"
                     onClick={() => setForm({ ...form, listing_type: form.listing_type === opt.value ? '' : opt.value })}
-                    className={`flex-1 text-sm rounded-lg px-3 py-2.5 border ${
-                      form.listing_type === opt.value ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'
+                    className={`flex-1 text-sm rounded-md px-3 py-2.5 border ${
+                      form.listing_type === opt.value ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-muted'
                     }`}
                   >{opt.label}</button>
                 ))}
@@ -346,8 +346,8 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
                   <button
                     key={opt.value} type="button"
                     onClick={() => setForm({ ...form, furnished: form.furnished === opt.value ? '' : opt.value })}
-                    className={`flex-1 text-sm rounded-lg px-3 py-2.5 border ${
-                      form.furnished === opt.value ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'
+                    className={`flex-1 text-sm rounded-md px-3 py-2.5 border ${
+                      form.furnished === opt.value ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-muted'
                     }`}
                   >{opt.label}</button>
                 ))}
@@ -358,8 +358,8 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
                   <button
                     key={opt.value} type="button"
                     onClick={() => setForm({ ...form, completion_status: form.completion_status === opt.value ? '' : opt.value })}
-                    className={`flex-1 text-sm rounded-lg px-3 py-2.5 border ${
-                      form.completion_status === opt.value ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'
+                    className={`flex-1 text-sm rounded-md px-3 py-2.5 border ${
+                      form.completion_status === opt.value ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-muted'
                     }`}
                   >{opt.label}</button>
                 ))}
@@ -373,7 +373,7 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
                       key={a.key} type="button"
                       onClick={() => setForm({ ...form, [a.key]: !form[a.key] })}
                       className={`text-xs rounded-full px-3 py-1.5 border ${
-                        form[a.key] ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'
+                        form[a.key] ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-muted'
                       }`}
                     >{a.label}</button>
                   ))}
@@ -383,12 +383,12 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
               <input
                 value={form.listing_url} onChange={(e) => setForm({ ...form, listing_url: e.target.value })}
                 placeholder="Link to the listing (Property Finder, Bayut, etc.)"
-                className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
               />
               <textarea
                 value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })}
                 placeholder="Description (used in the shared brochure)" rows={3}
-                className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
               />
 
               <div>
@@ -396,17 +396,17 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
                 <div className="flex gap-2 mb-2">
                   <button
                     type="button" onClick={() => setOwnerMode('link')}
-                    className={`text-xs rounded-full px-3 py-1.5 border ${ownerMode === 'link' ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'}`}
+                    className={`text-xs rounded-full px-3 py-1.5 border ${ownerMode === 'link' ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-muted'}`}
                   >Link to prospect</button>
                   <button
                     type="button" onClick={() => setOwnerMode('manual')}
-                    className={`text-xs rounded-full px-3 py-1.5 border ${ownerMode === 'manual' ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'}`}
+                    className={`text-xs rounded-full px-3 py-1.5 border ${ownerMode === 'manual' ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-muted'}`}
                   >Enter manually</button>
                 </div>
                 {ownerMode === 'link' ? (
                   <select
                     value={form.owner_contact_id} onChange={(e) => setForm({ ...form, owner_contact_id: e.target.value })}
-                    className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm bg-white"
+                    className="w-full border border-border rounded-md px-3 py-2.5 text-sm bg-white"
                   >
                     <option value="">Select a prospect…</option>
                     {contactOptions.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -415,16 +415,16 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
                   <div className="space-y-2">
                     <input
                       value={form.owner_name} onChange={(e) => setForm({ ...form, owner_name: e.target.value })}
-                      placeholder="Owner name" className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                      placeholder="Owner name" className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
                     />
                     <div className="flex gap-2">
                       <input
                         value={form.owner_phone} onChange={(e) => setForm({ ...form, owner_phone: e.target.value })}
-                        placeholder="Phone" className="flex-1 min-w-0 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                        placeholder="Phone" className="flex-1 min-w-0 border border-border rounded-md px-3 py-2.5 text-sm"
                       />
                       <input
                         value={form.owner_email} onChange={(e) => setForm({ ...form, owner_email: e.target.value })}
-                        placeholder="Email" type="email" className="flex-1 min-w-0 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                        placeholder="Email" type="email" className="flex-1 min-w-0 border border-border rounded-md px-3 py-2.5 text-sm"
                       />
                     </div>
                   </div>
@@ -432,7 +432,7 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
               </div>
 
               <div className="flex items-center gap-3 pt-1">
-                <button type="submit" disabled={saving} className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5 disabled:opacity-50">
+                <button type="submit" disabled={saving} className="bg-navyDeep text-white text-sm rounded-md px-4 py-2.5 disabled:opacity-50">
                   {saving ? 'Saving…' : 'Save'}
                 </button>
                 <button type="button" onClick={cancelEdit} className="text-sm text-muted px-2">Cancel</button>
@@ -447,10 +447,10 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
 
           {/* Photos */}
           <div>
-            <div className="font-mono text-xs uppercase tracking-wide text-muted mb-3">Photos</div>
+            <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-3">Photos</div>
             <div className="grid grid-cols-3 gap-2 mb-3">
               {photos.map((p) => (
-                <div key={p.name} className="relative aspect-square rounded-lg overflow-hidden border border-muted/20 group">
+                <div key={p.name} className="relative aspect-square rounded-md overflow-hidden border border-border group">
                   {/* The square crop below is only for the thumbnail grid —
                       clicking opens the full photo uncropped (object-contain)
                       so a portrait photo actually looks like a portrait
@@ -470,7 +470,7 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
               <button
                 onClick={() => photoInputRef.current?.click()}
                 disabled={uploadingPhoto}
-                className="aspect-square rounded-lg border border-dashed border-muted/40 flex flex-col items-center justify-center text-muted text-xs gap-1 disabled:opacity-50"
+                className="aspect-square rounded-md border border-dashed border-border flex flex-col items-center justify-center text-muted text-xs gap-1 disabled:opacity-50"
               >
                 <Upload size={16} />
                 {uploadingPhoto ? '…' : 'Add'}
@@ -481,10 +481,10 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
 
           {/* Documents (title deed, etc.) */}
           <div>
-            <div className="font-mono text-xs uppercase tracking-wide text-muted mb-3">Documents (title deed, etc.)</div>
+            <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-3">Documents (title deed, etc.)</div>
             <div className="space-y-2 mb-3">
               {documents.map((d) => (
-                <div key={d.name} className="bg-white border border-muted/20 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
+                <div key={d.name} className="bg-white border border-border rounded-md px-4 py-3 flex items-center justify-between gap-3">
                   <button onClick={() => downloadDoc(d.name)} className="text-sm text-navyDeep underline text-left truncate flex-1">
                     {displayName(d.name)}
                   </button>
@@ -498,7 +498,7 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
             <button
               onClick={() => docInputRef.current?.click()}
               disabled={uploadingDoc}
-              className="text-sm text-navyDeep border border-navyDeep/30 rounded-lg px-3.5 py-2 disabled:opacity-50"
+              className="text-sm text-navyDeep border border-navyDeep/30 rounded-md px-3.5 py-2 disabled:opacity-50"
             >
               {uploadingDoc ? 'Uploading…' : '+ Upload document'}
             </button>
@@ -507,10 +507,10 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
 
           {/* Invoices linked to this property */}
           <div>
-            <div className="font-mono text-xs uppercase tracking-wide text-muted mb-3">Invoices</div>
+            <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-3">Invoices</div>
             <div className="space-y-2">
               {invoices.map((inv) => (
-                <button key={inv.id} onClick={() => downloadInvoice(inv)} className="w-full text-left bg-white border border-muted/20 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
+                <button key={inv.id} onClick={() => downloadInvoice(inv)} className="w-full text-left bg-white border border-border rounded-md px-4 py-3 flex items-center justify-between gap-3">
                   <span className="flex items-center gap-2 text-sm text-navyDeep"><Receipt size={14} className="text-muted" /> {inv.invoice_number || 'Invoice'}</span>
                   <span className="text-xs text-muted font-mono">{formatMoney(inv.total, inv.currency || 'AED')}</span>
                 </button>
@@ -521,13 +521,13 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
 
           {/* Share to prospect */}
           <div>
-            <div className="font-mono text-xs uppercase tracking-wide text-muted mb-3">Share with a prospect</div>
-            <div className="bg-white border border-muted/20 rounded-xl p-4">
+            <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-3">Share with a prospect</div>
+            <div className="bg-white border border-border rounded-md p-4">
               {!shareUrl ? (
                 <button
                   onClick={generateShare}
                   disabled={sharing}
-                  className="flex items-center gap-2 bg-teal text-white text-sm font-medium rounded-lg px-4 py-2.5 disabled:opacity-50"
+                  className="flex items-center gap-2 bg-teal text-white text-sm font-medium rounded-md px-4 py-2.5 disabled:opacity-50"
                 >
                   <Share2 size={15} />
                   {sharing ? 'Generating PDF…' : 'Generate brochure to share'}
@@ -539,15 +539,15 @@ export default function PropertyDetail({ property, onClose, onUpdated }) {
                     <a
                       href={`https://wa.me/?text=${encodeURIComponent(`${current.title}\n${shareUrl}`)}`}
                       target="_blank" rel="noreferrer"
-                      className="text-sm bg-[#25D366] text-white rounded-lg px-4 py-2.5"
+                      className="text-sm bg-[#25D366] text-white rounded-md px-4 py-2.5"
                     >Send via WhatsApp</a>
                     <a
                       href={`mailto:?subject=${encodeURIComponent(current.title)}&body=${encodeURIComponent(`Here's the brochure: ${shareUrl}`)}`}
-                      className="text-sm text-navyDeep border border-navyDeep/30 rounded-lg px-4 py-2.5"
+                      className="text-sm text-navyDeep border border-navyDeep/30 rounded-md px-4 py-2.5"
                     >Send via email</a>
                     <button
                       onClick={copyShareLink}
-                      className="flex items-center gap-1.5 text-sm text-navyDeep border border-navyDeep/30 rounded-lg px-4 py-2.5"
+                      className="flex items-center gap-1.5 text-sm text-navyDeep border border-navyDeep/30 rounded-md px-4 py-2.5"
                     >
                       {linkCopied ? <Check size={14} /> : <Copy size={14} />}
                       {linkCopied ? 'Copied' : 'Copy link'}

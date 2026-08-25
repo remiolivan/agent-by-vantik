@@ -57,8 +57,8 @@ function SystemCard() {
   }
 
   return (
-    <div className="bg-white border border-muted/20 rounded-xl p-5 sm:p-6 mb-8">
-      <h3 className="font-mono text-xs uppercase tracking-wide text-muted mb-1">Système</h3>
+    <div className="bg-white border border-border rounded-md p-5 sm:p-6 mb-8">
+      <h3 className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-1">Système</h3>
       <p className="text-xs text-muted mb-4">
         Déclenche manuellement les jobs de rappel (normalement gérés par pg_cron). "0 envoyés" est le résultat normal s'il n'y avait rien à envoyer au moment du clic — ce n'est pas une erreur.
       </p>
@@ -66,14 +66,14 @@ function SystemCard() {
         <button
           disabled={busyTarget !== null}
           onClick={() => run('send-reminders', 'Reminders (email)')}
-          className="bg-navyDeep text-white text-sm rounded-lg px-3.5 py-2 disabled:opacity-50"
+          className="bg-mid text-white text-sm font-medium rounded-md px-3.5 py-2 disabled:opacity-50"
         >
           {busyTarget === 'send-reminders' ? 'En cours…' : 'Lancer send-reminders (email)'}
         </button>
         <button
           disabled={busyTarget !== null}
           onClick={() => run('send-due-reminders', 'Due reminders (push)')}
-          className="bg-navyDeep text-white text-sm rounded-lg px-3.5 py-2 disabled:opacity-50"
+          className="bg-mid text-white text-sm font-medium rounded-md px-3.5 py-2 disabled:opacity-50"
         >
           {busyTarget === 'send-due-reminders' ? 'En cours…' : 'Lancer send-due-reminders (push)'}
         </button>
@@ -91,7 +91,7 @@ function MetricCard({ label, value, accent }) {
     accent === 'amber' ? 'text-amber' :
     'text-navyDeep'
   return (
-    <div className="bg-white border border-muted/20 rounded-xl p-4">
+    <div className="bg-white border border-border rounded-md p-4">
       <div className="font-mono text-[10px] uppercase tracking-wide text-muted mb-1.5">{label}</div>
       <div className={`font-display text-2xl font-medium ${accentColor}`}>{value}</div>
     </div>

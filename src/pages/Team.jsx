@@ -92,13 +92,13 @@ export default function Team() {
         </Link>
         {/* Section 0: Organization name (appears on shared PDFs) */}
         <section>
-          <h2 className="font-mono text-xs uppercase tracking-wide text-muted mb-4">Organization name</h2>
+          <h2 className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-4">Organization name</h2>
           <form onSubmit={saveOrgName} className="flex gap-3 items-center">
             <input
               value={orgName} onChange={(e) => setOrgName(e.target.value)}
-              placeholder="Business name" className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm bg-white"
+              placeholder="Business name" className="flex-1 border border-border rounded-md px-3 py-2.5 text-sm bg-white"
             />
-            <button type="submit" disabled={savingOrgName} className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5 disabled:opacity-50 whitespace-nowrap">
+            <button type="submit" disabled={savingOrgName} className="bg-mid text-white text-sm font-medium rounded-md px-4 py-2.5 disabled:opacity-50 whitespace-nowrap">
               {savingOrgName ? 'Saving…' : 'Save'}
             </button>
           </form>
@@ -107,13 +107,13 @@ export default function Team() {
 
         {/* Section 1: Team management */}
         <section>
-          <h2 className="font-mono text-xs uppercase tracking-wide text-muted mb-4">Manage your team</h2>
+          <h2 className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-4">Manage your team</h2>
 
           {teamLocked ? (
-            <div className="bg-white border border-muted/20 rounded-xl p-6">
+            <div className="bg-white border border-border rounded-md p-6">
               <p className="text-sm text-ink mb-1">Team management is part of the Team and Brokerage plans.</p>
               <p className="text-sm text-muted mb-4">Upgrade to invite agents and manage roles.</p>
-              <a href="/billing" className="inline-block bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5">
+              <a href="/billing" className="inline-block bg-mid text-white text-sm font-medium rounded-md px-4 py-2.5">
                 View plans
               </a>
             </div>
@@ -123,18 +123,18 @@ export default function Team() {
             <input
               type="email" required placeholder="agent@email.com"
               value={email} onChange={(e) => setEmail(e.target.value)}
-              className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+              className="flex-1 border border-border rounded-md px-3 py-2.5 text-sm"
             />
             <select
               value={role} onChange={(e) => setRole(e.target.value)}
-              className="border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+              className="border border-border rounded-md px-3 py-2.5 text-sm"
             >
               <option value="agent">Agent</option>
               <option value="admin">Admin</option>
             </select>
             <button
               type="submit" disabled={sending}
-              className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5 disabled:opacity-50 whitespace-nowrap"
+              className="bg-mid text-white text-sm font-medium rounded-md px-4 py-2.5 disabled:opacity-50 whitespace-nowrap"
             >
               {sending ? 'Sending…' : 'Invite'}
             </button>
@@ -145,7 +145,7 @@ export default function Team() {
           {/* Mobile: card list */}
           <div className="space-y-2 sm:hidden">
             {members.map((m) => (
-              <div key={m.id} className="bg-white border border-muted/20 rounded-xl p-4">
+              <div key={m.id} className="bg-white border border-border rounded-md p-4">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm text-ink">{m.invited_email || '—'}</span>
                   <span className={
@@ -162,10 +162,10 @@ export default function Team() {
           </div>
 
           {/* Desktop: table */}
-          <div className="hidden sm:block bg-white border border-muted/20 rounded-xl overflow-hidden">
+          <div className="hidden sm:block bg-white border border-border rounded-md overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left font-mono text-xs uppercase tracking-wide text-muted border-b border-muted/20">
+                <tr className="text-left font-mono text-[9px] uppercase tracking-[0.1em] text-muted border-b border-border">
                   <th className="py-3 px-4 font-normal">Email</th>
                   <th className="py-3 px-4 font-normal">Role</th>
                   <th className="py-3 px-4 font-normal">Status</th>
@@ -173,7 +173,7 @@ export default function Team() {
               </thead>
               <tbody>
                 {members.map((m) => (
-                  <tr key={m.id} className="border-b border-muted/10 last:border-0">
+                  <tr key={m.id} className="border-b border-border last:border-0">
                     <td className="py-3 px-4 text-ink">{m.invited_email || '—'}</td>
                     <td className="py-3 px-4 text-muted capitalize">{m.role}</td>
                     <td className="py-3 px-4">
@@ -196,9 +196,9 @@ export default function Team() {
 
         {/* Section 2: Referral */}
         <section>
-          <h2 className="font-mono text-xs uppercase tracking-wide text-muted mb-4">Refer another agency</h2>
+          <h2 className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-4">Refer another agency</h2>
           {org && (
-            <div className="bg-navyDeep text-paper rounded-xl p-5 sm:p-6">
+            <div className="bg-navyDeep text-paper rounded-md p-5 sm:p-6">
               <div className="font-mono text-xs uppercase tracking-wide text-amber mb-2">Your referral code</div>
               <div className="font-display text-2xl font-medium mb-3">{org.referral_code}</div>
               <p className="text-sm text-paper/70 mb-4">
@@ -207,11 +207,11 @@ export default function Team() {
               <div className="flex flex-col sm:flex-row gap-2">
                 <input
                   readOnly value={referralLink()}
-                  className="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2.5 text-xs font-mono text-paper truncate"
+                  className="flex-1 bg-white/10 border border-white/20 rounded-md px-3 py-2.5 text-xs font-mono text-paper truncate"
                 />
                 <button
                   onClick={copyLink}
-                  className="bg-teal text-white text-sm rounded-lg px-4 py-2.5 whitespace-nowrap"
+                  className="bg-amber text-ink font-bold rounded-md px-4 py-2.5 whitespace-nowrap"
                 >
                   {copied ? 'Copied!' : 'Copy link'}
                 </button>

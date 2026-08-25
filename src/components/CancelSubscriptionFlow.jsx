@@ -34,7 +34,7 @@ export default function CancelSubscriptionFlow({ onClose, onCancelled }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
       <div className="absolute inset-0 bg-navyDeep/40" onClick={onClose} />
-      <div className="relative bg-white rounded-xl max-w-md w-full p-6">
+      <div className="relative bg-white rounded-md max-w-md w-full p-6">
         <button onClick={onClose} className="absolute top-4 right-4 text-muted" aria-label="Close">
           <X size={20} />
         </button>
@@ -49,7 +49,7 @@ export default function CancelSubscriptionFlow({ onClose, onCancelled }) {
             </ul>
             <p className="text-sm text-muted mb-6">Your data stays intact — you can resubscribe any time to pick up where you left off.</p>
             <div className="flex gap-3">
-              <button onClick={() => setStep(1)} className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5">Continue</button>
+              <button onClick={() => setStep(1)} className="bg-navyDeep text-white text-sm rounded-md px-4 py-2.5">Continue</button>
               <button onClick={onClose} className="text-sm text-muted px-2">Never mind, keep my plan</button>
             </div>
           </div>
@@ -63,14 +63,14 @@ export default function CancelSubscriptionFlow({ onClose, onCancelled }) {
               {REASONS.map((r) => (
                 <button
                   key={r} type="button" onClick={() => setReason(r)}
-                  className={`w-full text-left text-sm rounded-lg px-3 py-2.5 border ${
-                    reason === r ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-ink'
+                  className={`w-full text-left text-sm rounded-md px-3 py-2.5 border ${
+                    reason === r ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-ink'
                   }`}
                 >{r}</button>
               ))}
             </div>
             <div className="flex gap-3">
-              <button onClick={() => setStep(2)} className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5">Continue</button>
+              <button onClick={() => setStep(2)} className="bg-navyDeep text-white text-sm rounded-md px-4 py-2.5">Continue</button>
               <button onClick={() => setStep(0)} className="text-sm text-muted px-2">Back</button>
             </div>
           </div>
@@ -90,7 +90,7 @@ export default function CancelSubscriptionFlow({ onClose, onCancelled }) {
             <div className="flex gap-3">
               <button
                 onClick={confirmCancel} disabled={!confirmed || saving}
-                className="bg-red-600 text-white text-sm rounded-lg px-4 py-2.5 disabled:opacity-50"
+                className="bg-red-600 text-white text-sm rounded-md px-4 py-2.5 disabled:opacity-50"
               >
                 {saving ? 'Cancelling…' : 'Cancel subscription'}
               </button>

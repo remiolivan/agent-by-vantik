@@ -59,12 +59,12 @@ export default function ResetPassword() {
             <input
               type="password" placeholder="New password" value={password}
               onChange={(e) => setPassword(e.target.value)} required
-              className="w-full border border-muted/30 rounded px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
+              className="w-full border border-border rounded px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
             />
             <input
               type="password" placeholder="Confirm new password" value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)} required
-              className="w-full border border-muted/30 rounded px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
+              className="w-full border border-border rounded px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
             />
             {error && <p className="text-sm text-red-600">{error}</p>}
             <button

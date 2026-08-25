@@ -61,7 +61,7 @@ export default function ActivityLog({ contactId, propertyId }) {
 
   return (
     <div>
-      <div className="font-mono text-xs uppercase tracking-wide text-muted mb-3">Activity</div>
+      <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-3">Activity</div>
 
       <form onSubmit={logActivity} className="space-y-2 mb-4">
         <div className="flex gap-1.5 flex-wrap">
@@ -69,7 +69,7 @@ export default function ActivityLog({ contactId, propertyId }) {
             <button
               key={t.value} type="button" onClick={() => setType(t.value)}
               className={`flex items-center gap-1 text-xs rounded-full px-2.5 py-1 border ${
-                type === t.value ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'
+                type === t.value ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-muted'
               }`}
             >
               <t.icon size={12} />{t.label}
@@ -80,11 +80,11 @@ export default function ActivityLog({ contactId, propertyId }) {
           <textarea
             value={content} onChange={(e) => setContent(e.target.value)}
             placeholder="What was said or done…" rows={2}
-            className="flex-1 border border-muted/30 rounded-lg px-3 py-2 text-sm resize-none"
+            className="flex-1 border border-border rounded-md px-3 py-2 text-sm resize-none"
           />
           <button
             type="submit" disabled={saving || !content.trim()}
-            className="bg-navyDeep text-white text-sm rounded-lg px-3.5 self-end py-2 disabled:opacity-50 whitespace-nowrap"
+            className="bg-navyDeep text-white text-sm rounded-md px-3.5 self-end py-2 disabled:opacity-50 whitespace-nowrap"
           >
             Log
           </button>
@@ -99,7 +99,7 @@ export default function ActivityLog({ contactId, propertyId }) {
             const meta = TYPES.find((t) => t.value === a.type) || TYPES[0]
             return (
               <div key={a.id} className="flex gap-2.5">
-                <div className="w-6 h-6 rounded-full bg-tintBlue flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-6 h-6 rounded-full bg-mid/10 flex items-center justify-center shrink-0 mt-0.5">
                   <meta.icon size={12} className="text-navyDeep" />
                 </div>
                 <div className="flex-1 min-w-0">

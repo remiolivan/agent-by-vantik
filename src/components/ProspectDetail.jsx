@@ -197,7 +197,7 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
     <div className="fixed inset-0 z-40">
       <div className="absolute inset-0 bg-navyDeep/40" onClick={onClose} />
       <div className="absolute inset-y-0 right-0 w-full sm:max-w-md bg-paper overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-muted/15 px-5 pb-4 pt-[calc(1rem+env(safe-area-inset-top))] flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-white border-b border-border px-5 pb-4 pt-[calc(1rem+env(safe-area-inset-top))] flex items-center justify-between z-10">
           <div className="min-w-0">
             <div className="font-display text-lg font-medium text-navyDeep truncate">{current.name}</div>
             {current.email && <div className="text-xs text-muted truncate">{current.email}</div>}
@@ -220,7 +220,7 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
               default, not something they have to notice first. */}
           <button
             onClick={() => setShowFollowUp(true)}
-            className="w-full flex items-center justify-center gap-2 bg-teal hover:bg-teal-dark text-white text-sm font-medium rounded-lg px-4 py-3"
+            className="w-full flex items-center justify-center gap-2 bg-teal hover:bg-teal-dark text-white text-sm font-medium rounded-md px-4 py-3"
           >
             <Sparkles size={16} />
             Draft follow-up
@@ -228,10 +228,10 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
 
           {/* Stage */}
           <div>
-            <div className="font-mono text-xs uppercase tracking-wide text-muted mb-2">Stage</div>
+            <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-2">Stage</div>
             <select
               value={stageId} onChange={(e) => changeStage(e.target.value)} disabled={savingStage}
-              className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm bg-white"
+              className="w-full border border-border rounded-md px-3 py-2.5 text-sm bg-white"
             >
               {visibleStages.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
             </select>
@@ -239,10 +239,10 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
 
           {/* View / edit core info + search criteria */}
           {!editing ? (
-            <div className="bg-white border border-muted/20 rounded-xl p-4 space-y-3">
+            <div className="bg-white border border-border rounded-md p-4 space-y-3">
               {current.phone && <div className="text-sm text-ink">{current.phone}</div>}
               <div className="flex flex-wrap gap-2 text-xs">
-                {current.intent && <span className="rounded px-2 py-1 bg-tintBlue text-navyDeep capitalize">{current.intent === 'buy' ? 'Buying' : 'Renting'}</span>}
+                {current.intent && <span className="rounded px-2 py-1 bg-mid/10 text-navyDeep capitalize">{current.intent === 'buy' ? 'Buying' : 'Renting'}</span>}
                 {(current.budget_min || current.budget_max) && (
                   <span className="rounded px-2 py-1 bg-paper text-muted">
                     {formatNumber(current.budget_min, { fallback: '' })}{current.budget_min && current.budget_max ? '–' : ''}{formatNumber(current.budget_max, { fallback: '' })}
@@ -258,26 +258,26 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
               )}
             </div>
           ) : (
-            <form onSubmit={saveEdits} className="bg-white border border-muted/20 rounded-xl p-4 space-y-3">
+            <form onSubmit={saveEdits} className="bg-white border border-border rounded-md p-4 space-y-3">
               <input
                 value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-                placeholder="Name" required className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                placeholder="Name" required className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
               />
               <input
                 value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
-                placeholder="Email" type="email" className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                placeholder="Email" type="email" className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
               />
               <input
                 value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                placeholder="Phone" className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                placeholder="Phone" className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
               />
               <div className="flex gap-2">
                 {[{ value: 'buy', label: 'Buying' }, { value: 'rent', label: 'Renting' }].map((opt) => (
                   <button
                     key={opt.value} type="button"
                     onClick={() => setForm({ ...form, intent: form.intent === opt.value ? '' : opt.value })}
-                    className={`flex-1 text-sm rounded-lg px-3 py-2.5 border ${
-                      form.intent === opt.value ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'
+                    className={`flex-1 text-sm rounded-md px-3 py-2.5 border ${
+                      form.intent === opt.value ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-muted'
                     }`}
                   >{opt.label}</button>
                 ))}
@@ -285,11 +285,11 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
               <div className="flex gap-3">
                 <NumberInput
                   value={form.budget_min} onChange={(v) => setForm({ ...form, budget_min: v })}
-                  placeholder="Budget min (AED)" className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                  placeholder="Budget min (AED)" className="flex-1 border border-border rounded-md px-3 py-2.5 text-sm"
                 />
                 <NumberInput
                   value={form.budget_max} onChange={(v) => setForm({ ...form, budget_max: v })}
-                  placeholder="Budget max (AED)" className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                  placeholder="Budget max (AED)" className="flex-1 border border-border rounded-md px-3 py-2.5 text-sm"
                 />
               </div>
               <div>
@@ -299,7 +299,7 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
                     <button
                       key={opt} type="button" onClick={() => toggleBedroom(opt)}
                       className={`text-xs rounded-full px-3 py-1.5 border ${
-                        form.bedrooms_wanted_list.includes(opt) ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'
+                        form.bedrooms_wanted_list.includes(opt) ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-muted'
                       }`}
                     >{opt}</button>
                   ))}
@@ -308,10 +308,10 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
               <input
                 value={form.locations_wanted} onChange={(e) => setForm({ ...form, locations_wanted: e.target.value })}
                 placeholder="Locations (e.g. Marina, JBR, Downtown)"
-                className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
               />
               <div className="flex items-center gap-3 pt-1">
-                <button type="submit" disabled={saving} className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5 disabled:opacity-50">
+                <button type="submit" disabled={saving} className="bg-navyDeep text-white text-sm rounded-md px-4 py-2.5 disabled:opacity-50">
                   {saving ? 'Saving…' : 'Save'}
                 </button>
                 <button type="button" onClick={cancelEdit} className="text-sm text-muted px-2">Cancel</button>
@@ -326,18 +326,18 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
 
           {/* Tasks */}
           <div>
-            <div className="font-mono text-xs uppercase tracking-wide text-muted mb-3">Tasks</div>
-            <form onSubmit={addTask} className="bg-white border border-muted/20 rounded-xl p-3 mb-3 space-y-3">
+            <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-3">Tasks</div>
+            <form onSubmit={addTask} className="bg-white border border-border rounded-md p-3 mb-3 space-y-3">
               <div className="flex gap-2">
                 <input
                   value={newTask.title} onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
-                  placeholder="New task" className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                  placeholder="New task" className="flex-1 border border-border rounded-md px-3 py-2.5 text-sm"
                 />
                 <input
                   type="datetime-local" step="900" value={newTask.due}
                   onFocus={() => !newTask.due && setNewTask((t) => ({ ...t, due: nextQuarterHour() }))}
                   onChange={(e) => setNewTask({ ...newTask, due: e.target.value })}
-                  className="border border-muted/30 rounded-lg px-2 py-2.5 text-xs w-[9.5rem] shrink-0"
+                  className="border border-border rounded-md px-2 py-2.5 text-xs w-[9.5rem] shrink-0"
                 />
               </div>
               {!expandedNewTask ? (
@@ -345,39 +345,39 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
               ) : (
                 <textarea
                   value={newTask.description} onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
-                  placeholder="Description" rows={2} className="w-full border border-muted/30 rounded-lg px-3 py-2 text-sm"
+                  placeholder="Description" rows={2} className="w-full border border-border rounded-md px-3 py-2 text-sm"
                 />
               )}
-              <button type="submit" disabled={addingTask} className="bg-teal text-white text-sm rounded-lg px-4 py-2 disabled:opacity-50">
+              <button type="submit" disabled={addingTask} className="bg-teal text-white text-sm rounded-md px-4 py-2 disabled:opacity-50">
                 {addingTask ? 'Adding…' : 'Add task'}
               </button>
             </form>
             <div className="space-y-2">
               {sortedTasks.map((t) => (
                 editingTaskId === t.id ? (
-                  <form key={t.id} onSubmit={saveTaskEdit} className="bg-white border border-navyDeep/30 rounded-xl p-3 space-y-2">
+                  <form key={t.id} onSubmit={saveTaskEdit} className="bg-white border border-navyDeep/30 rounded-md p-3 space-y-2">
                     <input
                       value={editTaskForm.title} onChange={(e) => setEditTaskForm({ ...editTaskForm, title: e.target.value })}
-                      placeholder="Task" className="w-full border border-muted/30 rounded-lg px-3 py-2 text-sm"
+                      placeholder="Task" className="w-full border border-border rounded-md px-3 py-2 text-sm"
                     />
                     <input
                       type="datetime-local" step="900" value={editTaskForm.due}
                       onChange={(e) => setEditTaskForm({ ...editTaskForm, due: e.target.value })}
-                      className="w-full border border-muted/30 rounded-lg px-3 py-2 text-xs"
+                      className="w-full border border-border rounded-md px-3 py-2 text-xs"
                     />
                     <textarea
                       value={editTaskForm.description} onChange={(e) => setEditTaskForm({ ...editTaskForm, description: e.target.value })}
-                      placeholder="Description" rows={2} className="w-full border border-muted/30 rounded-lg px-3 py-2 text-sm"
+                      placeholder="Description" rows={2} className="w-full border border-border rounded-md px-3 py-2 text-sm"
                     />
                     <div className="flex items-center gap-3">
-                      <button type="submit" disabled={savingTask} className="bg-navyDeep text-white text-xs rounded-lg px-3 py-2 disabled:opacity-50">
+                      <button type="submit" disabled={savingTask} className="bg-navyDeep text-white text-xs rounded-md px-3 py-2 disabled:opacity-50">
                         {savingTask ? 'Saving…' : 'Save'}
                       </button>
                       <button type="button" onClick={() => setEditingTaskId(null)} className="text-xs text-muted px-1">Cancel</button>
                     </div>
                   </form>
                 ) : (
-                  <div key={t.id} className="bg-white border border-muted/20 rounded-xl px-4 py-3 flex items-start gap-3">
+                  <div key={t.id} className="bg-white border border-border rounded-md px-4 py-3 flex items-start gap-3">
                     <input
                       type="checkbox" checked={!!t.completed_at} onChange={() => toggleTask(t)}
                       className="w-5 h-5 accent-teal shrink-0 mt-0.5"
@@ -399,10 +399,10 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
 
           {/* Invoices linked to this prospect */}
           <div>
-            <div className="font-mono text-xs uppercase tracking-wide text-muted mb-3">Invoices</div>
+            <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-3">Invoices</div>
             <div className="space-y-2">
               {invoices.map((inv) => (
-                <button key={inv.id} onClick={() => downloadInvoice(inv)} className="w-full text-left bg-white border border-muted/20 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
+                <button key={inv.id} onClick={() => downloadInvoice(inv)} className="w-full text-left bg-white border border-border rounded-md px-4 py-3 flex items-center justify-between gap-3">
                   <span className="flex items-center gap-2 text-sm text-navyDeep"><Receipt size={14} className="text-muted" /> {inv.invoice_number || 'Invoice'}</span>
                   <span className="text-xs text-muted font-mono">{formatMoney(inv.total, inv.currency || 'AED')}</span>
                 </button>
@@ -413,12 +413,12 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
 
           {/* Share */}
           <div>
-            <div className="font-mono text-xs uppercase tracking-wide text-muted mb-3">Share prospect summary</div>
-            <div className="bg-white border border-muted/20 rounded-xl p-4">
+            <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-3">Share prospect summary</div>
+            <div className="bg-white border border-border rounded-md p-4">
               {!shareUrl ? (
                 <button
                   onClick={generateShare} disabled={sharing}
-                  className="flex items-center gap-2 bg-teal text-white text-sm font-medium rounded-lg px-4 py-2.5 disabled:opacity-50"
+                  className="flex items-center gap-2 bg-teal text-white text-sm font-medium rounded-md px-4 py-2.5 disabled:opacity-50"
                 >
                   <Share2 size={15} />
                   {sharing ? 'Generating PDF…' : 'Generate summary to share'}
@@ -429,15 +429,15 @@ export default function ProspectDetail({ prospect, onClose, onUpdated }) {
                   <div className="flex flex-wrap gap-2">
                     <a
                       href={`https://wa.me/?text=${encodeURIComponent(`${current.name}\n${shareUrl}`)}`}
-                      target="_blank" rel="noreferrer" className="text-sm bg-[#25D366] text-white rounded-lg px-4 py-2.5"
+                      target="_blank" rel="noreferrer" className="text-sm bg-[#25D366] text-white rounded-md px-4 py-2.5"
                     >Send via WhatsApp</a>
                     <a
                       href={`mailto:?subject=${encodeURIComponent(current.name)}&body=${encodeURIComponent(`Here's the summary: ${shareUrl}`)}`}
-                      className="text-sm text-navyDeep border border-navyDeep/30 rounded-lg px-4 py-2.5"
+                      className="text-sm text-navyDeep border border-navyDeep/30 rounded-md px-4 py-2.5"
                     >Send via email</a>
                     <button
                       onClick={copyShareLink}
-                      className="flex items-center gap-1.5 text-sm text-navyDeep border border-navyDeep/30 rounded-lg px-4 py-2.5"
+                      className="flex items-center gap-1.5 text-sm text-navyDeep border border-navyDeep/30 rounded-md px-4 py-2.5"
                     >
                       {linkCopied ? <Check size={14} /> : <Copy size={14} />}
                       {linkCopied ? 'Copied' : 'Copy link'}
