@@ -85,13 +85,13 @@ export default function OrgSettings({ orgId, defaultExpanded = false }) {
   }
 
   return (
-    <div className="bg-white border border-muted/20 rounded-xl p-5 sm:p-6">
+    <div className="bg-white border border-border rounded-md p-5 sm:p-6">
       <button
         type="button" onClick={() => setExpanded((s) => !s)}
         className="flex items-center justify-between w-full"
       >
         <div className="text-left">
-          <div className="font-mono text-xs uppercase tracking-wide text-muted mb-1">Business profile</div>
+          <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-1">Business profile</div>
           <div className="font-display text-lg font-medium text-navyDeep">Logo, invoice details & branding</div>
         </div>
         {expanded ? <ChevronUp size={18} className="text-muted" /> : <ChevronDown size={18} className="text-muted" />}
@@ -124,39 +124,39 @@ export default function OrgSettings({ orgId, defaultExpanded = false }) {
           <input
             type="text" placeholder="Business name" value={businessName}
             onChange={(e) => setBusinessName(e.target.value)} required
-            className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+            className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
           />
           <select
             value={currency} onChange={(e) => setCurrency(e.target.value)}
-            className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm bg-white"
+            className="w-full border border-border rounded-md px-3 py-2.5 text-sm bg-white"
           >
             {CURRENCIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
           <input
             type="text" placeholder="Address" value={address} onChange={(e) => setAddress(e.target.value)}
-            className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+            className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
           />
           <input
             type="text" placeholder="TRN" value={trn} onChange={(e) => setTrn(e.target.value)}
-            className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+            className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
           />
           <input
             type="text" placeholder="IBAN" value={iban} onChange={(e) => setIban(e.target.value)}
-            className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+            className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
           />
           <input
             type="email" placeholder="Invoice email" value={email} onChange={(e) => setEmail(e.target.value)}
-            className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+            className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
           />
           <input
             type="text" placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)}
-            className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+            className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
           />
 
           {error && <p className="text-sm text-red-600">{error}</p>}
           {saved && <p className="text-sm text-teal">Saved.</p>}
 
-          <button type="submit" disabled={saving} className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5 disabled:opacity-50">
+          <button type="submit" disabled={saving} className="bg-navyDeep text-white text-sm rounded-md px-4 py-2.5 disabled:opacity-50">
             {saving ? 'Saving…' : 'Save'}
           </button>
         </form>

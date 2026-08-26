@@ -95,31 +95,31 @@ export default function Tasks() {
   return (
     <Layout title="Tasks">
       <div className="max-w-2xl">
-        <form onSubmit={createTask} className="bg-white border border-muted/20 rounded-xl p-4 mb-8 space-y-3">
+        <form onSubmit={createTask} className="bg-white border border-border rounded-md p-4 mb-8 space-y-3">
           <div className="flex flex-col sm:flex-row gap-3">
             <input
               value={title} onChange={(e) => setTitle(e.target.value)}
               placeholder="Task title" required
-              className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+              className="flex-1 border border-border rounded-md px-3 py-2.5 text-sm"
             />
             <input
               type="datetime-local" step="900" value={dueAt}
               onFocus={() => !dueAt && setDueAt(nextQuarterHour())}
               onChange={(e) => setDueAt(e.target.value)}
-              className="border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+              className="border border-border rounded-md px-3 py-2.5 text-sm"
             />
           </div>
           <div className="flex flex-col sm:flex-row gap-3">
             <select
               value={prospectId} onChange={(e) => setProspectId(e.target.value)}
-              className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+              className="flex-1 border border-border rounded-md px-3 py-2.5 text-sm"
             >
               <option value="">No linked prospect</option>
               {prospects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
             <select
               value={propertyId} onChange={(e) => setPropertyId(e.target.value)}
-              className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+              className="flex-1 border border-border rounded-md px-3 py-2.5 text-sm"
             >
               <option value="">No linked property</option>
               {properties.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
@@ -130,10 +130,10 @@ export default function Tasks() {
           ) : (
             <textarea
               value={description} onChange={(e) => setDescription(e.target.value)}
-              placeholder="Description" rows={2} className="w-full border border-muted/30 rounded-lg px-3 py-2 text-sm"
+              placeholder="Description" rows={2} className="w-full border border-border rounded-md px-3 py-2 text-sm"
             />
           )}
-          <button type="submit" disabled={creating} className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5 disabled:opacity-50">
+          <button type="submit" disabled={creating} className="bg-mid text-white text-sm font-medium rounded-md px-4 py-2.5 disabled:opacity-50">
             {creating ? 'Adding…' : 'Add task'}
           </button>
         </form>
@@ -141,27 +141,27 @@ export default function Tasks() {
         <div className="space-y-2">
           {sortedTasks.map((t) => (
             editingId === t.id ? (
-              <form key={t.id} onSubmit={saveEdit} className="bg-white border border-navyDeep/30 rounded-xl p-4 space-y-2">
+              <form key={t.id} onSubmit={saveEdit} className="bg-white border border-navyDeep/30 rounded-md p-4 space-y-2">
                 <input
                   value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-                  placeholder="Task title" className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                  placeholder="Task title" className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
                 />
                 <input
                   type="datetime-local" step="900" value={editForm.due_at}
                   onChange={(e) => setEditForm({ ...editForm, due_at: e.target.value })}
-                  className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                  className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
                 />
                 <div className="flex flex-col sm:flex-row gap-2">
                   <select
                     value={editForm.prospect_id} onChange={(e) => setEditForm({ ...editForm, prospect_id: e.target.value })}
-                    className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                    className="flex-1 border border-border rounded-md px-3 py-2.5 text-sm"
                   >
                     <option value="">No linked prospect</option>
                     {prospects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
                   </select>
                   <select
                     value={editForm.property_id} onChange={(e) => setEditForm({ ...editForm, property_id: e.target.value })}
-                    className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                    className="flex-1 border border-border rounded-md px-3 py-2.5 text-sm"
                   >
                     <option value="">No linked property</option>
                     {properties.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
@@ -169,17 +169,17 @@ export default function Tasks() {
                 </div>
                 <textarea
                   value={editForm.description} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                  placeholder="Description" rows={2} className="w-full border border-muted/30 rounded-lg px-3 py-2 text-sm"
+                  placeholder="Description" rows={2} className="w-full border border-border rounded-md px-3 py-2 text-sm"
                 />
                 <div className="flex items-center gap-3">
-                  <button type="submit" disabled={saving} className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2 disabled:opacity-50">
+                  <button type="submit" disabled={saving} className="bg-mid text-white text-sm font-medium rounded-md px-4 py-2 disabled:opacity-50">
                     {saving ? 'Saving…' : 'Save'}
                   </button>
                   <button type="button" onClick={() => setEditingId(null)} className="text-sm text-muted px-2">Cancel</button>
                 </div>
               </form>
             ) : (
-              <div key={t.id} className="bg-white border border-muted/20 rounded-xl px-4 py-3 flex items-start gap-3">
+              <div key={t.id} className="bg-white border border-border rounded-md px-4 py-3 flex items-start gap-3">
                 <input
                   type="checkbox" checked={!!t.completed_at}
                   onChange={() => toggleComplete(t)}
@@ -194,7 +194,7 @@ export default function Tasks() {
                   {(t.contacts?.name || t.properties?.title) && (
                     <div className="flex flex-wrap gap-1.5 mt-1.5">
                       {t.contacts?.name && (
-                        <span className="text-xs text-navyDeep bg-tintBlue rounded px-2 py-0.5">{t.contacts.name}</span>
+                        <span className="text-xs text-navyDeep bg-mid/10 rounded px-2 py-0.5">{t.contacts.name}</span>
                       )}
                       {t.properties?.title && (
                         <span className="text-xs text-teal-700 bg-teal/10 rounded px-2 py-0.5">{t.properties.title}</span>

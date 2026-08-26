@@ -138,7 +138,15 @@ export default function Dashboard() {
   }
 
   return (
-    <Layout title={greetingName ? `${timeOfDayGreeting()}, ${greetingName}` : 'Dashboard'}>
+    <Layout title="Dashboard">
+      <div className="flex flex-col gap-1 mb-5">
+        <div className="text-[19px] font-semibold tracking-tight text-navy">
+          {greetingName ? `${timeOfDayGreeting()}, ${greetingName}` : timeOfDayGreeting()}
+        </div>
+        {kpis.dueCount > 0 && (
+          <div className="text-[13px] text-muted">{kpis.dueCount} follow-up{kpis.dueCount === 1 ? '' : 's'} need you today.</div>
+        )}
+      </div>
       <div className="flex flex-col gap-6">
         {/* The numbers an agent checks first: what's the pipeline actually
             worth, what's closing soon, what's overdue, is the funnel being
@@ -159,7 +167,7 @@ export default function Dashboard() {
             label="Follow-ups due"
             value={kpis.dueCount}
             sub={kpis.overdueCount > 0 ? `${kpis.overdueCount} overdue` : null}
-            subClassName={kpis.overdueCount > 0 ? 'text-red-600' : undefined}
+            subClassName={kpis.overdueCount > 0 ? 'text-warn' : undefined}
           />
           <KpiCard label="New leads this week" value={kpis.newLeadsThisWeek} />
         </div>
@@ -172,11 +180,11 @@ export default function Dashboard() {
         </div>
 
         <div className="order-1 sm:order-2">
-          <div className="font-mono text-xs uppercase tracking-wide text-muted mb-3">Today's appointments</div>
-          <div className="bg-white border border-muted/20 rounded-xl divide-y divide-muted/10">
+          <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-2">Today's appointments</div>
+          <div className="bg-white border border-border rounded-[6px] divide-y divide-borderSoft">
             {todayEvents.map((ev) => (
-              <Link key={ev.id} to="/calendar" className="flex items-start gap-3 px-4 py-3 hover:bg-tintBlue/30">
-                <div className="font-mono text-xs text-navyDeep w-14 shrink-0 pt-0.5">
+              <Link key={ev.id} to="/calendar" className="flex items-start gap-3 px-4 py-3 hover:bg-paper">
+                <div className="font-mono text-xs text-navy w-14 shrink-0 pt-0.5">
                   {new Date(ev.start_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </div>
                 <div className="min-w-0 flex-1">
@@ -186,8 +194,8 @@ export default function Dashboard() {
                   )}
                   {(ev.contacts?.name || ev.properties?.title) && (
                     <div className="flex flex-wrap gap-1.5 mt-1.5">
-                      {ev.contacts?.name && <span className="text-xs text-navyDeep bg-tintBlue rounded px-2 py-0.5">{ev.contacts.name}</span>}
-                      {ev.properties?.title && <span className="text-xs text-teal-700 bg-teal/10 rounded px-2 py-0.5">{ev.properties.title}</span>}
+                      {ev.contacts?.name && <span className="text-xs text-navy bg-mid/10 rounded px-2 py-0.5">{ev.contacts.name}</span>}
+                      {ev.properties?.title && <span className="text-xs text-[#8A6B1F] bg-gold/15 rounded px-2 py-0.5">{ev.properties.title}</span>}
                     </div>
                   )}
                 </div>
@@ -200,8 +208,8 @@ export default function Dashboard() {
         </div>
 
         <div className="order-2 sm:order-3">
-          <div className="font-mono text-xs uppercase tracking-wide text-muted mb-3">Today's tasks</div>
-          <div className="bg-white border border-muted/20 rounded-xl divide-y divide-muted/10">
+          <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-2">Today's tasks</div>
+          <div className="bg-white border border-border rounded-[6px] divide-y divide-borderSoft">
             {todayTasks.map((t) => {
               // Only tasks tied to a prospect or property have anything for
               // the AI draft to work with — plain standalone tasks (e.g.
@@ -210,7 +218,7 @@ export default function Dashboard() {
               return (
                 <div
                   key={t.id}
-                  className={`flex items-start gap-3 px-4 py-3 ${canFollowUp ? 'cursor-pointer hover:bg-tintBlue/30' : ''}`}
+                  className={`flex items-start gap-3 px-4 py-3 ${canFollowUp ? 'cursor-pointer hover:bg-paper' : ''}`}
                   onClick={canFollowUp ? () => setFollowUpTarget({
                     contactId: t.prospect_id || null,
                     propertyId: t.property_id || null,
@@ -222,19 +230,19 @@ export default function Dashboard() {
                     type="checkbox" checked={!!t.completed_at}
                     onClick={(e) => e.stopPropagation()}
                     onChange={() => toggleTask(t)}
-                    className="w-5 h-5 accent-teal shrink-0 mt-0.5"
+                    className="w-[17px] h-[17px] rounded-[5px] border-[1.5px] border-navLight accent-mid shrink-0 mt-0.5"
                   />
                   <div className="min-w-0 flex-1">
                     <div className="text-sm text-ink truncate">{t.title}</div>
                     {t.description && <div className="text-xs text-muted mt-0.5">{t.description}</div>}
                     {(t.contacts?.name || t.properties?.title) && (
                       <div className="flex flex-wrap gap-1.5 mt-1.5">
-                        {t.contacts?.name && <span className="text-xs text-navyDeep bg-tintBlue rounded px-2 py-0.5">{t.contacts.name}</span>}
-                        {t.properties?.title && <span className="text-xs text-teal-700 bg-teal/10 rounded px-2 py-0.5">{t.properties.title}</span>}
+                        {t.contacts?.name && <span className="text-xs text-navy bg-mid/10 rounded px-2 py-0.5">{t.contacts.name}</span>}
+                        {t.properties?.title && <span className="text-xs text-[#8A6B1F] bg-gold/15 rounded px-2 py-0.5">{t.properties.title}</span>}
                       </div>
                     )}
                   </div>
-                  {canFollowUp && <Sparkles size={14} className="text-teal shrink-0 mt-1" aria-label="Draft a follow-up" />}
+                  {canFollowUp && <Sparkles size={14} className="text-amber shrink-0 mt-1" aria-label="Draft a follow-up" />}
                 </div>
               )
             })}
@@ -261,19 +269,19 @@ export default function Dashboard() {
 
 function StatCard({ label, value }) {
   return (
-    <div className="bg-white border border-muted/20 rounded-xl p-6">
-      <div className="font-mono text-xs uppercase tracking-wide text-muted mb-2">{label}</div>
-      <div className="font-display text-3xl font-medium text-navyDeep">{value}</div>
+    <div className="bg-white border border-border rounded-[6px] p-[13px] flex flex-col gap-1.5">
+      <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted">{label}</div>
+      <div className="font-mono font-medium text-2xl text-navy tracking-tight">{value}</div>
     </div>
   )
 }
 
 function KpiCard({ label, value, sub, subClassName }) {
   return (
-    <div className="bg-white border border-muted/20 rounded-xl p-4 sm:p-5">
-      <div className="font-mono text-[10px] sm:text-xs uppercase tracking-wide text-muted mb-1.5">{label}</div>
-      <div className="font-display text-xl sm:text-2xl font-medium text-navyDeep">{value}</div>
-      {sub && <div className={`text-xs mt-1 ${subClassName || 'text-muted'}`}>{sub}</div>}
+    <div className="bg-white border border-border rounded-[6px] p-[13px] flex flex-col gap-1.5">
+      <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted">{label}</div>
+      <div className="font-mono font-medium text-xl text-navy tracking-tight">{value}</div>
+      {sub && <div className={`font-mono text-[10px] ${subClassName || 'text-muted'}`}>{sub}</div>}
     </div>
   )
 }

@@ -139,16 +139,16 @@ export default function Onboarding() {
           <input
             type="text" placeholder="Your first name (optional)" value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
-            className="w-full border border-muted/30 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
+            className="w-full border border-border rounded-md px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
           />
           <input
             type="text" placeholder="Business name" value={businessName}
             onChange={(e) => setBusinessName(e.target.value)} required
-            className="w-full border border-muted/30 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
+            className="w-full border border-border rounded-md px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
           />
           <select
             value={currency} onChange={(e) => setCurrency(e.target.value)}
-            className="w-full border border-muted/30 rounded-lg px-4 py-3 text-sm bg-white"
+            className="w-full border border-border rounded-md px-4 py-3 text-sm bg-white"
           >
             {CURRENCIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
@@ -156,11 +156,11 @@ export default function Onboarding() {
           {/* Reminders — same toggles as Settings, surfaced here too so this
               isn't buried where most people never look after their first
               week. Still fully optional and editable later. */}
-          <div className="border border-muted/20 rounded-lg p-4">
-            <div className="font-mono text-xs uppercase tracking-wide text-muted mb-3">Reminders (optional)</div>
+          <div className="border border-border rounded-md p-4">
+            <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-3">Reminders (optional)</div>
             <div className="space-y-4">
               <PushNotificationToggle />
-              <div className="pt-3 border-t border-muted/15 flex items-center justify-between">
+              <div className="pt-3 border-t border-border flex items-center justify-between">
                 <div>
                   <div className="text-sm text-ink font-medium">Morning digest</div>
                   <div className="text-xs text-muted mt-0.5">A push each morning (~7am) with today's tasks and appointments.</div>
@@ -168,7 +168,7 @@ export default function Onboarding() {
                 <button
                   type="button" onClick={toggleDigest} disabled={savingDigest || !membershipId}
                   className={`text-xs rounded-full px-3.5 py-1.5 border disabled:opacity-50 ${
-                    digestEnabled ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'
+                    digestEnabled ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-muted'
                   }`}
                 >
                   {digestEnabled ? 'On' : 'Off'}
@@ -189,23 +189,23 @@ export default function Onboarding() {
             <div className="space-y-4 pt-1">
               <input
                 type="text" placeholder="Address" value={address} onChange={(e) => setAddress(e.target.value)}
-                className="w-full border border-muted/30 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
+                className="w-full border border-border rounded-md px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
               />
               <input
                 type="text" placeholder="TRN" value={trn} onChange={(e) => setTrn(e.target.value)}
-                className="w-full border border-muted/30 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
+                className="w-full border border-border rounded-md px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
               />
               <input
                 type="text" placeholder="IBAN" value={iban} onChange={(e) => setIban(e.target.value)}
-                className="w-full border border-muted/30 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
+                className="w-full border border-border rounded-md px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
               />
               <input
                 type="email" placeholder="Invoice email" value={email} onChange={(e) => setEmail(e.target.value)}
-                className="w-full border border-muted/30 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
+                className="w-full border border-border rounded-md px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
               />
               <input
                 type="text" placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)}
-                className="w-full border border-muted/30 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
+                className="w-full border border-border rounded-md px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
               />
               <div>
                 <div className="text-xs text-muted mb-1.5">Logo</div>
@@ -229,7 +229,7 @@ export default function Onboarding() {
           <div className="flex items-center gap-4 pt-2">
             <button
               type="submit" disabled={saving}
-              className="bg-navyDeep text-paper rounded-lg px-5 py-3 text-sm font-medium disabled:opacity-50"
+              className="bg-navyDeep text-paper rounded-md px-5 py-3 text-sm font-medium disabled:opacity-50"
             >
               {saving ? 'Saving…' : 'Finish setup'}
             </button>

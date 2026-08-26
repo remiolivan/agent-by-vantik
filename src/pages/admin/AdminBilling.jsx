@@ -25,20 +25,20 @@ export default function AdminBilling() {
 
       {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
 
-      <div className="bg-white border border-muted/20 rounded-xl overflow-hidden">
+      <div className="bg-white border border-border rounded-md overflow-hidden">
         <table className="w-full text-sm hidden md:table">
-          <thead className="bg-tintBlue text-left">
+          <thead className="bg-mid/10 text-left">
             <tr>
-              <th className="px-4 py-3 font-mono text-xs uppercase tracking-wide text-muted">Organization</th>
-              <th className="px-4 py-3 font-mono text-xs uppercase tracking-wide text-muted">Plan</th>
-              <th className="px-4 py-3 font-mono text-xs uppercase tracking-wide text-muted">Subscription</th>
-              <th className="px-4 py-3 font-mono text-xs uppercase tracking-wide text-muted">Renouvelle / se termine</th>
-              <th className="px-4 py-3 font-mono text-xs uppercase tracking-wide text-muted">Stripe</th>
+              <th className="px-4 py-3 font-mono text-[9px] uppercase tracking-[0.1em] text-muted">Organization</th>
+              <th className="px-4 py-3 font-mono text-[9px] uppercase tracking-[0.1em] text-muted">Plan</th>
+              <th className="px-4 py-3 font-mono text-[9px] uppercase tracking-[0.1em] text-muted">Subscription</th>
+              <th className="px-4 py-3 font-mono text-[9px] uppercase tracking-[0.1em] text-muted">Renouvelle / se termine</th>
+              <th className="px-4 py-3 font-mono text-[9px] uppercase tracking-[0.1em] text-muted">Stripe</th>
             </tr>
           </thead>
           <tbody>
             {orgs.map((o) => (
-              <tr key={o.id} className="border-t border-muted/10 hover:bg-tintBlue/40">
+              <tr key={o.id} className="border-t border-border hover:bg-mid/10">
                 <td className="px-4 py-3">
                   <Link to={`/admin/orgs/${o.id}`} className="text-navyDeep font-medium hover:underline">{o.name}</Link>
                 </td>

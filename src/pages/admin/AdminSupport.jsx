@@ -60,36 +60,36 @@ export default function AdminSupport() {
           placeholder="Rechercher une organisation…"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-navyDeep"
+          className="flex-1 border border-border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:border-navyDeep"
         />
         <select
           value={plan}
           onChange={(e) => { setPlan(e.target.value); setPage(1) }}
-          className="border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+          className="border border-border rounded-md px-3 py-2.5 text-sm"
         >
           {PLAN_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
-        <button type="submit" className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5 whitespace-nowrap">
+        <button type="submit" className="bg-mid text-white text-sm font-medium rounded-md px-4 py-2.5 whitespace-nowrap">
           Rechercher
         </button>
       </form>
 
       {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
 
-      <div className="bg-white border border-muted/20 rounded-xl overflow-hidden">
+      <div className="bg-white border border-border rounded-md overflow-hidden">
         <table className="w-full text-sm hidden md:table">
-          <thead className="bg-tintBlue text-left">
+          <thead className="bg-mid/10 text-left">
             <tr>
-              <th className="px-4 py-3 font-mono text-xs uppercase tracking-wide text-muted">Organization</th>
-              <th className="px-4 py-3 font-mono text-xs uppercase tracking-wide text-muted">Plan</th>
-              <th className="px-4 py-3 font-mono text-xs uppercase tracking-wide text-muted">Statut</th>
-              <th className="px-4 py-3 font-mono text-xs uppercase tracking-wide text-muted">Membres</th>
-              <th className="px-4 py-3 font-mono text-xs uppercase tracking-wide text-muted">Créée le</th>
+              <th className="px-4 py-3 font-mono text-[9px] uppercase tracking-[0.1em] text-muted">Organization</th>
+              <th className="px-4 py-3 font-mono text-[9px] uppercase tracking-[0.1em] text-muted">Plan</th>
+              <th className="px-4 py-3 font-mono text-[9px] uppercase tracking-[0.1em] text-muted">Statut</th>
+              <th className="px-4 py-3 font-mono text-[9px] uppercase tracking-[0.1em] text-muted">Membres</th>
+              <th className="px-4 py-3 font-mono text-[9px] uppercase tracking-[0.1em] text-muted">Créée le</th>
             </tr>
           </thead>
           <tbody>
             {orgs.map((o) => (
-              <tr key={o.id} className="border-t border-muted/10 hover:bg-tintBlue/40">
+              <tr key={o.id} className="border-t border-border hover:bg-mid/10">
                 <td className="px-4 py-3">
                   <Link to={`/admin/orgs/${o.id}`} className="text-navyDeep font-medium hover:underline">{o.name}</Link>
                 </td>

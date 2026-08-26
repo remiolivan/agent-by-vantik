@@ -37,43 +37,76 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-paper px-4">
-      <div className="w-full max-w-sm">
-        <Logo size={34} className="mb-8" />
-        <h1 className="font-display text-2xl font-medium text-navyDeep mb-8">Log in</h1>
-
-        <OAuthButtons />
-        <div className="flex items-center gap-3 my-6">
-          <div className="h-px bg-muted/20 flex-1" />
-          <span className="text-xs text-muted">or</span>
-          <div className="h-px bg-muted/20 flex-1" />
+    <div className="min-h-screen flex flex-col lg:flex-row">
+      {/* Left panel — navy, brand + pitch. Hidden on small screens. */}
+      <div className="hidden lg:flex lg:w-[380px] lg:shrink-0 bg-navy px-8 py-10 flex-col justify-between">
+        <Logo size={30} on="dark" />
+        <div className="flex flex-col gap-3.5">
+          <div className="w-12 h-px bg-gold" />
+          <p className="text-[15px] text-navLight leading-relaxed text-pretty">
+            Built for agents in the UAE. Leads, viewings, invoices and follow-ups, without the spreadsheet.
+          </p>
         </div>
+        <span className="font-mono text-[11px] text-navFaint">agent.getvantik.com</span>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="email" placeholder="Email" value={email}
-            onChange={(e) => setEmail(e.target.value)} required
-            className="w-full border border-muted/30 rounded px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
-          />
-          <input
-            type="password" placeholder="Password" value={password}
-            onChange={(e) => setPassword(e.target.value)} required
-            className="w-full border border-muted/30 rounded px-4 py-3 text-sm focus:outline-none focus:border-navyDeep"
-          />
-          {error && <p className="text-sm text-red-600">{error}</p>}
-          <button
-            type="submit" disabled={loading}
-            className="w-full bg-navyDeep text-paper rounded px-4 py-3 text-sm font-medium disabled:opacity-50"
-          >
-            {loading ? 'Logging in…' : 'Log in'}
-          </button>
-        </form>
-        <p className="text-sm text-muted mt-4">
-          <Link to="/forgot-password" className="text-navyDeep underline">Forgot password?</Link>
-        </p>
-        <p className="text-sm text-muted mt-6">
-          No account? <Link to="/signup" className="text-navyDeep underline">Start free trial</Link>
-        </p>
+      {/* Mobile-only compact brand header */}
+      <div className="lg:hidden bg-navy px-6 pt-[calc(1.5rem+env(safe-area-inset-top))] pb-8">
+        <Logo size={28} on="dark" />
+      </div>
+
+      {/* Right panel — form, on paper background */}
+      <div className="flex-1 bg-paper flex items-center justify-center px-6 py-10">
+        <div className="w-full max-w-[340px] flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
+            <h1 className="text-[22px] font-semibold text-navy tracking-tight">Log in</h1>
+            <p className="text-[13px] text-muted">Welcome back.</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <label className="flex flex-col gap-1.5">
+              <span className="font-mono text-[9px] tracking-[0.1em] uppercase text-muted">Email</span>
+              <input
+                type="email" placeholder="you@agency.ae" value={email}
+                onChange={(e) => setEmail(e.target.value)} required
+                className="w-full bg-white border border-inputBorder rounded-[5px] px-3 py-2.5 text-sm text-ink focus:outline-none focus:border-mid focus:ring-1 focus:ring-mid"
+              />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[9px] tracking-[0.1em] uppercase text-muted">Password</span>
+                <Link to="/forgot-password" className="text-xs font-semibold text-mid">Forgot?</Link>
+              </div>
+              <input
+                type="password" placeholder="••••••••••" value={password}
+                onChange={(e) => setPassword(e.target.value)} required
+                className="w-full bg-white border border-inputBorder rounded-[5px] px-3 py-2.5 text-sm font-mono text-ink focus:outline-none focus:border-mid focus:ring-1 focus:ring-mid"
+              />
+            </label>
+
+            {error && <p className="text-sm text-warn">{error}</p>}
+
+            <button
+              type="submit" disabled={loading}
+              className="w-full bg-amber text-ink rounded-[5px] px-4 py-3 text-sm font-bold disabled:opacity-50"
+            >
+              {loading ? 'Logging in…' : 'Log in'}
+            </button>
+          </form>
+
+          <div className="flex items-center gap-2.5">
+            <div className="flex-1 h-px bg-border" />
+            <span className="font-mono text-[10px] text-muted">OR</span>
+            <div className="flex-1 h-px bg-border" />
+          </div>
+
+          <OAuthButtons />
+
+          <p className="text-xs text-muted text-center">
+            No account yet?{' '}
+            <Link to="/signup" className="text-mid font-semibold">Create one</Link>
+          </p>
+        </div>
       </div>
     </div>
   )

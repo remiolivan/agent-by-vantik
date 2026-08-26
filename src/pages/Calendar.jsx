@@ -283,7 +283,7 @@ export default function Calendar() {
     <Layout
       title="Calendar"
       action={
-        <button onClick={() => openNewEvent()} className="flex items-center gap-1.5 bg-teal text-white text-sm font-medium rounded-lg px-4 py-2.5 lg:py-2 whitespace-nowrap">
+        <button onClick={() => openNewEvent()} className="flex items-center gap-1.5 bg-amber text-ink font-bold rounded-md px-4 py-2.5 lg:py-2 whitespace-nowrap">
           <Plus size={15} /> New event
         </button>
       }
@@ -294,9 +294,9 @@ export default function Calendar() {
           <button onClick={() => navigate(-1)} className="p-1.5 text-muted hover:text-ink" aria-label="Previous"><ChevronLeft size={18} /></button>
           <div className="font-display text-base font-medium text-navyDeep min-w-[180px]">{headerLabel}</div>
           <button onClick={() => navigate(1)} className="p-1.5 text-muted hover:text-ink" aria-label="Next"><ChevronRight size={18} /></button>
-          <button onClick={() => setCursor(new Date())} className="text-xs text-navyDeep border border-navyDeep/30 rounded-lg px-2.5 py-1 ml-1">Today</button>
+          <button onClick={() => setCursor(new Date())} className="text-xs text-navyDeep border border-navyDeep/30 rounded-md px-2.5 py-1 ml-1">Today</button>
         </div>
-        <div className="flex bg-white border border-muted/20 rounded-lg p-0.5">
+        <div className="flex bg-white border border-border rounded-md p-0.5">
           {['day', 'week', 'month'].map((v) => (
             <button
               key={v} onClick={() => setView(v)}
@@ -317,8 +317,8 @@ export default function Calendar() {
       )}
 
       {/* Connections: kept below the calendar grid, "add another" tucked below the connected list */}
-      <div className="bg-white border border-muted/20 rounded-xl p-4 mt-6">
-        <div className="font-mono text-xs uppercase tracking-wide text-muted mb-3">Connected calendars</div>
+      <div className="bg-white border border-border rounded-md p-4 mt-6">
+        <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-3">Connected calendars</div>
         {connectedList.length === 0 && <p className="text-sm text-muted mb-3">No calendar connected yet.</p>}
         <div className="space-y-2 mb-3">
           {connectedList.map((c) => (
@@ -327,7 +327,7 @@ export default function Calendar() {
                 <div className="text-sm text-ink capitalize">{c.provider === 'google' ? 'Google Calendar' : 'Outlook Calendar'}</div>
                 <div className="text-xs text-teal-700 truncate">Connected · {c.provider_account_email}</div>
               </div>
-              <button onClick={() => disconnect(c.id)} className="text-xs text-coral border border-coral/30 rounded-lg px-3 py-1.5 whitespace-nowrap shrink-0">
+              <button onClick={() => disconnect(c.id)} className="text-xs text-coral border border-coral/30 rounded-md px-3 py-1.5 whitespace-nowrap shrink-0">
                 Disconnect
               </button>
             </div>
@@ -336,12 +336,12 @@ export default function Calendar() {
 
         {unconnectedList.length > 0 && (
           addingCalendar ? (
-            <div className="pt-3 border-t border-muted/15 space-y-2">
+            <div className="pt-3 border-t border-border space-y-2">
               {unconnectedList.map((opt) => (
                 <div key={opt.key} className="flex items-center justify-between gap-3">
                   <span className="text-sm text-ink">{opt.label}</span>
                   {opt.configured ? (
-                    <a href={opt.url()} className="text-xs bg-navyDeep text-white rounded-lg px-3 py-1.5 whitespace-nowrap">Connect</a>
+                    <a href={opt.url()} className="text-xs bg-navyDeep text-white rounded-md px-3 py-1.5 whitespace-nowrap">Connect</a>
                   ) : (
                     <span className="text-xs text-faint">Not set up yet</span>
                   )}
@@ -349,7 +349,7 @@ export default function Calendar() {
               ))}
             </div>
           ) : (
-            <button onClick={() => setAddingCalendar(true)} className="text-sm text-navyDeep underline pt-2 border-t border-muted/15 w-full text-left">
+            <button onClick={() => setAddingCalendar(true)} className="text-sm text-navyDeep underline pt-2 border-t border-border w-full text-left">
               + Add another calendar
             </button>
           )
@@ -391,7 +391,7 @@ function EventPill({ ev, onClick, compact, style }) {
     <button
       onClick={(e) => { e.stopPropagation(); onClick(ev) }}
       style={style}
-      className={`text-left bg-tintBlue hover:bg-tintBlue/70 border border-border-blue rounded px-2 py-1 overflow-hidden ${compact ? 'text-[11px]' : 'text-xs'} ${style ? 'absolute inset-x-0.5' : 'w-full truncate'}`}
+      className={`text-left bg-mid/10 hover:bg-mid/15 border border-mid/25 rounded px-2 py-1 overflow-hidden ${compact ? 'text-[11px]' : 'text-xs'} ${style ? 'absolute inset-x-0.5' : 'w-full truncate'}`}
       title={`${ev.title} (${startLabel} – ${endLabel})`}
     >
       {/* Shows the full start–end range, not just the start time — a
@@ -435,13 +435,13 @@ function NowLine() {
 
 function DayView({ date, events, onEventClick, onSlotClick }) {
   return (
-    <div className="bg-white border border-muted/20 rounded-xl overflow-hidden relative">
+    <div className="bg-white border border-border rounded-md overflow-hidden relative">
       {HOURS.map((h) => {
         const slotDate = new Date(date); slotDate.setHours(h, 0, 0, 0)
         return (
-          <div key={h} className="flex border-b border-muted/10 last:border-0" style={{ height: HOUR_HEIGHT }}>
+          <div key={h} className="flex border-b border-border last:border-0" style={{ height: HOUR_HEIGHT }}>
             <div className="w-14 shrink-0 py-2 px-2 text-[11px] font-mono text-muted text-right">{h}:00</div>
-            <div onClick={() => onSlotClick(slotDate)} className="flex-1 cursor-pointer hover:bg-tintBlue/20" />
+            <div onClick={() => onSlotClick(slotDate)} className="flex-1 cursor-pointer hover:bg-mid/10" />
           </div>
         )
       })}
@@ -477,15 +477,15 @@ function WeekView({ days, eventsOn, onEventClick, onSlotClick }) {
   }, [days])
 
   return (
-    <div className="bg-white border border-muted/20 rounded-xl overflow-x-auto">
+    <div className="bg-white border border-border rounded-md overflow-x-auto">
       <div className="min-w-[720px]">
-        <div className={`grid ${cols} border-b border-muted/15`}>
+        <div className={`grid ${cols} border-b border-border`}>
           <div />
           {days.map((d, i) => (
             <div
               key={i}
               ref={sameDay(d, today) ? todayColRef : null}
-              className={`text-center py-2 border-l border-muted/10 ${sameDay(d, today) ? 'bg-tintBlue/40' : ''}`}
+              className={`text-center py-2 border-l border-border ${sameDay(d, today) ? 'bg-mid/10' : ''}`}
             >
               <div className="text-[10px] font-mono text-muted uppercase">{WEEKDAY_LABELS[i]}</div>
               <div className={`text-sm ${sameDay(d, today) ? 'text-navyDeep font-medium' : 'text-ink'}`}>{d.getDate()}</div>
@@ -494,14 +494,14 @@ function WeekView({ days, eventsOn, onEventClick, onSlotClick }) {
         </div>
         <div className="relative">
           {HOURS.map((h) => (
-            <div key={h} className={`grid ${cols} border-b border-muted/10 last:border-0`} style={{ height: HOUR_HEIGHT }}>
+            <div key={h} className={`grid ${cols} border-b border-border last:border-0`} style={{ height: HOUR_HEIGHT }}>
               <div className="py-1.5 px-2 text-[11px] font-mono text-muted text-right">{h}:00</div>
               {days.map((d, i) => {
                 const slotDate = new Date(d); slotDate.setHours(h, 0, 0, 0)
                 return (
                   <div
                     key={i} onClick={() => onSlotClick(slotDate)}
-                    className="border-l border-muted/10 cursor-pointer hover:bg-tintBlue/20 min-w-0"
+                    className="border-l border-border cursor-pointer hover:bg-mid/10 min-w-0"
                   />
                 )
               })}
@@ -530,8 +530,8 @@ function WeekView({ days, eventsOn, onEventClick, onSlotClick }) {
 function MonthView({ month, grid, eventsOn, onDayClick }) {
   const today = new Date()
   return (
-    <div className="bg-white border border-muted/20 rounded-xl overflow-hidden">
-      <div className="grid grid-cols-7 border-b border-muted/15">
+    <div className="bg-white border border-border rounded-md overflow-hidden">
+      <div className="grid grid-cols-7 border-b border-border">
         {WEEKDAY_LABELS.map((l) => (
           <div key={l} className="text-center py-2 text-[10px] font-mono text-muted uppercase">{l}</div>
         ))}
@@ -543,12 +543,12 @@ function MonthView({ month, grid, eventsOn, onDayClick }) {
           return (
             <button
               key={i} onClick={() => onDayClick(d)}
-              className={`text-left border-b border-r border-muted/10 min-h-[80px] p-1.5 ${inMonth ? '' : 'bg-paper/60'} ${sameDay(d, today) ? 'bg-tintBlue/30' : ''}`}
+              className={`text-left border-b border-r border-border min-h-[80px] p-1.5 ${inMonth ? '' : 'bg-paper/60'} ${sameDay(d, today) ? 'bg-mid/10' : ''}`}
             >
               <div className={`text-xs mb-1 ${inMonth ? 'text-ink' : 'text-faint'} ${sameDay(d, today) ? 'font-medium text-navyDeep' : ''}`}>{d.getDate()}</div>
               <div className="space-y-0.5">
                 {dayEvents.slice(0, 2).map((ev) => (
-                  <div key={ev.id} className="text-[10px] truncate bg-tintBlue text-navyDeep rounded px-1 py-0.5">{ev.title}</div>
+                  <div key={ev.id} className="text-[10px] truncate bg-mid/10 text-navyDeep rounded px-1 py-0.5">{ev.title}</div>
                 ))}
                 {dayEvents.length > 2 && <div className="text-[10px] text-muted">+{dayEvents.length - 2} more</div>}
               </div>
@@ -566,7 +566,7 @@ function EventView({ ev, onClose, onEdit, onDelete }) {
     <div className="fixed inset-0 z-40">
       <div className="absolute inset-0 bg-navyDeep/40" onClick={onClose} />
       <div className="absolute inset-x-0 bottom-0 sm:inset-y-0 sm:right-0 sm:left-auto sm:w-full sm:max-w-md bg-white rounded-t-2xl sm:rounded-none max-h-[90vh] sm:max-h-none overflow-y-auto">
-        <div className="px-5 pb-4 pt-[calc(1rem+env(safe-area-inset-top))] border-b border-muted/15 flex items-center justify-between">
+        <div className="px-5 pb-4 pt-[calc(1rem+env(safe-area-inset-top))] border-b border-border flex items-center justify-between">
           <span className="font-display text-lg font-medium text-navyDeep truncate pr-3">{ev.title}</span>
           <button onClick={onDelete} className="text-faint hover:text-coral p-1 shrink-0" aria-label="Delete event"><Trash2 size={17} /></button>
         </div>
@@ -582,7 +582,7 @@ function EventView({ ev, onClose, onEdit, onDelete }) {
           {ev.location && <div className="text-sm text-ink">{ev.location}</div>}
           {(ev.contacts?.name || ev.properties?.title) && (
             <div className="flex flex-wrap gap-1.5">
-              {ev.contacts?.name && <span className="text-xs text-navyDeep bg-tintBlue rounded px-2 py-1">{ev.contacts.name}</span>}
+              {ev.contacts?.name && <span className="text-xs text-navyDeep bg-mid/10 rounded px-2 py-1">{ev.contacts.name}</span>}
               {ev.properties?.title && <span className="text-xs text-teal-700 bg-teal/10 rounded px-2 py-1">{ev.properties.title}</span>}
             </div>
           )}
@@ -590,7 +590,7 @@ function EventView({ ev, onClose, onEdit, onDelete }) {
             <div className="text-xs text-teal-700">Synced to {syncedProviders.join(', ')}</div>
           )}
           <div className="flex gap-3 pt-2">
-            <button onClick={onEdit} className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5">Edit</button>
+            <button onClick={onEdit} className="bg-mid text-white text-sm font-medium rounded-md px-4 py-2.5">Edit</button>
             <button onClick={onClose} className="text-sm text-muted px-2">Close</button>
           </div>
         </div>
@@ -613,7 +613,7 @@ function EventForm({ isNew, form, setForm, onStartChange, onPropertyChange, conn
     <div className="fixed inset-0 z-40">
       <div className="absolute inset-0 bg-navyDeep/40" onClick={onCancel} />
       <div className="absolute inset-x-0 bottom-0 sm:inset-y-0 sm:right-0 sm:left-auto sm:w-full sm:max-w-md bg-white rounded-t-2xl sm:rounded-none max-h-[90vh] sm:max-h-none overflow-y-auto">
-        <div className="px-5 pb-4 pt-[calc(1rem+env(safe-area-inset-top))] border-b border-muted/15 flex items-center justify-between">
+        <div className="px-5 pb-4 pt-[calc(1rem+env(safe-area-inset-top))] border-b border-border flex items-center justify-between">
           <span className="font-display text-lg font-medium text-navyDeep">{isNew ? 'New event' : 'Edit event'}</span>
           {onDelete && (
             <button onClick={onDelete} className="text-faint hover:text-coral p-1" aria-label="Delete event"><Trash2 size={17} /></button>
@@ -621,11 +621,11 @@ function EventForm({ isNew, form, setForm, onStartChange, onPropertyChange, conn
         </div>
         <form onSubmit={onSubmit} className="p-5 space-y-3">
           {/* Property first — selecting one auto-fills the location below */}
-          <select value={form.property_id} onChange={(e) => onPropertyChange(e.target.value)} className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm">
+          <select value={form.property_id} onChange={(e) => onPropertyChange(e.target.value)} className="w-full border border-border rounded-md px-3 py-2.5 text-sm">
             <option value="">No linked property</option>
             {properties.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
           </select>
-          <select value={form.prospect_id} onChange={(e) => setForm({ ...form, prospect_id: e.target.value })} className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm">
+          <select value={form.prospect_id} onChange={(e) => setForm({ ...form, prospect_id: e.target.value })} className="w-full border border-border rounded-md px-3 py-2.5 text-sm">
             <option value="">No linked prospect</option>
             {prospects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
@@ -633,32 +633,32 @@ function EventForm({ isNew, form, setForm, onStartChange, onPropertyChange, conn
           <input
             value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })}
             placeholder="Event title (e.g. Viewing – 2BR Marina Tower)" required
-            className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+            className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
           />
           <input
             value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })}
-            placeholder="Location / address" className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+            placeholder="Location / address" className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
           />
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1">
               <label className="text-xs text-muted block mb-1">Start</label>
               <input
                 type="datetime-local" step="900" value={form.start} onChange={(e) => onStartChange(e.target.value)} required
-                className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
               />
             </div>
             <div className="flex-1">
               <label className="text-xs text-muted block mb-1">End</label>
               <input
                 type="datetime-local" step="900" value={form.end} onChange={(e) => setForm({ ...form, end: e.target.value })} required
-                className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+                className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
               />
             </div>
           </div>
           <p className="text-xs text-faint -mt-1">Defaults to 30 min — only touch End if it runs longer or shorter.</p>
 
           {isNew && connectedList.length > 0 && (
-            <div className="border border-muted/20 rounded-lg p-3 space-y-2">
+            <div className="border border-border rounded-md p-3 space-y-2">
               <div className="text-xs text-muted mb-1">Sync to calendar</div>
               {connectedList.map((c) => (
                 <label key={c.id} className="flex items-center gap-2 text-sm text-ink">
@@ -676,7 +676,7 @@ function EventForm({ isNew, form, setForm, onStartChange, onPropertyChange, conn
           )}
 
           {canInvite && (
-            <label className="flex items-center gap-2 text-sm text-ink border border-muted/20 rounded-lg p-3">
+            <label className="flex items-center gap-2 text-sm text-ink border border-border rounded-md p-3">
               <input
                 type="checkbox" checked={form.sendInvite}
                 onChange={(e) => setForm({ ...form, sendInvite: e.target.checked })}
@@ -691,7 +691,7 @@ function EventForm({ isNew, form, setForm, onStartChange, onPropertyChange, conn
           )}
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3 pt-1">
-            <button type="submit" disabled={saving} className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5 disabled:opacity-50">
+            <button type="submit" disabled={saving} className="bg-mid text-white text-sm font-medium rounded-md px-4 py-2.5 disabled:opacity-50">
               {saving ? 'Saving…' : isNew ? 'Add event' : 'Save changes'}
             </button>
             <button type="button" onClick={onCancel} className="text-sm text-muted px-2">Cancel</button>

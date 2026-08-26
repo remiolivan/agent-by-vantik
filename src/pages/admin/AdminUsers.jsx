@@ -38,21 +38,21 @@ export default function AdminUsers() {
           placeholder="Search by email or organization name…"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-navyDeep"
+          className="flex-1 border border-border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:border-navyDeep"
         />
-        <button type="submit" disabled={loading} className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5 disabled:opacity-50">
+        <button type="submit" disabled={loading} className="bg-mid text-white text-sm font-medium rounded-md px-4 py-2.5 disabled:opacity-50">
           Search
         </button>
       </form>
 
       {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
 
-      <div className="bg-white border border-muted/20 rounded-xl divide-y divide-muted/10">
+      <div className="bg-white border border-border rounded-md divide-y divide-muted/10">
         {users.map((u) => (
           <Link
             key={u.membership_id}
             to={`/admin/orgs/${u.org_id}`}
-            className="block px-4 py-3 hover:bg-tintBlue/40"
+            className="block px-4 py-3 hover:bg-mid/10"
           >
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <span className="text-sm text-ink">{u.email ?? u.invited_email}</span>

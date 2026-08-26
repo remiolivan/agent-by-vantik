@@ -115,35 +115,35 @@ export default function Prospects() {
           <button
             onClick={() => fileRef.current?.click()}
             disabled={importing}
-            className="text-sm text-navyDeep border border-navyDeep/30 rounded-lg px-3.5 py-2.5 lg:py-2 disabled:opacity-50 whitespace-nowrap"
+            className="text-sm text-navyDeep border border-navyDeep/30 rounded-md px-3.5 py-2.5 lg:py-2 disabled:opacity-50 whitespace-nowrap"
           >
             {importing ? 'Importing…' : 'Import CSV'}
           </button>
           <input ref={fileRef} type="file" accept=".csv" onChange={handleImport} className="hidden" />
-          <button onClick={() => setShowNew(true)} className="bg-teal text-white text-sm font-medium rounded-lg px-4 py-2.5 lg:py-2 whitespace-nowrap">
+          <button onClick={() => setShowNew(true)} className="bg-amber text-ink font-bold rounded-md px-4 py-2.5 lg:py-2 whitespace-nowrap">
             + New
           </button>
         </div>
       }
     >
       {importMsg && (
-        <div className="mb-4 px-4 py-3 bg-white border border-muted/20 rounded-xl text-sm text-muted">{importMsg}</div>
+        <div className="mb-4 px-4 py-3 bg-white border border-border rounded-md text-sm text-muted">{importMsg}</div>
       )}
 
       {showNew && (
-        <form onSubmit={createContact} className="px-4 py-5 -mx-4 mb-6 bg-white border-y border-muted/20 sm:mx-0 sm:rounded-xl sm:border space-y-3 max-w-2xl">
+        <form onSubmit={createContact} className="px-4 py-5 -mx-4 mb-6 bg-white border-y border-border sm:mx-0 sm:rounded-md sm:border space-y-3 max-w-2xl">
           <div className="flex flex-col sm:flex-row gap-3">
             <input
               value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-              placeholder="Name" required className="border border-muted/30 rounded-lg px-3 py-2.5 text-sm flex-1"
+              placeholder="Name" required className="border border-border rounded-md px-3 py-2.5 text-sm flex-1"
             />
             <input
               value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
-              placeholder="Email" type="email" className="border border-muted/30 rounded-lg px-3 py-2.5 text-sm flex-1"
+              placeholder="Email" type="email" className="border border-border rounded-md px-3 py-2.5 text-sm flex-1"
             />
             <input
               value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
-              placeholder="Phone" className="border border-muted/30 rounded-lg px-3 py-2.5 text-sm flex-1"
+              placeholder="Phone" className="border border-border rounded-md px-3 py-2.5 text-sm flex-1"
             />
           </div>
 
@@ -161,7 +161,7 @@ export default function Prospects() {
               <button
                 key={opt.value} type="button" onClick={() => setForm({ ...form, type: opt.value })}
                 className={`text-sm rounded-full px-3.5 py-1.5 border ${
-                  form.type === opt.value ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-ink'
+                  form.type === opt.value ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-ink'
                 }`}
               >{opt.label}</button>
             ))}
@@ -172,8 +172,8 @@ export default function Prospects() {
               <button
                 key={opt.value} type="button"
                 onClick={() => setForm({ ...form, intent: form.intent === opt.value ? '' : opt.value })}
-                className={`flex-1 text-sm rounded-lg px-3 py-2.5 border ${
-                  form.intent === opt.value ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'
+                className={`flex-1 text-sm rounded-md px-3 py-2.5 border ${
+                  form.intent === opt.value ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-muted'
                 }`}
               >{opt.label}</button>
             ))}
@@ -182,11 +182,11 @@ export default function Prospects() {
           <div className="flex gap-3">
             <NumberInput
               value={form.budget_min} onChange={(v) => setForm({ ...form, budget_min: v })}
-              placeholder="Budget min (AED)" className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+              placeholder="Budget min (AED)" className="flex-1 border border-border rounded-md px-3 py-2.5 text-sm"
             />
             <NumberInput
               value={form.budget_max} onChange={(v) => setForm({ ...form, budget_max: v })}
-              placeholder="Budget max (AED)" className="flex-1 border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+              placeholder="Budget max (AED)" className="flex-1 border border-border rounded-md px-3 py-2.5 text-sm"
             />
           </div>
 
@@ -197,7 +197,7 @@ export default function Prospects() {
                 <button
                   key={opt} type="button" onClick={() => toggleNewBedroom(opt)}
                   className={`text-xs rounded-full px-3 py-1.5 border ${
-                    form.bedrooms_wanted_list.includes(opt) ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'
+                    form.bedrooms_wanted_list.includes(opt) ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-muted'
                   }`}
                 >{opt}</button>
               ))}
@@ -207,11 +207,11 @@ export default function Prospects() {
           <input
             value={form.locations_wanted} onChange={(e) => setForm({ ...form, locations_wanted: e.target.value })}
             placeholder="Locations (e.g. Marina, JBR, Downtown)"
-            className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm"
+            className="w-full border border-border rounded-md px-3 py-2.5 text-sm"
           />
 
           <div className="flex gap-3">
-            <button type="submit" disabled={creating} className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5 flex-1 sm:flex-none disabled:opacity-50">
+            <button type="submit" disabled={creating} className="bg-mid text-white text-sm font-medium rounded-md px-4 py-2.5 flex-1 sm:flex-none disabled:opacity-50">
               {creating ? 'Adding…' : 'Add prospect'}
             </button>
             <button type="button" onClick={() => setShowNew(false)} className="text-sm text-muted px-2">Cancel</button>
@@ -224,11 +224,11 @@ export default function Prospects() {
         {contacts.map((c) => (
           <button
             key={c.id} onClick={() => setSelected(c)}
-            className="w-full text-left bg-white border border-muted/20 rounded-xl p-4"
+            className="w-full text-left bg-white border border-border rounded-md p-4"
           >
             <div className="flex items-center justify-between mb-1">
               <span className="text-sm font-medium text-ink">{c.name}</span>
-              <span className="text-xs text-muted capitalize bg-tintBlue rounded px-2 py-0.5">{c.type.replace('_', ' ')}</span>
+              <span className="text-xs text-muted capitalize bg-mid/10 rounded px-2 py-0.5">{c.type.replace('_', ' ')}</span>
             </div>
             {c.pipeline_stages?.name && (
               <div className="text-xs text-teal-700 mb-1">{c.pipeline_stages.name}</div>
@@ -248,10 +248,10 @@ export default function Prospects() {
       </div>
 
       {/* Desktop: table */}
-      <div className="hidden sm:block bg-white border border-muted/20 rounded-xl overflow-hidden">
+      <div className="hidden sm:block bg-white border border-border rounded-md overflow-hidden">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left font-mono text-xs uppercase tracking-wide text-muted border-b border-muted/20">
+            <tr className="text-left font-mono text-[9px] uppercase tracking-[0.1em] text-muted border-b border-border">
               <th className="py-3 px-4 font-normal">Name</th>
               <th className="py-3 px-4 font-normal">Email</th>
               <th className="py-3 px-4 font-normal">Phone</th>
@@ -264,7 +264,7 @@ export default function Prospects() {
             {contacts.map((c) => (
               <tr
                 key={c.id} onClick={() => setSelected(c)}
-                className="border-b border-muted/10 last:border-0 cursor-pointer hover:bg-tintBlue/40"
+                className="border-b border-border last:border-0 cursor-pointer hover:bg-mid/10"
               >
                 <td className="py-3 px-4 text-ink">{c.name}</td>
                 <td className="py-3 px-4 text-muted">{c.email || '—'}</td>

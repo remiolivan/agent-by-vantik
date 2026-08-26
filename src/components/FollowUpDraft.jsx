@@ -77,7 +77,7 @@ export default function FollowUpDraft({ contactId, propertyId, contactPhone, con
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
       <div className="absolute inset-0 bg-navyDeep/40" onClick={onClose} />
-      <div className="relative bg-white rounded-xl max-w-lg w-full p-6">
+      <div className="relative bg-white rounded-md max-w-lg w-full p-6">
         <button onClick={onClose} className="absolute top-4 right-4 text-muted" aria-label="Close">
           <X size={20} />
         </button>
@@ -94,11 +94,11 @@ export default function FollowUpDraft({ contactId, propertyId, contactPhone, con
         <div className="flex gap-2 mb-3">
           <button
             onClick={() => setChannel('whatsapp')} disabled={loading}
-            className={`text-xs rounded-full px-3 py-1.5 border ${channel === 'whatsapp' ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'}`}
+            className={`text-xs rounded-full px-3 py-1.5 border ${channel === 'whatsapp' ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-muted'}`}
           >WhatsApp</button>
           <button
             onClick={() => setChannel('email')} disabled={loading}
-            className={`text-xs rounded-full px-3 py-1.5 border ${channel === 'email' ? 'bg-navyDeep text-white border-navyDeep' : 'border-muted/30 text-muted'}`}
+            className={`text-xs rounded-full px-3 py-1.5 border ${channel === 'email' ? 'bg-navyDeep text-white border-navyDeep' : 'border-border text-muted'}`}
           >Email</button>
         </div>
 
@@ -113,7 +113,7 @@ export default function FollowUpDraft({ contactId, propertyId, contactPhone, con
             value={instructions} onChange={(e) => setInstructions(e.target.value)}
             placeholder="e.g. mention the price just dropped, keep it very short, suggest a viewing this weekend…"
             rows={2}
-            className="w-full border border-muted/30 rounded-lg px-3 py-2 text-sm resize-none mb-3"
+            className="w-full border border-border rounded-md px-3 py-2 text-sm resize-none mb-3"
           />
         )}
 
@@ -125,11 +125,11 @@ export default function FollowUpDraft({ contactId, propertyId, contactPhone, con
             <textarea
               value={draft} onChange={(e) => setDraft(e.target.value)}
               rows={6}
-              className="w-full border border-muted/30 rounded-lg px-3 py-2.5 text-sm resize-none mb-4"
+              className="w-full border border-border rounded-md px-3 py-2.5 text-sm resize-none mb-4"
             />
             <div className="flex gap-3 flex-wrap">
               {channel === 'whatsapp' && whatsappUrl && (
-                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="text-sm bg-[#25D366] text-white rounded-lg px-4 py-2.5">
+                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="text-sm bg-[#25D366] text-white rounded-md px-4 py-2.5">
                   Send via WhatsApp
                 </a>
               )}
@@ -137,7 +137,7 @@ export default function FollowUpDraft({ contactId, propertyId, contactPhone, con
                 <p className="text-xs text-muted">No phone number on file for this prospect.</p>
               )}
               {channel === 'email' && emailUrl && (
-                <a href={emailUrl} className="text-sm text-navyDeep border border-navyDeep/30 rounded-lg px-4 py-2.5">
+                <a href={emailUrl} className="text-sm text-navyDeep border border-navyDeep/30 rounded-md px-4 py-2.5">
                   Send via email
                 </a>
               )}
@@ -154,7 +154,7 @@ export default function FollowUpDraft({ contactId, propertyId, contactPhone, con
                 whether the agent used the Send button here or copied the
                 text elsewhere. */}
             {!marked ? (
-              <div className="flex items-center gap-3 mt-4 pt-4 border-t border-muted/15">
+              <div className="flex items-center gap-3 mt-4 pt-4 border-t border-border">
                 <span className="text-xs text-muted">Did you send this?</span>
                 <button
                   onClick={() => markSent(true)} disabled={marking}
@@ -166,7 +166,7 @@ export default function FollowUpDraft({ contactId, propertyId, contactPhone, con
                 >Not sent</button>
               </div>
             ) : (
-              <p className="text-xs text-teal mt-4 pt-4 border-t border-muted/15">Logged to Activity.</p>
+              <p className="text-xs text-teal mt-4 pt-4 border-t border-border">Logged to Activity.</p>
             )}
           </>
         )}
@@ -174,7 +174,7 @@ export default function FollowUpDraft({ contactId, propertyId, contactPhone, con
         {!loading && !hasGenerated && !error && (
           <button
             onClick={() => generate()}
-            className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5"
+            className="bg-navyDeep text-white text-sm rounded-md px-4 py-2.5"
           >
             Generate draft
           </button>
@@ -182,7 +182,7 @@ export default function FollowUpDraft({ contactId, propertyId, contactPhone, con
         {!loading && error && (
           <button
             onClick={() => generate()}
-            className="bg-navyDeep text-white text-sm rounded-lg px-4 py-2.5"
+            className="bg-navyDeep text-white text-sm rounded-md px-4 py-2.5"
           >
             Try again
           </button>

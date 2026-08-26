@@ -68,9 +68,9 @@ export default function Billing() {
     <Layout title="Billing">
       <div className="max-w-3xl">
         {org && (
-          <div className="bg-white border border-muted/20 rounded-xl p-5 sm:p-6 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="bg-white border border-border rounded-md p-5 sm:p-6 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <div className="font-mono text-xs uppercase tracking-wide text-muted mb-1">Current plan</div>
+              <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-1">Current plan</div>
               <div className="font-display text-xl font-medium text-navyDeep capitalize">{org.plan}</div>
               {org.plan === 'trial' && daysLeft !== null && (
                 <div className="text-sm text-muted mt-1">{daysLeft} day{daysLeft === 1 ? '' : 's'} left in trial</div>
@@ -79,7 +79,7 @@ export default function Billing() {
             {org.stripe_customer_id && (
               <button
                 onClick={manageBilling} disabled={portalLoading}
-                className="text-sm text-navyDeep border border-navyDeep/30 rounded-lg px-4 py-2.5 disabled:opacity-50 whitespace-nowrap"
+                className="text-sm text-navyDeep border border-navyDeep/30 rounded-md px-4 py-2.5 disabled:opacity-50 whitespace-nowrap"
               >
                 {portalLoading ? 'Loading…' : 'Manage billing'}
               </button>
@@ -91,14 +91,14 @@ export default function Billing() {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {PLANS.map((p) => (
-            <div key={p.key} className="bg-white border border-muted/20 rounded-xl p-6 flex flex-col">
+            <div key={p.key} className="bg-white border border-border rounded-md p-6 flex flex-col">
               <div className="font-display text-lg font-medium text-navyDeep mb-1">{p.name}</div>
               <div className="font-mono text-2xl text-navyDeep mb-1">{p.price}</div>
               <div className="text-sm text-muted mb-6">{p.desc}</div>
               <button
                 onClick={() => subscribe(p.key)}
                 disabled={loadingPlan === p.key || org?.plan === p.key}
-                className="mt-auto bg-teal text-white text-sm font-medium rounded-lg px-4 py-2.5 disabled:opacity-50"
+                className="mt-auto bg-amber text-ink font-bold rounded-md px-4 py-2.5 disabled:opacity-50"
               >
                 {org?.plan === p.key ? 'Current plan' : loadingPlan === p.key ? 'Loading…' : 'Subscribe'}
               </button>

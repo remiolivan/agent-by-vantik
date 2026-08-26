@@ -37,19 +37,19 @@ export default function OAuthButtons({ referralCode }) {
     <div className="space-y-2.5">
       <button
         type="button" onClick={() => signInWith('google')} disabled={!!loadingProvider}
-        className="w-full flex items-center justify-center gap-2.5 border border-muted/30 rounded px-4 py-3 text-sm font-medium text-ink hover:bg-tintBlue/40 disabled:opacity-50"
+        className="w-full flex items-center justify-center gap-2.5 border border-navy rounded-[5px] px-4 py-3 text-sm font-semibold text-navy hover:bg-paper disabled:opacity-50"
       >
         <GoogleIcon />
         {loadingProvider === 'google' ? 'Redirecting…' : 'Continue with Google'}
       </button>
       <button
         type="button" onClick={() => signInWith('azure')} disabled={!!loadingProvider}
-        className="w-full flex items-center justify-center gap-2.5 border border-muted/30 rounded px-4 py-3 text-sm font-medium text-ink hover:bg-tintBlue/40 disabled:opacity-50"
+        className="w-full flex items-center justify-center gap-2.5 border border-navy rounded-[5px] px-4 py-3 text-sm font-semibold text-navy hover:bg-paper disabled:opacity-50"
       >
         <MicrosoftIcon />
         {loadingProvider === 'azure' ? 'Redirecting…' : 'Continue with Microsoft'}
       </button>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-warn">{error}</p>}
     </div>
   )
 }

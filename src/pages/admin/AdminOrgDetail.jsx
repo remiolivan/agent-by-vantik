@@ -187,7 +187,7 @@ export default function AdminOrgDetail() {
       {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
 
       <div className="grid lg:grid-cols-3 gap-6 mb-8">
-        <div className="lg:col-span-2 bg-white border border-muted/20 rounded-xl p-5 sm:p-6">
+        <div className="lg:col-span-2 bg-white border border-border rounded-md p-5 sm:p-6">
           <div className="flex items-center gap-3 mb-4 flex-wrap">
             <h2 className="font-display text-lg font-medium text-navyDeep">{org.name}</h2>
             <StatusBadge status={status} />
@@ -210,7 +210,7 @@ export default function AdminOrgDetail() {
             <CountCard label="Documents" value={counts.documents} />
             <CountCard label="Tasks" value={counts.tasks} />
           </div>
-          <div className="bg-white border border-muted/20 rounded-xl p-4">
+          <div className="bg-white border border-border rounded-md p-4">
             <div className="font-mono text-[10px] uppercase tracking-wide text-muted mb-2">Export CSV</div>
             <div className="flex flex-wrap gap-2">
               {['contacts', 'properties', 'documents', 'tasks'].map((entity) => (
@@ -218,7 +218,7 @@ export default function AdminOrgDetail() {
                   key={entity}
                   disabled={exportingEntity !== null}
                   onClick={() => handleExportCsv(entity)}
-                  className="text-xs text-navyDeep border border-navyDeep/30 rounded-lg px-2.5 py-1.5 disabled:opacity-50 capitalize"
+                  className="text-xs text-navyDeep border border-navyDeep/30 rounded-md px-2.5 py-1.5 disabled:opacity-50 capitalize"
                 >
                   {exportingEntity === entity ? '…' : entity}
                 </button>
@@ -229,20 +229,20 @@ export default function AdminOrgDetail() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white border border-muted/20 rounded-xl p-5 sm:p-6">
-          <h3 className="font-mono text-xs uppercase tracking-wide text-muted mb-4">Trial &amp; plan</h3>
+        <div className="bg-white border border-border rounded-md p-5 sm:p-6">
+          <h3 className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-4">Trial &amp; plan</h3>
 
           <div className="flex items-center gap-2 mb-4">
             <input
               type="number" min="1" value={extendDays}
               onChange={(e) => setExtendDays(e.target.value)}
-              className="w-20 border border-muted/30 rounded-lg px-3 py-2 text-sm"
+              className="w-20 border border-border rounded-md px-3 py-2 text-sm"
             />
             <span className="text-sm text-muted">days</span>
             <button
               disabled={busy || !extendDays || Number(extendDays) <= 0}
               onClick={() => runAction('extend_trial', { days: Number(extendDays) }, `Trial extended by ${extendDays} days.`)}
-              className="bg-navyDeep text-white text-sm rounded-lg px-3.5 py-2 disabled:opacity-50 ml-auto"
+              className="bg-mid text-white text-sm font-medium rounded-md px-3.5 py-2 disabled:opacity-50 ml-auto"
             >
               Extend trial
             </button>
@@ -251,14 +251,14 @@ export default function AdminOrgDetail() {
           <div className="flex items-center gap-2 mb-4">
             <select
               value={newPlan} onChange={(e) => setNewPlan(e.target.value)}
-              className="border border-muted/30 rounded-lg px-3 py-2 text-sm"
+              className="border border-border rounded-md px-3 py-2 text-sm"
             >
               {PLAN_OPTIONS.map((p) => <option key={p} value={p}>{p}</option>)}
             </select>
             <button
               disabled={busy || newPlan === org.plan}
               onClick={() => runAction('set_plan', { plan: newPlan }, `Plan label set to "${newPlan}". This does not touch Stripe.`)}
-              className="bg-navyDeep text-white text-sm rounded-lg px-3.5 py-2 disabled:opacity-50 ml-auto"
+              className="bg-mid text-white text-sm font-medium rounded-md px-3.5 py-2 disabled:opacity-50 ml-auto"
             >
               Set plan
             </button>
@@ -273,13 +273,13 @@ export default function AdminOrgDetail() {
           </button>
         </div>
 
-        <div className="bg-white border border-muted/20 rounded-xl p-5 sm:p-6">
-          <h3 className="font-mono text-xs uppercase tracking-wide text-muted mb-4">Access</h3>
+        <div className="bg-white border border-border rounded-md p-5 sm:p-6">
+          <h3 className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-4">Access</h3>
           {org.suspended_at ? (
             <button
               disabled={busy}
               onClick={() => runAction('unsuspend_org', {}, 'Organization reactivated.')}
-              className="bg-teal text-white text-sm rounded-lg px-3.5 py-2 disabled:opacity-50"
+              className="bg-amber text-ink font-bold rounded-md px-3.5 py-2 disabled:opacity-50"
             >
               Reactivate organization
             </button>
@@ -289,13 +289,13 @@ export default function AdminOrgDetail() {
                 placeholder="Reason for suspension (required, shown in audit log)"
                 value={suspendReason}
                 onChange={(e) => setSuspendReason(e.target.value)}
-                className="w-full border border-muted/30 rounded-lg px-3 py-2 text-sm mb-3"
+                className="w-full border border-border rounded-md px-3 py-2 text-sm mb-3"
                 rows={2}
               />
               <button
                 disabled={busy || !suspendReason.trim()}
                 onClick={() => runAction('suspend_org', { reason: suspendReason }, 'Organization suspended.')}
-                className="bg-coral text-white text-sm rounded-lg px-3.5 py-2 disabled:opacity-50"
+                className="bg-coral text-white text-sm rounded-md px-3.5 py-2 disabled:opacity-50"
               >
                 Suspend organization
               </button>
@@ -307,8 +307,8 @@ export default function AdminOrgDetail() {
         </div>
       </div>
 
-      <div className="bg-white border border-muted/20 rounded-xl p-5 sm:p-6 mb-8">
-        <h3 className="font-mono text-xs uppercase tracking-wide text-muted mb-4">Members ({members.length})</h3>
+      <div className="bg-white border border-border rounded-md p-5 sm:p-6 mb-8">
+        <h3 className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-4">Members ({members.length})</h3>
         <div className="divide-y divide-muted/10">
           {members.map((m) => (
             <div key={m.membership_id} className="py-3 flex flex-wrap items-center justify-between gap-3">
@@ -322,14 +322,14 @@ export default function AdminOrgDetail() {
                     <button
                       disabled={busy}
                       onClick={() => handleResendInvite(m.membership_id)}
-                      className="text-xs text-navyDeep border border-navyDeep/30 rounded-lg px-2.5 py-1.5 disabled:opacity-50"
+                      className="text-xs text-navyDeep border border-navyDeep/30 rounded-md px-2.5 py-1.5 disabled:opacity-50"
                     >
                       Renvoyer l'email
                     </button>
                     <button
                       disabled={busy}
                       onClick={() => handleGetInviteLink(m.membership_id)}
-                      className="text-xs text-navyDeep border border-navyDeep/30 rounded-lg px-2.5 py-1.5 disabled:opacity-50"
+                      className="text-xs text-navyDeep border border-navyDeep/30 rounded-md px-2.5 py-1.5 disabled:opacity-50"
                     >
                       Copier le lien
                     </button>
@@ -339,14 +339,14 @@ export default function AdminOrgDetail() {
                   <button
                     disabled={busy}
                     onClick={() => handleResetPassword(m.email)}
-                    className="text-xs text-navyDeep border border-navyDeep/30 rounded-lg px-2.5 py-1.5 disabled:opacity-50"
+                    className="text-xs text-navyDeep border border-navyDeep/30 rounded-md px-2.5 py-1.5 disabled:opacity-50"
                   >
                     Reset password
                   </button>
                 )}
               </div>
               {inviteLinks[m.membership_id] && (
-                <div className="w-full mt-2 text-xs text-muted break-all bg-tintBlue/40 rounded-lg px-3 py-2">
+                <div className="w-full mt-2 text-xs text-muted break-all bg-mid/10 rounded-md px-3 py-2">
                   {inviteLinks[m.membership_id]}
                 </div>
               )}
@@ -356,8 +356,8 @@ export default function AdminOrgDetail() {
         </div>
       </div>
 
-      <div className="bg-white border border-muted/20 rounded-xl p-5 sm:p-6 mb-8">
-        <h3 className="font-mono text-xs uppercase tracking-wide text-muted mb-1">Assistant IA</h3>
+      <div className="bg-white border border-border rounded-md p-5 sm:p-6 mb-8">
+        <h3 className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-1">Assistant IA</h3>
         <p className="text-xs text-muted mb-4">
           Décris le problème du client, l'IA regarde les données de cette org (plan, statut, membres, actions récentes) et te propose un diagnostic.
         </p>
@@ -366,27 +366,27 @@ export default function AdminOrgDetail() {
             value={aiProblem}
             onChange={(e) => setAiProblem(e.target.value)}
             placeholder="Ex : le client dit qu'il ne reçoit plus les rappels par email depuis 3 jours"
-            className="w-full border border-muted/30 rounded-lg px-3 py-2 text-sm mb-3"
+            className="w-full border border-border rounded-md px-3 py-2 text-sm mb-3"
             rows={2}
           />
           <button
             type="submit"
             disabled={aiBusy || !aiProblem.trim()}
-            className="bg-navyDeep text-white text-sm rounded-lg px-3.5 py-2 disabled:opacity-50"
+            className="bg-mid text-white text-sm font-medium rounded-md px-3.5 py-2 disabled:opacity-50"
           >
             {aiBusy ? 'Diagnostic en cours…' : 'Diagnostiquer'}
           </button>
         </form>
         {aiError && <p className="text-sm text-red-600">{aiError}</p>}
         {aiDiagnosis && (
-          <div className="bg-tintBlue/40 rounded-lg px-4 py-3 text-sm text-ink whitespace-pre-wrap">
+          <div className="bg-mid/10 rounded-md px-4 py-3 text-sm text-ink whitespace-pre-wrap">
             {aiDiagnosis}
           </div>
         )}
       </div>
 
-      <div className="bg-white border border-muted/20 rounded-xl p-5 sm:p-6 mb-8">
-        <h3 className="font-mono text-xs uppercase tracking-wide text-muted mb-1">Erreurs récentes</h3>
+      <div className="bg-white border border-border rounded-md p-5 sm:p-6 mb-8">
+        <h3 className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-1">Erreurs récentes</h3>
         <p className="text-xs text-muted mb-4">
           Erreurs réellement survenues côté backend pour cette org (email/push non envoyé, etc.). Un problème "ça ne marche pas / c'est vide" sans message d'erreur ne remontera pas ici — c'est le rôle de l'assistant IA ci-dessus.
         </p>
@@ -406,8 +406,8 @@ export default function AdminOrgDetail() {
         </div>
       </div>
 
-      <div className="bg-white border border-muted/20 rounded-xl p-5 sm:p-6">
-        <h3 className="font-mono text-xs uppercase tracking-wide text-muted mb-4">Recent admin activity</h3>
+      <div className="bg-white border border-border rounded-md p-5 sm:p-6">
+        <h3 className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-4">Recent admin activity</h3>
         <div className="divide-y divide-muted/10">
           {recentActivity.map((a) => (
             <div key={a.id} className="py-2.5 text-sm">
@@ -424,7 +424,7 @@ export default function AdminOrgDetail() {
 
 function CountCard({ label, value }) {
   return (
-    <div className="bg-white border border-muted/20 rounded-xl p-4">
+    <div className="bg-white border border-border rounded-md p-4">
       <div className="font-mono text-[10px] uppercase tracking-wide text-muted mb-1">{label}</div>
       <div className="font-display text-xl font-medium text-navyDeep">{value}</div>
     </div>
