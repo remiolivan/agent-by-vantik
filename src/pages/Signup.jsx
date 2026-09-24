@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import Logo from '../components/Logo'
 import OAuthButtons from '../components/OAuthButtons'
+import LegalFooter from '../components/LegalFooter'
 
 export default function Signup() {
   const [orgName, setOrgName] = useState('')
@@ -73,9 +74,16 @@ export default function Signup() {
             {loading ? 'Creating account…' : 'Create account'}
           </button>
         </form>
+        <p className="text-xs text-muted mt-4 leading-relaxed">
+          By creating an account, with email, Google or Microsoft, you agree to the{' '}
+          <Link to="/legal/terms" target="_blank" rel="noopener noreferrer" className="text-navyDeep underline">Terms of Service</Link>
+          {' '}and acknowledge the{' '}
+          <Link to="/legal/privacy" target="_blank" rel="noopener noreferrer" className="text-navyDeep underline">Privacy Policy</Link>.
+        </p>
         <p className="text-sm text-muted mt-6">
           Already have an account? <Link to="/login" className="text-navyDeep underline">Log in</Link>
         </p>
+        <LegalFooter newTab className="mt-10" />
       </div>
     </div>
   )

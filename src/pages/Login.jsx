@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import Logo from '../components/Logo'
 import OAuthButtons from '../components/OAuthButtons'
+import LegalFooter from '../components/LegalFooter'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -106,6 +107,8 @@ export default function Login() {
             No account yet?{' '}
             <Link to="/signup" className="text-mid font-semibold">Create one</Link>
           </p>
+
+          <LegalFooter className="mt-6 text-center [&>div]:justify-center" />
         </div>
       </div>
     </div>

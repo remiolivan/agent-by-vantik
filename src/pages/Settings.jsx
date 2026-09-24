@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import Layout from '../components/Layout'
 import OrgSettings from '../components/OrgSettings'
 import PushNotificationToggle from '../components/PushNotificationToggle'
+import LegalFooter from '../components/LegalFooter'
 
 export default function Settings() {
   const [orgId, setOrgId] = useState(null)
@@ -57,6 +58,8 @@ export default function Settings() {
         </div>
 
         {orgId && <OrgSettings orgId={orgId} defaultExpanded />}
+
+        <LegalFooter className="pt-2" />
       </div>
     </Layout>
   )

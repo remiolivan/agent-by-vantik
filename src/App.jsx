@@ -24,6 +24,9 @@ import AdminBilling from './pages/admin/AdminBilling'
 import AdminOrgDetail from './pages/admin/AdminOrgDetail'
 import AdminUsers from './pages/admin/AdminUsers'
 import AdminActivity from './pages/admin/AdminActivity'
+import Terms from './pages/legal/Terms'
+import Privacy from './pages/legal/Privacy'
+import Refunds from './pages/legal/Refunds'
 export default function App() {
   return (
     <Routes>
@@ -32,6 +35,10 @@ export default function App() {
       <Route path="/check-email" element={<CheckEmail />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/legal" element={<Navigate to="/legal/terms" replace />} />
+      <Route path="/legal/terms" element={<Terms />} />
+      <Route path="/legal/privacy" element={<Privacy />} />
+      <Route path="/legal/refunds" element={<Refunds />} />
       <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/properties" element={<ProtectedRoute><Properties /></ProtectedRoute>} />
       <Route path="/prospects" element={<ProtectedRoute><Prospects /></ProtectedRoute>} />

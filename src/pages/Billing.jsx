@@ -4,12 +4,14 @@ import { supabase } from '../lib/supabase'
 import Layout from '../components/Layout'
 import CancelSubscriptionFlow from '../components/CancelSubscriptionFlow'
 import BrokerageContactForm from '../components/BrokerageContactForm'
+import LegalFooter from '../components/LegalFooter'
 
-// Prices validated Aug 2026 (see claude_agent-pricing-aed.md) — AED, annual
-// carries a flat -20% vs. 12x the monthly price.
+// Prices updated 24 Sep 2026 — AED. Annual shown as "2 months free":
+// Solo 999 vs 12x99 = 1188 (-15.9%), Team 3499 vs 12x349 = 4188 (-16.5%).
+// Must match the 4 Stripe Price objects (STRIPE_PRICE_{SOLO,TEAM}_{MONTHLY,ANNUAL}).
 const SELF_SERVE_PLANS = [
-  { key: 'solo', name: 'Solo', monthly: 129, annual: 1239, desc: '1 agent' },
-  { key: 'team', name: 'Team', monthly: 399, annual: 3830, desc: 'Up to 5 agents' },
+  { key: 'solo', name: 'Solo', monthly: 99, annual: 999, desc: '1 agent' },
+  { key: 'team', name: 'Team', monthly: 349, annual: 3499, desc: 'Up to 5 agents' },
 ]
 
 function aed(n) {
@@ -115,7 +117,7 @@ export default function Billing() {
           </div>
           {interval === 'annual' && (
             <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-[#9A5A16] bg-amber/10 rounded px-2 py-1">
-              Save 20%
+              2 months free
             </span>
           )}
         </div>
@@ -162,6 +164,12 @@ export default function Billing() {
             </button>
           </div>
         </div>
+
+        <p className="text-xs text-muted mt-4 leading-relaxed">
+          Prices in AED, billed in advance and renewed automatically until you cancel. No VAT charged. Subscribing means you
+          agree to the <Link to="/legal/terms" className="text-navyDeep underline">Terms of Service</Link> and
+          the <Link to="/legal/refunds" className="text-navyDeep underline">Refund Policy</Link>.
+        </p>
       </div>
 
       {orgId && (
@@ -185,6 +193,8 @@ export default function Billing() {
           )}
         </div>
       )}
+
+      <LegalFooter className="mt-12 max-w-3xl" />
 
       {showCancelFlow && (
         <CancelSubscriptionFlow
