@@ -128,15 +128,27 @@ function Feature({ n, title, children, visual, flip = false }) {
 }
 
 function PipelineVisual() {
-  const cols = [['New', 12, 3], ['Contacted', 9, 2], ['Viewing', 5, 2], ['Offer', 2, 1]]
+  // Sample data, illustrative only.
+  const cols = [
+    ['New', 12, [['Olga V.', 'JVC · 1.2M'], ['Daniel K.', 'Marina · rent'], ['Priya S.', 'Downtown · 3M']]],
+    ['Contacted', 9, [['Karim A.', 'Al Furjan · rent'], ['Lina H.', 'JLT · 950k']]],
+    ['Viewing', 5, [['Sara M.', 'Marina · 2.4M'], ['Tom B.', 'Arabian Ranches']]],
+    ['Offer', 2, [['Nadia R.', 'Palm · 6.8M']]],
+  ]
   return (
-    <div className="bg-white border border-border rounded-md p-4 sm:p-6 grid grid-cols-4 gap-2 sm:gap-3" aria-hidden="true">
+    <div className="bg-white border border-border rounded-md p-3 sm:p-6 grid grid-cols-4 gap-1.5 sm:gap-3" aria-hidden="true">
       {cols.map(([label, count, cards]) => (
-        <div key={label} className="flex flex-col gap-2">
-          <div className={`font-mono text-[8px] sm:text-[9px] tracking-[0.1em] uppercase ${SMALL}`}>{label} · {count}</div>
-          {Array.from({ length: cards }).map((_, i) => (
-            <div key={i} className={`h-12 sm:h-14 rounded-md border ${label === 'Viewing' && i === 0 ? 'border-mid bg-[#EAF0FA]' : 'border-border bg-paper'}`} />
-          ))}
+        <div key={label} className="flex flex-col gap-1.5 sm:gap-2 min-w-0">
+          <div className={`font-mono text-[8px] sm:text-[9px] tracking-[0.1em] uppercase ${SMALL} truncate`}>{label} · {count}</div>
+          {cards.map(([name, detail], i) => {
+            const active = label === 'Viewing' && i === 0
+            return (
+              <div key={name} className={`rounded-md border px-2 py-2 sm:px-3 sm:py-2.5 min-w-0 ${active ? 'border-mid bg-[#EAF0FA]' : 'border-border bg-paper'}`}>
+                <div className="text-[11px] sm:text-[13px] font-semibold text-navy truncate">{name}</div>
+                <div className={`text-[10px] sm:text-[11px] ${SMALL} mt-0.5 truncate`}>{detail}</div>
+              </div>
+            )
+          })}
         </div>
       ))}
     </div>
