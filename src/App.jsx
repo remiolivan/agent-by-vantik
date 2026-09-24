@@ -25,8 +25,21 @@ import AdminOrgDetail from './pages/admin/AdminOrgDetail'
 import AdminUsers from './pages/admin/AdminUsers'
 import AdminActivity from './pages/admin/AdminActivity'
 import Terms from './pages/legal/Terms'
+import Landing from './pages/Landing'
+import { useAuth } from './lib/useAuth'
 import Privacy from './pages/legal/Privacy'
 import Refunds from './pages/legal/Refunds'
+// "/" serves two audiences: visitors see the public landing page, signed-in
+// users get their dashboard. OAuth and email-confirmation redirects land on
+// "/" too; getSession() resolves after the session in the URL is stored, so
+// they correctly fall through to the dashboard.
+function Home() {
+  const { user, loading } = useAuth()
+  if (loading) return null
+  if (!user) return <Landing />
+  return <ProtectedRoute><Dashboard /></ProtectedRoute>
+}
+
 export default function App() {
   return (
     <Routes>
@@ -39,7 +52,7 @@ export default function App() {
       <Route path="/legal/terms" element={<Terms />} />
       <Route path="/legal/privacy" element={<Privacy />} />
       <Route path="/legal/refunds" element={<Refunds />} />
-      <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+      <Route path="/" element={<Home />} />
       <Route path="/properties" element={<ProtectedRoute><Properties /></ProtectedRoute>} />
       <Route path="/prospects" element={<ProtectedRoute><Prospects /></ProtectedRoute>} />
       <Route path="/team" element={<ProtectedRoute><Team /></ProtectedRoute>} />

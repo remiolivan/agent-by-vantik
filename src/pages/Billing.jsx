@@ -5,18 +5,8 @@ import Layout from '../components/Layout'
 import CancelSubscriptionFlow from '../components/CancelSubscriptionFlow'
 import BrokerageContactForm from '../components/BrokerageContactForm'
 import LegalFooter from '../components/LegalFooter'
+import { SELF_SERVE_PLANS, BROKERAGE_FROM, aed } from '../lib/pricing'
 
-// Prices updated 24 Sep 2026 — AED. Annual shown as "2 months free":
-// Solo 999 vs 12x99 = 1188 (-15.9%), Team 3499 vs 12x349 = 4188 (-16.5%).
-// Must match the 4 Stripe Price objects (STRIPE_PRICE_{SOLO,TEAM}_{MONTHLY,ANNUAL}).
-const SELF_SERVE_PLANS = [
-  { key: 'solo', name: 'Solo', monthly: 99, annual: 999, desc: '1 agent' },
-  { key: 'team', name: 'Team', monthly: 349, annual: 3499, desc: 'Up to 5 agents' },
-]
-
-function aed(n) {
-  return `AED ${n.toLocaleString('en-US')}`
-}
 
 export default function Billing() {
   const [org, setOrg] = useState(null)
@@ -152,7 +142,7 @@ export default function Billing() {
           <div className="bg-white border border-border rounded-md p-6 flex flex-col">
             <div className="font-display text-lg font-medium text-navyDeep mb-1">Brokerage</div>
             <div className="font-mono text-2xl text-navyDeep mb-0.5">
-              {aed(899)}<span className="text-sm text-muted font-body">/mo</span>
+              {aed(BROKERAGE_FROM)}<span className="text-sm text-muted font-body">/mo</span>
             </div>
             <div className="text-xs text-muted mb-1">Starting from — custom quote</div>
             <div className="text-sm text-muted mb-6 mt-1">Portal integrations, API, dedicated support</div>
