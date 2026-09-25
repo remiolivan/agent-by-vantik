@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { functionErrorMessage } from '../lib/functionError'
 
 const REASONS = [
   'Too expensive',
@@ -27,7 +28,7 @@ export default function CancelSubscriptionFlow({ onClose, onCancelled }) {
       headers: { Authorization: `Bearer ${token}` },
     })
     setSaving(false)
-    if (error || data?.error) return setError(data?.error || error.message)
+    if (error || data?.error) return setError(await functionErrorMessage(error, data))
     onCancelled()
   }
 

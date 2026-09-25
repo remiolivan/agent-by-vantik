@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import Layout from '../components/Layout'
 import CancelSubscriptionFlow from '../components/CancelSubscriptionFlow'
 import BrokerageContactForm from '../components/BrokerageContactForm'
 import LegalFooter from '../components/LegalFooter'
 import { SELF_SERVE_PLANS, BROKERAGE_FROM, aed } from '../lib/pricing'
+import { orgHasAccess, PAID_PLANS } from '../lib/access'
+import { functionErrorMessage } from '../lib/functionError'
 
 
 export default function Billing() {
@@ -17,6 +19,11 @@ export default function Billing() {
   const [error, setError] = useState(null)
   const [showCancelFlow, setShowCancelFlow] = useState(false)
   const [showBrokerageForm, setShowBrokerageForm] = useState(false)
+  const [searchParams] = useSearchParams()
+  const justPaid = searchParams.get('success') === 'true'
+  const checkoutCanceled = searchParams.get('canceled') === 'true'
+  // After Stripe redirects back, the webhook may land a few seconds later.
+  const [activation, setActivation] = useState(justPaid ? 'pending' : null) // 'pending' | 'done' | 'slow' | null
 
   async function load() {
     const { data: membership } = await supabase.from('memberships').select('org_id').single()
@@ -28,10 +35,29 @@ export default function Billing() {
         .eq('id', membership.org_id)
         .single()
       setOrg(data)
+      return data
     }
+    return null
   }
 
   useEffect(() => { load() }, [])
+
+  // Poll until the webhook has switched the org to a paid plan.
+  useEffect(() => {
+    if (!justPaid) return
+    let tries = 0
+    let stopped = false
+    async function poll() {
+      if (stopped) return
+      const data = await load()
+      if (data && PAID_PLANS.includes(data.plan)) return setActivation('done')
+      tries += 1
+      if (tries >= 15) return setActivation('slow')
+      setTimeout(poll, 2000)
+    }
+    poll()
+    return () => { stopped = true }
+  }, [justPaid])
 
   async function subscribe(plan) {
     setError(null)
@@ -43,7 +69,7 @@ export default function Billing() {
       headers: { Authorization: `Bearer ${token}` },
     })
     setLoadingPlan(null)
-    if (error || data?.error) return setError(data?.error || error.message)
+    if (error || data?.error) return setError(await functionErrorMessage(error, data))
     window.location.href = data.url
   }
 
@@ -56,7 +82,7 @@ export default function Billing() {
       headers: { Authorization: `Bearer ${token}` },
     })
     setPortalLoading(false)
-    if (error || data?.error) return setError(data?.error || error.message)
+    if (error || data?.error) return setError(await functionErrorMessage(error, data))
     window.location.href = data.url
   }
 
@@ -67,6 +93,35 @@ export default function Billing() {
   return (
     <Layout title="Billing">
       <div className="max-w-3xl">
+        {activation === 'pending' && (
+          <div className="bg-white border border-border rounded-md p-4 mb-6 text-sm text-ink">
+            Payment received — activating your plan…
+          </div>
+        )}
+        {activation === 'done' && (
+          <div className="bg-white border border-border rounded-md p-4 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <p className="text-sm text-ink">You're all set — your plan is active. Thank you!</p>
+            {/* Full reload so every page picks up the new plan */}
+            <button onClick={() => { window.location.href = '/' }} className="bg-amber text-ink font-bold rounded-md px-4 py-2 text-sm whitespace-nowrap">
+              Go to dashboard
+            </button>
+          </div>
+        )}
+        {activation === 'slow' && (
+          <div className="bg-white border border-border rounded-md p-4 mb-6 text-sm text-ink">
+            Your payment went through, but activation is taking longer than usual. Refresh this page in a minute — if your plan
+            still isn't active, email <a href="mailto:remi.olivan@getvantik.com" className="text-navyDeep underline">remi.olivan@getvantik.com</a>.
+          </div>
+        )}
+        {checkoutCanceled && !activation && (
+          <p className="text-sm text-muted mb-6">Checkout canceled — you haven't been charged.</p>
+        )}
+        {org && !activation && !orgHasAccess(org) && (
+          <div className="bg-amber/10 border border-amber/40 rounded-md p-4 mb-6">
+            <p className="text-sm font-semibold text-navyDeep">Your free trial has ended.</p>
+            <p className="text-sm text-ink mt-0.5">Choose a plan below to keep using Agent. Your data is safe and waiting for you.</p>
+          </div>
+        )}
         {org && (
           <div className="bg-white border border-border rounded-md p-5 sm:p-6 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
@@ -170,7 +225,7 @@ export default function Billing() {
         </div>
       )}
 
-      {!org?.is_comped && (
+      {org && !org.is_comped && PAID_PLANS.includes(org.plan) && (
         <div className="mt-10 max-w-3xl">
           {org?.cancel_requested_at ? (
             <p className="text-sm text-muted">

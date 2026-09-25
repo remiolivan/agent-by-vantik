@@ -71,6 +71,8 @@ export default function App() {
       <Route path="/admin/support/users" element={<ProtectedAdminRoute><AdminUsers /></ProtectedAdminRoute>} />
       <Route path="/admin/support/activity" element={<ProtectedAdminRoute><AdminActivity /></ProtectedAdminRoute>} />
       <Route path="/admin/orgs/:orgId" element={<ProtectedAdminRoute><AdminOrgDetail /></ProtectedAdminRoute>} />
+      {/* Unknown URLs (typos, //billing...) go home instead of a blank page */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }
