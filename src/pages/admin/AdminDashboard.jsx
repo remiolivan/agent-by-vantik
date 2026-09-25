@@ -16,7 +16,7 @@ export default function AdminDashboard() {
 
       {metrics && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <MetricCard label="MRR (est.)" value={`$${metrics.mrrUsd.toLocaleString()}`} />
+          <MetricCard label="MRR (est.)" value={`AED ${(metrics.mrrAed ?? 0).toLocaleString()}`} />
           <MetricCard label="Active" value={metrics.active} accent="teal" />
           <MetricCard label="Trialing" value={metrics.trialing} />
           <MetricCard label="Trials expiring ≤3d" value={metrics.trialsExpiringSoon} accent={metrics.trialsExpiringSoon > 0 ? 'amber' : undefined} />
