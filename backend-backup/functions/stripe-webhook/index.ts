@@ -97,7 +97,7 @@ Deno.serve(async (req: Request) => {
   }
 
   // deno-lint-ignore no-explicit-any
-  async function syncSubscription(sub: any, orgIdHint?: string | null) {
+  async function syncSubscription(sub: any, orgIdHint?: string | null): Promise<string> {
     const orgId = await resolveOrgId(sub, orgIdHint);
     if (!orgId) throw new Error(`No org found for subscription ${sub.id}`);
     const { plan, interval } = planFromSub(sub);
@@ -136,7 +136,26 @@ Deno.serve(async (req: Request) => {
     } else if (LOST_STATUSES.includes(sub.status)) {
       await dropToTrialIfNoOtherLiveSub(orgId, sub.id);
     }
+    return orgId;
   }
+
+  // Ask lifecycle-emails to send what is now due for this org (payment
+  // confirmed, cancellation confirmed). Best effort: it never affects the
+  // webhook response, and the 15-min cron sends anything missed here.
+  async function triggerLifecycleEmails(orgId: string) {
+    try {
+      const res = await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/lifecycle-emails`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-cron-secret": Deno.env.get("CRON_SECRET") ?? "" },
+        body: JSON.stringify({ org_id: orgId }),
+        signal: AbortSignal.timeout(8000),
+      });
+      if (!res.ok) console.error("[stripe-webhook] lifecycle-emails returned", res.status, await res.text());
+    } catch (err) {
+      console.error("[stripe-webhook] lifecycle-emails call failed:", String(err));
+    }
+  }
+  let emailOrgId: string | null = null;
 
   try {
     switch (event.type) {
@@ -145,11 +164,11 @@ Deno.serve(async (req: Request) => {
         if (session.mode !== "subscription" || !session.subscription) break;
         const subId = typeof session.subscription === "string" ? session.subscription : session.subscription.id;
         const sub = await stripe.subscriptions.retrieve(subId);
-        await syncSubscription(sub, session.metadata?.org_id ?? null);
+        emailOrgId = await syncSubscription(sub, session.metadata?.org_id ?? null);
         break;
       }
       case "customer.subscription.updated": {
-        await syncSubscription(event.data.object);
+        emailOrgId = await syncSubscription(event.data.object);
         break;
       }
       case "customer.subscription.deleted": {
@@ -171,6 +190,13 @@ Deno.serve(async (req: Request) => {
   } catch (e) {
     console.error(`[stripe-webhook] ${event.type} ${event.id}:`, e);
     return json({ error: String(e) }, 500);
+  }
+
+  if (emailOrgId) {
+    // deno-lint-ignore no-explicit-any
+    const rt = (globalThis as any).EdgeRuntime;
+    if (rt?.waitUntil) rt.waitUntil(triggerLifecycleEmails(emailOrgId));
+    else await triggerLifecycleEmails(emailOrgId);
   }
 
   return json({ received: true });
