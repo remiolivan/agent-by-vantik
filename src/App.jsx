@@ -29,13 +29,24 @@ import Landing from './pages/Landing'
 import { useAuth } from './lib/useAuth'
 import Privacy from './pages/legal/Privacy'
 import Refunds from './pages/legal/Refunds'
+function hasStoredSession() {
+  try {
+    return Object.keys(window.localStorage).some((k) => /^sb-.*-auth-token$/.test(k))
+  } catch {
+    return false
+  }
+}
+
 // "/" serves two audiences: visitors see the public landing page, signed-in
 // users get their dashboard. OAuth and email-confirmation redirects land on
 // "/" too; getSession() resolves after the session in the URL is stored, so
 // they correctly fall through to the dashboard.
 function Home() {
   const { user, loading } = useAuth()
-  if (loading) return null
+  // Visitors without a stored session see the landing straight away (it is
+  // also prerendered in index.html), instead of a blank frame while the
+  // session check resolves. Signed-in users keep the blank frame -> dashboard.
+  if (loading) return hasStoredSession() ? null : <Landing />
   if (!user) return <Landing />
   return <ProtectedRoute><Dashboard /></ProtectedRoute>
 }

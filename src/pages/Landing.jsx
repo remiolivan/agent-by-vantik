@@ -226,7 +226,7 @@ function PlanCard({ name, tagline, price, per, note, features, cta, highlight = 
   )
 }
 
-const FAQ = [
+export const FAQ = [
   ['Do I need a card for the trial?', `No. The trial lasts ${TRIAL_DAYS} days, or ${TRIAL_DAYS_REFERRAL} with a referral code. Choose a plan only if you want to keep going.`],
   ['Does Agent send messages to my clients on its own?', 'Never. Agent prepares the draft; you review it and send it from your own WhatsApp or email.'],
   ['Can I cancel anytime?', 'Yes, from the Billing page. You keep access until the end of the period you paid for.'],

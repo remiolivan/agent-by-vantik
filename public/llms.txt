@@ -1,0 +1,41 @@
+# Agent by Vantik
+
+> Agent by Vantik is a CRM for real estate agents and brokerages in Dubai, United Arab Emirates. It keeps prospects, properties, viewings and follow-ups in one place, drafts WhatsApp and email follow-ups that the agent reviews and sends, syncs viewings with Google Calendar or Outlook, and issues commission invoices and property brochures as PDF. Made by Vantik Apps Technology, a software studio based in Dubai (getvantik.com).
+
+Not to be confused with other products named "Vantik" or "Vantix": Agent by Vantik is the real estate CRM at agent.getvantik.com.
+
+## Who it is for
+
+- Independent real estate agents in Dubai (Solo plan)
+- Small teams of up to 5 agents (Team plan)
+- Brokerages with larger teams (Brokerage plan, custom quote)
+
+## What it does
+
+- Prospect pipeline: log a lead with intent, budget and preferred areas; move it from new lead to contacted, viewing and offer; see who has gone quiet.
+- Follow-up drafts: Agent drafts the next WhatsApp or email message from the prospect's history. Nothing is sent automatically; the agent reviews it and sends it from their own WhatsApp or email.
+- Calendar: viewings sync with Google Calendar or Outlook, with invites sent to the client.
+- Daily routine: a morning email listing follow-ups and viewings, plus push reminders.
+- Properties: listings with owner details, branded PDF brochures and share links.
+- Invoices: commission invoices as PDF with the agent's logo, with due-date reminders.
+- Mobile: installable on iOS and Android home screens, with notifications.
+
+## Pricing (AED, no VAT charged)
+
+- Solo: AED 99/month or AED 999/year (1 agent)
+- Team: AED 349/month or AED 3,499/year (up to 5 agents)
+- Brokerage: from AED 899/month, custom quote
+- Free trial: 14 days, no card required (30 days with a referral code). Cancel anytime; access continues until the end of the paid period.
+
+## Links
+
+- [Agent by Vantik](https://agent.getvantik.com/): product page, features, pricing and FAQ
+- [Start a free trial](https://agent.getvantik.com/signup)
+- [Terms of Service](https://agent.getvantik.com/legal/terms)
+- [Privacy Policy](https://agent.getvantik.com/legal/privacy)
+- [Refund Policy](https://agent.getvantik.com/legal/refunds)
+- [Vantik](https://getvantik.com): the company behind Agent
+
+## Company
+
+Vantik Apps Technology, Sole Establishment, Dubai e-Trader licence no. 1654966, Department of Economy and Tourism, Dubai. Contact: remi.olivan@getvantik.com
